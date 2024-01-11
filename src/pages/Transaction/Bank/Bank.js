@@ -13,6 +13,9 @@ import axios from 'axios';
 import BankTableCard from './BankTableCard';
 import ViewTransactionForm  from "../Commen/ViewTransactionForm";
 import {DeleteOutlined, EyeOutlined, PrinterOutlined} from "@ant-design/icons";
+import Item from "../../GlobalViewModels/Item";
+import Customer from "../../GlobalViewModels/Customer";
+
 
 
 const { Option } = Select;
@@ -33,6 +36,11 @@ class Bank extends Component {
             tableSelling  : [],
             tablePayment : [],
 
+            isViewItemModalVisible: false,
+            selectedRefferenceItem: null,
+            selectedCustomer: null,
+            isViewModalCustomerVisible: false,
+
 
             searchCode: '',
             searchStatus: '',
@@ -46,6 +54,8 @@ class Bank extends Component {
         this.getAllBankTransactions = this.getAllBankTransactions.bind(this);
         this.toggleViewModal = this.toggleViewModal.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
+        this.showReferenceItem = this.showReferenceItem.bind(this);
+        this.showCustomer = this.showCustomer.bind(this);
 
     }
 
@@ -53,6 +63,24 @@ class Bank extends Component {
 
     componentDidMount() {
         this.getAllBankTransactions();
+    }
+
+
+    showReferenceItem(itemId){
+        console.log('itemId', itemId);
+        this.setState({
+            selectedRefferenceItem: itemId,
+            isViewItemModalVisible: true,
+        });
+    }
+
+
+
+    showCustomer(customerId){
+        this.setState({
+            selectedCustomer: customerId,
+            isViewModalCustomerVisible: true,
+        });
     }
 
     handlePrint = async (row) => {
@@ -466,6 +494,8 @@ class Bank extends Component {
                                 handleViewShow={this.handleViewShow}
                                 handlePrint={this.handlePrint}
                                 handleDelete={this.handleDelete}
+                                showReferenceItem={this.showReferenceItem}
+                                showCustomer={this.showCustomer}
                                 loading={this.state.loading}
                             />
                         </Col>
@@ -482,6 +512,8 @@ class Bank extends Component {
                                 handleViewShow={this.handleViewShow}
                                 handlePrint={this.handlePrint}
                                 handleDelete={this.handleDelete}
+                                showReferenceItem={this.showReferenceItem}
+                                showCustomer={this.showCustomer}
                                 loading={this.state.loading}
                             />
                         </Col>
@@ -544,16 +576,26 @@ class Bank extends Component {
                                             {
                                                 title: 'Reference Item',
                                                 dataIndex: 'ITEM_CODE',
+                                                render: (text, record) => (
+                                                    <Button type="default" style={{ height: 'auto' }}
+                                                            onClick={() => this.showReferenceItem(record.ITEM_ID_AI)}>
+                                <span>
+                <div>{record.ITEM_CODE}</div>
+                                </span>
+                                                    </Button>
+                                                ),
                                             },
                                             {
                                                 title: 'Customer Name',
                                                 dataIndex: 'C_NAME',
                                                 render: (text, record) => (
-                                                    <span>
+                                                    <Button type="default" style={{ height: 'auto' , width: '100%' }} onClick={() => this.showCustomer(record.CUSTOMER_ID)}>
+                                <span>
                 <div>{record.C_NAME}</div>
                 <div>{record.PHONE_NUMBER}</div>
                 <div>({record.COMPANY})</div>
             </span>
+                                                    </Button>
                                                 ),
                                             },
                                             {
@@ -669,6 +711,35 @@ class Bank extends Component {
                     )}
                 </Modal>
 
+                <Modal
+                    title="View Item"
+                    visible={this.state.isViewItemModalVisible}
+                    onCancel={() => this.setState({ isViewItemModalVisible: false })}
+                    footer={null}
+                    width={1250}
+                >
+                    {this.state.selectedRefferenceItem && (
+                        <Item
+                            key={this.state.selectedRefferenceItem} // Pass a key to ensure a new instance is created
+                            itemId={this.state.selectedRefferenceItem}
+                        />
+                    )}
+                </Modal>
+
+                <Modal
+                    title="View Customer"
+                    visible={this.state.isViewModalCustomerVisible}
+                    onCancel={() => this.setState({ isViewModalCustomerVisible: false })}
+                    footer={null}
+                    width={1250}
+                >
+                    {this.state.selectedCustomer && (
+                        <Customer
+                            key={this.state.selectedCustomer} // Pass a key to ensure a new instance is created
+                            customerId={this.state.selectedCustomer}
+                        />
+                    )}
+                </Modal>
             </>
         );
     }

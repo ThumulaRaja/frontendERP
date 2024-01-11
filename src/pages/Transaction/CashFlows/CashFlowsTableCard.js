@@ -12,6 +12,8 @@ let CashFlowsTableCard = ({
                             handleViewShow,
                             handleDelete,
                               handlePrint,
+                              showReferenceItem,
+                              showCustomer,
                             loading,
                         }) => {
     const buttonStyle = {
@@ -116,14 +118,28 @@ let CashFlowsTableCard = ({
                             dataIndex: 'ITEM_CODE',
                         },
                         {
+                            title: 'Reference Item',
+                            dataIndex: 'ITEM_CODE',
+                            render: (text, record) => (
+                                <Button type="default" style={{ height: 'auto' }}
+                                        onClick={() => showReferenceItem(record.ITEM_ID_AI)}>
+                                <span>
+                <div>{record.ITEM_CODE}</div>
+                                </span>
+                                </Button>
+                            ),
+                        },
+                        {
                             title: 'Customer Name',
                             dataIndex: 'C_NAME',
                             render: (text, record) => (
+                                <Button type="default" style={{ height: 'auto' , width: '100%' }} onClick={() => showCustomer(record.CUSTOMER_ID)}>
                                 <span>
                 <div>{record.C_NAME}</div>
                 <div>{record.PHONE_NUMBER}</div>
                 <div>({record.COMPANY})</div>
             </span>
+                                </Button>
                             ),
                         },
                         {

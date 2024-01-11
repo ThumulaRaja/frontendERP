@@ -1,6 +1,7 @@
 import React from 'react';
 import {Button, Card, Table, Tooltip, Divider, Popconfirm, InputNumber, Modal} from 'antd';
 import { EyeOutlined, ExclamationCircleOutlined, DeleteOutlined ,PrinterOutlined} from '@ant-design/icons';
+import customers from "../../Customers/Customers";
 
 
 
@@ -9,6 +10,8 @@ let BankTableCard = ({
                             backgroundColor,
                             dataSource,
                             handleViewShow,
+                            showReferenceItem,
+                            showCustomer,
                             handlePrint,
                             handleDelete,
                             loading,
@@ -64,10 +67,6 @@ let BankTableCard = ({
     };
 
 
-
-
-
-
     return (
         <Card
             bordered={false}
@@ -114,7 +113,8 @@ let BankTableCard = ({
                             title: 'Reference Item',
                             dataIndex: 'ITEM_CODE',
                             render: (text, record) => (
-                                <Button type="default" style={{ height: 'auto' }}>
+                                <Button type="default" style={{ height: 'auto' }}
+                                        onClick={() => showReferenceItem(record.ITEM_ID_AI)}>
                                 <span>
                 <div>{record.ITEM_CODE}</div>
                                 </span>
@@ -125,7 +125,7 @@ let BankTableCard = ({
                             title: 'Customer Name',
                             dataIndex: 'C_NAME',
                             render: (text, record) => (
-                                <Button type="default" style={{ height: 'auto' }}>
+                                <Button type="default" style={{ height: 'auto' , width: '100%' }} onClick={() => showCustomer(record.CUSTOMER_ID)}>
                                 <span>
                 <div>{record.C_NAME}</div>
                 <div>{record.PHONE_NUMBER}</div>
