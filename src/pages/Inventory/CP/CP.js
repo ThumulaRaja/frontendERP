@@ -80,7 +80,7 @@ class CP extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchCP', searchData);
+            const response = await axios.post('http://13.200.220.236:3001/searchCP', searchData);
 
 
             if (response.data.success) {
@@ -181,7 +181,7 @@ class CP extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchCP', searchData);
+            const response = await axios.post('http://13.200.220.236:3001/searchCP', searchData);
 
 
             if (response.data.success) {
@@ -282,7 +282,7 @@ class CP extends Component {
         console.log('id', id);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deactivateItem', {
+            const response = await axios.post('http://13.200.220.236:3001/deactivateItem', {
                 ITEM_ID_AI: id,
             });
 
@@ -304,7 +304,7 @@ class CP extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllCP');
+            const response = await axios.post('http://13.200.220.236:3001/getAllCP');
 
             if (response.data.success) {
                 const items = response.data.result;

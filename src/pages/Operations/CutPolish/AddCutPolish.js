@@ -46,7 +46,7 @@ class AddCutPolish extends React.Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
             console.log("responseCus", response);
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
@@ -71,7 +71,7 @@ class AddCutPolish extends React.Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
             console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -93,7 +93,7 @@ class AddCutPolish extends React.Component {
                 imgBBLink2: '',
                 fileList2: [],
             });
-            const response = await axios.post('http://localhost:3001/getReferenceCPDetails', {
+            const response = await axios.post('http://13.200.220.236:3001/getReferenceCPDetails', {
                 ITEM_ID_AI: value,
             });
             if (response.data.success) {
@@ -256,7 +256,7 @@ class AddCutPolish extends React.Component {
             console.log('resultArrayData', resultArrayData);
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/addCutPolish', resultArrayData);
+            const response = await axios.post('http://13.200.220.236:3001/addCutPolish', resultArrayData);
 
             if (response.data.success) {
                 message.success('Cut & Polish added successfully');

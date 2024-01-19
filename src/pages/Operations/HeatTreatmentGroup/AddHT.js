@@ -27,7 +27,7 @@ class AddHT extends React.Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
             console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -61,7 +61,7 @@ class AddHT extends React.Component {
                 REFERENCE: referenceString,
             };
 
-            const response = await axios.post('http://localhost:3001/addHT', updatedValues);
+            const response = await axios.post('http://13.200.220.236:3001/addHT', updatedValues);
 
             if (response.data.success) {
                 message.success('Heat Treatment Group added successfully');

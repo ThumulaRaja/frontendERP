@@ -21,7 +21,7 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
 
     const fetchReferenceOptions = async () => {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
             console.log('response', response);
             const options = response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -48,7 +48,7 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
             };
 
             // Make API call to update customer
-            const response = await axios.post('http://localhost:3001/updateHT', updatedValues);
+            const response = await axios.post('http://13.200.220.236:3001/updateHT', updatedValues);
 
             if (response.data.success) {
                 message.success('Heat Treatment Group updated successfully');

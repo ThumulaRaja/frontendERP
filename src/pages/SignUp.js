@@ -90,7 +90,7 @@ export default class SignUp extends Component {
 
 
       // Check if the email and username are already in use
-      const checkResponse = await axios.post('http://localhost:3001/checkEmailUsername', { EMAIL, USERNAME });
+      const checkResponse = await axios.post('http://13.200.220.236:3001/checkEmailUsername', { EMAIL, USERNAME });
 
       if (checkResponse.data.used) {
         // Either email or username is already in use
@@ -115,7 +115,7 @@ export default class SignUp extends Component {
         PHOTO: this.state.imgBBLink2,
       };
 
-      const response = await axios.post('http://localhost:3001/addUser', updatedValues);
+      const response = await axios.post('http://13.200.220.236:3001/addUser', updatedValues);
 
       if (response.data.success) {
         message.success('User added successfully');

@@ -22,7 +22,7 @@ function Home() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:3001/getItemCountData');
+      const response = await axios.post('http://13.200.220.236:3001/getItemCountData');
 
       if (response.data.success) {
         console.log('ResponseDashboard:', response.data.result);

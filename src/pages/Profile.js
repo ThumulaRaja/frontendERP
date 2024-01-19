@@ -122,7 +122,7 @@ class Profile extends Component {
       }
 
       // Check if the user entered the old password correctly
-      const response = await axios.post("http://localhost:3001/checkPassword", {
+      const response = await axios.post("http://13.200.220.236:3001/checkPassword", {
         USER_ID: USER_ID,
         PASSWORD: OLD_PASSWORD,
       });
@@ -139,7 +139,7 @@ class Profile extends Component {
         console.log("Updated values:", updatedValues);
 
         const response = await axios.post(
-            "http://localhost:3001/updateProfile",
+            "http://13.200.220.236:3001/updateProfile",
             updatedValues
         );
         if (response.data.success) {

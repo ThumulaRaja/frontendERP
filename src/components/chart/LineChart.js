@@ -20,7 +20,7 @@ function LineChart() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axios.post('http://localhost:3001/getTransactionData');
+            const response = await axios.post('http://13.200.220.236:3001/getTransactionData');
 
             if (response.data.success) {
                 console.log('TransactionData:', response.data.result);

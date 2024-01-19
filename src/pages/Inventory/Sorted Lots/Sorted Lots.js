@@ -74,7 +74,7 @@ class SortedLots extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchSortedLots', searchData);
+            const response = await axios.post('http://13.200.220.236:3001/searchSortedLots', searchData);
 
 
             if (response.data.success) {
@@ -145,7 +145,7 @@ class SortedLots extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchSortedLots', searchData);
+            const response = await axios.post('http://13.200.220.236:3001/searchSortedLots', searchData);
 
 
             if (response.data.success) {
@@ -226,7 +226,7 @@ class SortedLots extends Component {
         console.log('id', id);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deactivateItem', {
+            const response = await axios.post('http://13.200.220.236:3001/deactivateItem', {
                 ITEM_ID_AI: id,
             });
 
@@ -248,7 +248,7 @@ class SortedLots extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllSortedLots');
+            const response = await axios.post('http://13.200.220.236:3001/getAllSortedLots');
 
             if (response.data.success) {
                 const items = response.data.result;

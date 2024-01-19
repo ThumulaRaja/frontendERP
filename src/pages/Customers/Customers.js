@@ -64,7 +64,7 @@ class Customers extends Component {
     handleDelete = async (customerId) => {
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deactivateCustomer', {
+            const response = await axios.post('http://13.200.220.236:3001/deactivateCustomer', {
                 CUSTOMER_ID: customerId,
             });
 
@@ -86,7 +86,7 @@ class Customers extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllCustomers');
+            const response = await axios.post('http://13.200.220.236:3001/getAllCustomers');
 
             if (response.data.success) {
                 const customers = response.data.result;

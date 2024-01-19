@@ -25,7 +25,7 @@ class AddCustomerForm extends React.Component {
                 CREATED_BY: USER_ID,
             };
 
-            const response = await axios.post('http://localhost:3001/addCustomer', updatedValues);
+            const response = await axios.post('http://13.200.220.236:3001/addCustomer', updatedValues);
 
             if (response.data.success) {
                 message.success('Customer added successfully');

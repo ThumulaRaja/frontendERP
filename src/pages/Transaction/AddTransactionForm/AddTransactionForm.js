@@ -82,7 +82,7 @@ export default class AddTransactionForm extends Component {
 
   async fetchCustomerOptions() {
     try {
-      const response = await axios.post("http://localhost:3001/getAllCustomers");
+      const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
       console.log("response", response);
       return response.data.result.map((customer) => ({
         value: customer.CUSTOMER_ID,
@@ -96,7 +96,7 @@ export default class AddTransactionForm extends Component {
 
   async fetchReferenceOptions() {
     try {
-      const response = await axios.post("http://localhost:3001/getItemsForReference");
+      const response = await axios.post("http://13.200.220.236:3001/getItemsForReference");
       console.log("response", response);
       return response.data.result.map((ref) => ({
         value: ref.ITEM_ID_AI,
@@ -114,7 +114,7 @@ export default class AddTransactionForm extends Component {
     console.log(`selected ${value}`);
     const form = this.formRef.current;
     try {
-      const response = await axios.post('http://localhost:3001/getItemsDetailsForTransaction', {
+      const response = await axios.post('http://13.200.220.236:3001/getItemsDetailsForTransaction', {
         ITEM_ID_AI: value,
       });
       if (response.data.success) {
@@ -178,7 +178,7 @@ export default class AddTransactionForm extends Component {
 
       console.log("updatedValues", updatedValues);
 
-      const response = await axios.post('http://localhost:3001/addTransaction', updatedValues);
+      const response = await axios.post('http://13.200.220.236:3001/addTransaction', updatedValues);
 
       if (response.data.success) {
         message.success('Transaction added successfully');

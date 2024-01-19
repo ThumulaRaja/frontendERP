@@ -86,7 +86,7 @@ class Bank extends Component {
     handlePrint = async (row) => {
         console.log('row', row);
         try {
-            const response = await axios.post('http://localhost:3001/generateInvoice', {
+            const response = await axios.post('http://13.200.220.236:3001/generateInvoice', {
                 data: row,
             });
 
@@ -130,7 +130,7 @@ class Bank extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchBank', searchData);
+            const response = await axios.post('http://13.200.220.236:3001/searchBank', searchData);
 
 
             if (response.data.success) {
@@ -202,7 +202,7 @@ class Bank extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchBank', searchData);
+            const response = await axios.post('http://13.200.220.236:3001/searchBank', searchData);
 
 
             if (response.data.success) {
@@ -274,7 +274,7 @@ class Bank extends Component {
         console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
+            const response = await axios.post('http://13.200.220.236:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -296,7 +296,7 @@ class Bank extends Component {
         console.log('id', id);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deletePayment', {
+            const response = await axios.post('http://13.200.220.236:3001/deletePayment', {
                 TRANSACTION_ID: id,
                 PAYMENT_AMOUNT: paymentAmount,
                 AMOUNT_SETTLED: amountSettled,
@@ -322,7 +322,7 @@ class Bank extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllBankTransactions');
+            const response = await axios.post('http://13.200.220.236:3001/getAllBankTransactions');
 
             if (response.data.success) {
                 const items = response.data.result;

@@ -43,7 +43,7 @@ class HeatT extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
             console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -83,7 +83,7 @@ class HeatT extends Component {
     handleDelete = async (Id) => {
         try {
             // Make an API call to deactivate the Heat Treatment
-            const response = await axios.post('http://localhost:3001/deactivateHeatT', {
+            const response = await axios.post('http://13.200.220.236:3001/deactivateHeatT', {
                 HEAT_ID: Id,
             });
 
@@ -105,7 +105,7 @@ class HeatT extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllHeatT');
+            const response = await axios.post('http://13.200.220.236:3001/getAllHeatT');
 
             if (response.data.success) {
                 const customers = response.data.result;

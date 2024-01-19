@@ -40,7 +40,7 @@ class UpdateCustomerForm extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getCustomerTransactions', {
+            const response = await axios.post('http://13.200.220.236:3001/getCustomerTransactions', {
                 CUSTOMER_ID: this.props.initialValues.CUSTOMER_ID,
             });
 
@@ -79,7 +79,7 @@ class UpdateCustomerForm extends Component {
                 CUSTOMER_ID: initialValues.CUSTOMER_ID,
             };
 
-            const response = await axios.post('http://localhost:3001/updateCustomer', updatedValues);
+            const response = await axios.post('http://13.200.220.236:3001/updateCustomer', updatedValues);
 
             if (response.data.success) {
                 message.success('Customer updated successfully');

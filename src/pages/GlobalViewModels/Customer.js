@@ -45,7 +45,7 @@ class Customer extends Component {
 
         try {
             console.log('this.props.customerId', this.props);
-            const response = await axios.post('http://localhost:3001/getCustomerDetails', {
+            const response = await axios.post('http://13.200.220.236:3001/getCustomerDetails', {
                 CUSTOMER_ID: this.props.customerId,
             });
 
@@ -79,7 +79,7 @@ class Customer extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getCustomerTransactions', {
+            const response = await axios.post('http://13.200.220.236:3001/getCustomerTransactions', {
                 CUSTOMER_ID: this.props.customerId,
             });
 

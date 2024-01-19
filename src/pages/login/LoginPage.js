@@ -21,7 +21,7 @@ const Login = () => {
 
         try {
             console.log('Login values:', values);
-            const response = await axios.post('http://localhost:3001/login', values);
+            const response = await axios.post('http://13.200.220.236:3001/login', values);
 
             if (response.status === 200) {
                 message.success('Login successful');

@@ -22,7 +22,7 @@ const UpdateExpenses = ({ initialValues, onUpdate, onCancel }) => {
 
     const fetchReferenceOptions = async () => {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
             console.log('response', response);
             const options = response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -48,7 +48,7 @@ const UpdateExpenses = ({ initialValues, onUpdate, onCancel }) => {
             };
 
             // Make API call to update Expenses
-            const response = await axios.post('http://localhost:3001/updateExpenses', updatedValues);
+            const response = await axios.post('http://13.200.220.236:3001/updateExpenses', updatedValues);
 
             if (response.data.success) {
                 message.success('Expenses updated successfully');

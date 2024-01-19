@@ -96,7 +96,7 @@ class CashFlows extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchCash', searchData);
+            const response = await axios.post('http://13.200.220.236:3001/searchCash', searchData);
 
 
             if (response.data.success) {
@@ -168,7 +168,7 @@ class CashFlows extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchCash', searchData);
+            const response = await axios.post('http://13.200.220.236:3001/searchCash', searchData);
 
 
             if (response.data.success) {
@@ -240,7 +240,7 @@ class CashFlows extends Component {
         console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
+            const response = await axios.post('http://13.200.220.236:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -261,7 +261,7 @@ class CashFlows extends Component {
     handlePrint = async (row) => {
         console.log('row', row);
         try {
-            const response = await axios.post('http://localhost:3001/generateInvoice', {
+            const response = await axios.post('http://13.200.220.236:3001/generateInvoice', {
                 data: row,
             });
 
@@ -289,7 +289,7 @@ class CashFlows extends Component {
         console.log('id', id);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deletePayment', {
+            const response = await axios.post('http://13.200.220.236:3001/deletePayment', {
                 TRANSACTION_ID: id,
                 PAYMENT_AMOUNT: paymentAmount,
                 AMOUNT_SETTLED: amountSettled,
@@ -315,7 +315,7 @@ class CashFlows extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllCashTransactions');
+            const response = await axios.post('http://13.200.220.236:3001/getAllCashTransactions');
 
             if (response.data.success) {
                 const items = response.data.result;

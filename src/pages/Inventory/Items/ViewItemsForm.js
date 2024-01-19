@@ -74,7 +74,7 @@ class ViewItemsForm extends Component {
 
         try {
             let id = this.props.initialValues.ITEM_ID_AI;
-            const response = await axios.post('http://localhost:3001/getAllTransactions', { id });
+            const response = await axios.post('http://13.200.220.236:3001/getAllTransactions', { id });
 
             if (response.data.success) {
                 const items = response.data.result;
@@ -118,7 +118,7 @@ class ViewItemsForm extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
             console.log("response", response);
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
@@ -132,7 +132,7 @@ class ViewItemsForm extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getItemsForReference");
+            const response = await axios.post("http://13.200.220.236:3001/getItemsForReference");
             console.log("response", response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -146,7 +146,7 @@ class ViewItemsForm extends Component {
 
     async fetchHTGroupOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllHT");
+            const response = await axios.post("http://13.200.220.236:3001/getAllHT");
             console.log("response", response);
             return response.data.result.map((ht) => ({
                 value: ht.HT_ID,
@@ -168,7 +168,7 @@ class ViewItemsForm extends Component {
         console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
+            const response = await axios.post('http://13.200.220.236:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
