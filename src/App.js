@@ -1,4 +1,3 @@
-
 import { Switch, Route, Redirect } from "react-router-dom";
 import Home from "./pages/Home";
 import Customers from "./pages/Customers/Customers";
@@ -21,8 +20,6 @@ import Bank from "./pages/Transaction/Bank/Bank";
 import HT from "./pages/Operations/HeatTreatmentGroup/HT";
 import HeatT from "./pages/Operations/HeatTreatment/HeatT";
 import CutPolish from "./pages/Operations/CutPolish/CutPolish";
-
-
 
 import "./assets/styles/main.css";
 import "./assets/styles/responsive.css";

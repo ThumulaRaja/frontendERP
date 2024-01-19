@@ -171,17 +171,17 @@ class UpdateCustomerForm extends Component {
                     </Col>
                 </Row>
 
-                {type === "view" ? null : (
-                    <Row gutter={16}>
-                        <Col span={24}>
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                    Update Customer
-                                </Button>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                )}
+                {type === "edit" ? (
+                        <Row gutter={16}>
+                            <Col span={24}>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit">
+                                        Update Customer
+                                    </Button>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    ) : null}
 
                 {type === "view" ? (
                     <Card
@@ -197,7 +197,6 @@ class UpdateCustomerForm extends Component {
                                     padding: '8px 16px',
                                     cursor: 'default',
                                 }}
-                                onClick={() => { }}
                             >
                                 Transactions Related To This Customer
                             </button>
@@ -239,7 +238,7 @@ class UpdateCustomerForm extends Component {
                                                              formatter={(value) =>
                                                                  `Rs. ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                                                              }
-                                                             parser={(value) => value.replace(/\Rs.\s?|(,*)/g, '')}
+                                                             parser={(value) => value.replace(/Rs.\s?|(,*)/g, '')}
                                                 />
                                             );
                                         },
