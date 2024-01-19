@@ -76,9 +76,9 @@ class Profile extends Component {
 
           const imgBBLinkKey = `imgBBLink${uploaderNumber}`;
           this.setState({ [imgBBLinkKey]: response.data.data.url });
-          console.log('Image uploaded to ImgBB:', response.data.data.url);
+          //console.log('Image uploaded to ImgBB:', response.data.data.url);
 
-          console.log('this.state', this.state);
+          //console.log('this.state', this.state);
         }
       }
     } catch (error) {
@@ -128,7 +128,7 @@ class Profile extends Component {
       });
 
       if (response.data.match) {
-        console.log("Old password is correct");
+        //console.log("Old password is correct");
 
         const updatedValues = {
           PHOTO: this.state.imgBBLink2 === "" ? PHOTO1 : this.state.imgBBLink2,
@@ -136,7 +136,7 @@ class Profile extends Component {
           NAME: values.NAME === "" ? NAME1 : values.NAME,
           PASSWORD: PASSWORD === "" ? OLD_PASSWORD : PASSWORD,
         };
-        console.log("Updated values:", updatedValues);
+        //console.log("Updated values:", updatedValues);
 
         const response = await axios.post(
             "http://13.200.220.236:3001/updateProfile",

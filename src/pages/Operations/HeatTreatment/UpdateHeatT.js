@@ -46,7 +46,7 @@ class UpdateHeatT extends Component {
     async fetchCustomerOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -73,7 +73,7 @@ class UpdateHeatT extends Component {
     async fetchReferenceOptions() {
         try {
             const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
-            console.log('response', response);
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -101,7 +101,7 @@ class UpdateHeatT extends Component {
     async fetchHTGroupOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getAllHT");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((ht) => ({
                 value: ht.HT_ID,
                 label: ht.NAME,
@@ -115,18 +115,18 @@ class UpdateHeatT extends Component {
 
     loadReferenceFromHTGroup = async (value) => {
         const form = this.formRef.current;
-        console.log("value", this.props);
+        //console.log("value", this.props);
         try {
             this.setState({ resultArray: [] });
             const response = await axios.post('http://13.200.220.236:3001/getReferenceFromHTGroup', {
                 HT_ID: value,
             });
             if (response.data.success) {
-                console.log("response1", response);
+                //console.log("response1", response);
 
                 // Store the result array in the component state
                 this.setState({ resultArray: response.data.result });
-                console.log("resultArray", this.state.resultArray);
+                //console.log("resultArray", this.state.resultArray);
 
             } else {
                 message.error('Failed to fetch Item Details');
@@ -174,8 +174,8 @@ class UpdateHeatT extends Component {
                     this.setState({
                         [imgBBLinkKey]: response.data.data.url,
                     });
-                    console.log('this.state', this.state);
-                    console.log('Image uploaded to ImgBB:', response.data.data.url);
+                    //console.log('this.state', this.state);
+                    //console.log('Image uploaded to ImgBB:', response.data.data.url);
                 }
             }
         } catch (error) {
@@ -476,7 +476,7 @@ class UpdateHeatT extends Component {
                 mainData,
                 subDataArray,
             };
-            console.log('resultArrayData', resultArrayData);
+            //console.log('resultArrayData', resultArrayData);
 
             // Send the request
             const response = await axios.post('http://13.200.220.236:3001/updateHeatT', resultArrayData);

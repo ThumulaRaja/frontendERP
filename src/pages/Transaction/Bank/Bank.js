@@ -67,7 +67,7 @@ class Bank extends Component {
 
 
     showReferenceItem(itemId){
-        console.log('itemId', itemId);
+        //console.log('itemId', itemId);
         this.setState({
             selectedRefferenceItem: itemId,
             isViewItemModalVisible: true,
@@ -84,7 +84,7 @@ class Bank extends Component {
     }
 
     handlePrint = async (row) => {
-        console.log('row', row);
+        //console.log('row', row);
         try {
             const response = await axios.post('http://13.200.220.236:3001/generateInvoice', {
                 data: row,
@@ -136,7 +136,7 @@ class Bank extends Component {
             if (response.data.success) {
                 const filteredItems = response.data.result;
 
-                console.log('filteredItems', filteredItems);
+                //console.log('filteredItems', filteredItems);
 
                 // Categorize filtered items based on CP_TYPE
                 const categorizedTables = {
@@ -171,10 +171,10 @@ class Bank extends Component {
                     tablePayment: categorizedTables.Payment,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -207,7 +207,7 @@ class Bank extends Component {
 
             if (response.data.success) {
                 const filteredItems = response.data.result;
-                console.log('filteredItems', filteredItems);
+                //console.log('filteredItems', filteredItems);
 
                 message.info(response.data.message);
 
@@ -246,10 +246,10 @@ class Bank extends Component {
                     tableSelling: categorizedTables.Selling,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -260,18 +260,18 @@ class Bank extends Component {
 
 
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
 
     handleDelete = async (id,all) => {
-        console.log('id', id);
-        console.log('all', all);
+        //console.log('id', id);
+        //console.log('all', all);
         try {
             // Make an API call to deactivate the customer
             const response = await axios.post('http://13.200.220.236:3001/deactivateTransaction', {
@@ -293,7 +293,7 @@ class Bank extends Component {
     };
 
     deletePayment = async (id ,paymentAmount , amountSettled , dueAmount,referenceTransaction) => {
-        console.log('id', id);
+        //console.log('id', id);
         try {
             // Make an API call to deactivate the customer
             const response = await axios.post('http://13.200.220.236:3001/deletePayment', {
@@ -326,7 +326,7 @@ class Bank extends Component {
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
 
 
                 // Categorize items based on TYPE
@@ -361,12 +361,12 @@ class Bank extends Component {
                     tablePayment: categorizedTables.Payment,
                     tableSelling: categorizedTables.Selling,
                 });
-                console.log('tablePayment', this.state.tablePayment);
+                //console.log('tablePayment', this.state.tablePayment);
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,

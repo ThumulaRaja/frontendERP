@@ -28,7 +28,7 @@ class AddExpenses extends Component {
     async fetchReferenceOptions() {
         try {
             const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
-            console.log('response', response);
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -60,7 +60,7 @@ class AddExpenses extends Component {
                 CREATED_BY: USER_ID,
                 REFERENCE: referenceString,
             };
-            console.log('updatedValues', updatedValues);
+            //console.log('updatedValues', updatedValues);
 
             const response = await axios.post('http://13.200.220.236:3001/addExpenses', updatedValues);
 

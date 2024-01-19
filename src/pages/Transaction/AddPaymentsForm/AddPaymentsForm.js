@@ -69,7 +69,7 @@ export default class AddPaymentsForm extends Component {
   async fetchCustomerOptions() {
     try {
       const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
-      console.log("response", response);
+      //console.log("response", response);
       return response.data.result.map((customer) => ({
         value: customer.CUSTOMER_ID,
         label: customer.NAME,
@@ -83,7 +83,7 @@ export default class AddPaymentsForm extends Component {
   async fetchReferenceOptions() {
     try {
       const response = await axios.post("http://13.200.220.236:3001/getItemsForReference");
-      console.log("response", response);
+      //console.log("response", response);
       return response.data.result.map((ref) => ({
         value: ref.ITEM_ID_AI,
         label: ref.CODE,
@@ -97,7 +97,7 @@ export default class AddPaymentsForm extends Component {
   async fetchTransactionOptions() {
     try {
       const response = await axios.post("http://13.200.220.236:3001/getTransactionForReference");
-      console.log("response", response);
+      //console.log("response", response);
       return response.data.result.map((transaction) => ({
         value: transaction.TRANSACTION_ID,
         label: transaction.CODE,
@@ -117,7 +117,7 @@ export default class AddPaymentsForm extends Component {
           TRANSACTION_ID: value,
         });
         if (response.data.success) {
-          console.log("response", response);
+          //console.log("response", response);
           form.setFieldsValue({ TYPE: response.data.result[0].TYPE });
             form.setFieldsValue({ METHOD: response.data.result[0].METHOD });
             form.setFieldsValue({ STATUS: response.data.result[0].STATUS });
@@ -159,7 +159,7 @@ export default class AddPaymentsForm extends Component {
         CREATED_BY: USER_ID,
       };
 
-      console.log("updatedValues", updatedValues);
+      //console.log("updatedValues", updatedValues);
 
       const response = await axios.post('http://13.200.220.236:3001/addPayment', updatedValues);
 

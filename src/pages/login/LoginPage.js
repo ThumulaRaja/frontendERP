@@ -20,7 +20,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-            console.log('Login values:', values);
+            //console.log('Login values:', values);
             const response = await axios.post('http://13.200.220.236:3001/login', values);
 
             if (response.status === 200) {
@@ -29,7 +29,7 @@ const Login = () => {
 
                 if (values.remember) {
                     Cookies.set('rememberedUser', JSON.stringify({ USER_ID, NAME,EMAIL,ROLE,PHOTO }), { expires: 2 });
-                    // console.log('rememberedUser', { USER_ID, NAME,EMAIL,ROLE });
+                    // //console.log('rememberedUser', { USER_ID, NAME,EMAIL,ROLE });
                 }
                 // Navigate to the dashboard using history.push
                 history.push('/dashboard');
@@ -45,7 +45,7 @@ const Login = () => {
     };
 
     const onFinishFailed = errorInfo => {
-        console.log('Failed:', errorInfo);
+        //console.log('Failed:', errorInfo);
     };
 
     return (

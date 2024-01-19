@@ -110,10 +110,10 @@ class Lots extends Component {
                     tableLotsSelling: categorizedTables.LotsSelling,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -144,7 +144,7 @@ class Lots extends Component {
 
             if (response.data.success) {
                 const filteredItems = response.data.result;
-                console.log('filteredItems', filteredItems);
+                //console.log('filteredItems', filteredItems);
                 this.formRef.current.resetFields();
 
                 message.info(response.data.message);
@@ -179,10 +179,10 @@ class Lots extends Component {
                     tableLotsSelling: categorizedTables.LotsSelling,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -192,26 +192,26 @@ class Lots extends Component {
 
 
     handleUpdateShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isUpdateModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
 
     handleDelete = async (id) => {
-        console.log('id', id);
+        //console.log('id', id);
         try {
             // Make an API call to deactivate the customer
             const response = await axios.post('http://13.200.220.236:3001/deactivateItem', {
@@ -240,7 +240,7 @@ class Lots extends Component {
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
 
 
                 // Categorize items based on LOT_TYPE
@@ -274,10 +274,10 @@ class Lots extends Component {
 
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,

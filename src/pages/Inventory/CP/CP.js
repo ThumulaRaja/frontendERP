@@ -85,7 +85,7 @@ class CP extends Component {
 
             if (response.data.success) {
                 const filteredItems = response.data.result;
-                console.log('filteredItems', filteredItems);
+                //console.log('filteredItems', filteredItems);
 
                 message.info(response.data.message);
                 this.formRef.current.resetFields();
@@ -150,10 +150,10 @@ class CP extends Component {
                     tableBlueSapphireTreatedLots: categorizedTables.BlueSapphireTreatedLots,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -247,10 +247,10 @@ class CP extends Component {
                     tableBlueSapphireTreatedLots: categorizedTables.BlueSapphireTreatedLots,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -260,26 +260,26 @@ class CP extends Component {
 
 
     handleUpdateShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isUpdateModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
 
     handleDelete = async (id) => {
-        console.log('id', id);
+        //console.log('id', id);
         try {
             // Make an API call to deactivate the customer
             const response = await axios.post('http://13.200.220.236:3001/deactivateItem', {
@@ -308,7 +308,7 @@ class CP extends Component {
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
 
                 this.setState({
                     tableData: items,
@@ -374,10 +374,10 @@ class CP extends Component {
                     tableBlueSapphireTreatedLots: categorizedTables.BlueSapphireTreatedLots,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,

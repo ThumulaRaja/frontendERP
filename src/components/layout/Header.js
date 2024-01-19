@@ -135,7 +135,7 @@ function Header({
     NAME1 = NAME;
     PHOTO1 = PHOTO;
 
-    console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
+    //console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
   }
   else{
     Cookies.remove('rememberedUser');

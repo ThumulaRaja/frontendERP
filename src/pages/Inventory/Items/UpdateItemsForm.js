@@ -79,7 +79,7 @@ class UpdateItemsForm extends Component {
     }
 
     showProps = () => {
-        console.log("this.props",this.props);
+        //console.log("this.props",this.props);
     }
 
     handleFileChange = async ({ fileList }, uploaderNumber) => {
@@ -104,7 +104,7 @@ class UpdateItemsForm extends Component {
 
                     const imgBBLinkKey = `imgBBLink${uploaderNumber}`;
                     this.setState({ [imgBBLinkKey]: response.data.data.url });
-                    console.log('Image uploaded to ImgBB:', response.data.data.url);
+                    //console.log('Image uploaded to ImgBB:', response.data.data.url);
                 }
             }
         } catch (error) {
@@ -139,7 +139,7 @@ class UpdateItemsForm extends Component {
     async fetchCustomerOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -153,7 +153,7 @@ class UpdateItemsForm extends Component {
     async fetchReferenceOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getItemsForReference");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -167,7 +167,7 @@ class UpdateItemsForm extends Component {
     async fetchHTGroupOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getAllHT");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((ht) => ({
                 value: ht.HT_ID,
                 label: ht.NAME,
@@ -224,7 +224,7 @@ class UpdateItemsForm extends Component {
                 POLICY: policyString,
             };
 
-            console.log("updatedValues", updatedValues);
+            //console.log("updatedValues", updatedValues);
 
             const response = await axios.post('http://13.200.220.236:3001/updateItem', updatedValues);
 

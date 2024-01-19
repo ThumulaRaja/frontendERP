@@ -74,14 +74,14 @@ class Item extends Component {
     async getModelItemDetails() {
         try {
             let id = this.props.itemId;
-            console.log('id', id);
+            //console.log('id', id);
             const response = await axios.post('http://13.200.220.236:3001/getItemDetails', { id });
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
                 this.setState({ initialValues: items });
-                console.log('tableTransaction', this.state.initialValues);
+                //console.log('tableTransaction', this.state.initialValues);
 
                 //set the form values
                 this.formRef.current.setFieldsValue({
@@ -131,10 +131,10 @@ class Item extends Component {
                     DATE_FINISHED: this.state.initialValues.DATE_FINISHED ? moment(this.state.initialValues.DATE_FINISHED) : null,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -149,19 +149,19 @@ class Item extends Component {
 
         try {
             let id = this.props.itemId;
-            console.log('id1', id);
+            //console.log('id1', id);
             const response = await axios.post('http://13.200.220.236:3001/getAllTransactions', { id });
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
                 this.setState({ tableTransaction: items });
-                console.log('tableTransaction1', this.state.tableTransaction);
+                //console.log('tableTransaction1', this.state.tableTransaction);
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -170,7 +170,7 @@ class Item extends Component {
     }
 
     showProps = () => {
-        console.log("this.props",this.props);
+        //console.log("this.props",this.props);
     }
 
 
@@ -195,7 +195,7 @@ class Item extends Component {
     async fetchCustomerOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -209,7 +209,7 @@ class Item extends Component {
     async fetchReferenceOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getItemsForReference");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -223,7 +223,7 @@ class Item extends Component {
     async fetchHTGroupOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getAllHT");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((ht) => ({
                 value: ht.HT_ID,
                 label: ht.NAME,
@@ -240,8 +240,8 @@ class Item extends Component {
     };
 
     handleDeleteTranscation = async (id, all) => {
-        console.log('id', id);
-        console.log('all', all);
+        //console.log('id', id);
+        //console.log('all', all);
         try {
             // Make an API call to deactivate the customer
             const response = await axios.post('http://13.200.220.236:3001/deactivateTransaction', {
@@ -263,12 +263,12 @@ class Item extends Component {
     };
 
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
 

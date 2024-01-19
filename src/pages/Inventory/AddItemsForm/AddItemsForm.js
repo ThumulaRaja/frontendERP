@@ -87,9 +87,9 @@ export default class AddItemsForm extends Component {
 
           const imgBBLinkKey = `imgBBLink${uploaderNumber}`;
           this.setState({ [imgBBLinkKey]: response.data.data.url });
-          console.log('Image uploaded to ImgBB:', response.data.data.url);
+          //console.log('Image uploaded to ImgBB:', response.data.data.url);
 
-          console.log('this.state', this.state);
+          //console.log('this.state', this.state);
         }
       }
     } catch (error) {
@@ -132,7 +132,7 @@ export default class AddItemsForm extends Component {
   async fetchCustomerOptions() {
     try {
       const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
-      console.log("response", response);
+      //console.log("response", response);
       return response.data.result.map((customer) => ({
         value: customer.CUSTOMER_ID,
         label: customer.NAME,
@@ -146,7 +146,7 @@ export default class AddItemsForm extends Component {
   async fetchReferenceOptions() {
     try {
       const response = await axios.post("http://13.200.220.236:3001/getItemsForReference");
-      console.log("response", response);
+      //console.log("response", response);
       return response.data.result.map((ref) => ({
         value: ref.ITEM_ID_AI,
         label: ref.CODE,
@@ -160,7 +160,7 @@ export default class AddItemsForm extends Component {
   async fetchHTGroupOptions() {
     try {
       const response = await axios.post("http://13.200.220.236:3001/getAllHT");
-      console.log("response", response);
+      //console.log("response", response);
       return response.data.result.map((ht) => ({
         value: ht.HT_ID,
         label: ht.NAME,
@@ -216,7 +216,7 @@ export default class AddItemsForm extends Component {
         POLICY: policyString,
       };
 
-      console.log("updatedValues", updatedValues);
+      //console.log("updatedValues", updatedValues);
 
       const response = await axios.post('http://13.200.220.236:3001/addItem', updatedValues);
 

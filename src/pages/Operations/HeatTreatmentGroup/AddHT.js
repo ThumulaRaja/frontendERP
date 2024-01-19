@@ -28,7 +28,7 @@ class AddHT extends React.Component {
     async fetchReferenceOptions() {
         try {
             const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
-            console.log('response', response);
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,

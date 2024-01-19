@@ -40,13 +40,13 @@ class ViewTransactionForm extends Component {
         this.setState({ customerOptions });
         const ReferenceOptions = await this.fetchReferenceOptions();
         this.setState({ ReferenceOptions });
-        console.log("initialValues", this.props.initialValues);
+        //console.log("initialValues", this.props.initialValues);
     }
 
     async fetchCustomerOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -60,7 +60,7 @@ class ViewTransactionForm extends Component {
     async fetchReferenceOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getItemsForReference");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,

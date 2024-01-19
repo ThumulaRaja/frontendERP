@@ -25,13 +25,13 @@ function Home() {
       const response = await axios.post('http://13.200.220.236:3001/getItemCountData');
 
       if (response.data.success) {
-        console.log('ResponseDashboard:', response.data.result);
+        //console.log('ResponseDashboard:', response.data.result);
         setCountData(response.data.result);
       } else {
-        console.log('Error:', response.data.message);
+        //console.log('Error:', response.data.message);
       }
     } catch (error) {
-      console.log('Error:', error.message);
+      //console.log('Error:', error.message);
     } finally {
       setLoading(false);
     }
@@ -45,7 +45,7 @@ function Home() {
     rememberedUser = JSON.parse(rememberedUser);
     const { USER_ID, NAME } = rememberedUser;
     NAME1 = NAME;
-    console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
+    //console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
   }
   else{
     Cookies.remove('rememberedUser');

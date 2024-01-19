@@ -83,7 +83,7 @@ export default class AddTransactionForm extends Component {
   async fetchCustomerOptions() {
     try {
       const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
-      console.log("response", response);
+      //console.log("response", response);
       return response.data.result.map((customer) => ({
         value: customer.CUSTOMER_ID,
         label: customer.NAME,
@@ -97,7 +97,7 @@ export default class AddTransactionForm extends Component {
   async fetchReferenceOptions() {
     try {
       const response = await axios.post("http://13.200.220.236:3001/getItemsForReference");
-      console.log("response", response);
+      //console.log("response", response);
       return response.data.result.map((ref) => ({
         value: ref.ITEM_ID_AI,
         label: ref.CODE,
@@ -111,14 +111,14 @@ export default class AddTransactionForm extends Component {
 
 
   handleReferenceChange = async (value) => {
-    console.log(`selected ${value}`);
+    //console.log(`selected ${value}`);
     const form = this.formRef.current;
     try {
       const response = await axios.post('http://13.200.220.236:3001/getItemsDetailsForTransaction', {
         ITEM_ID_AI: value,
       });
       if (response.data.success) {
-        console.log("response", response);
+        //console.log("response", response);
         form.setFieldsValue({ PAYMENT_ETA_START: response.data.result[0].PAYMENT_ETA_START ? moment(response.data.result[0].PAYMENT_ETA_START) : undefined });
         form.setFieldsValue({ PAYMENT_ETA_END: response.data.result[0].PAYMENT_ETA_END ? moment(response.data.result[0].PAYMENT_ETA_END) : undefined });
         form.setFieldsValue({ DATE_FINISHED: response.data.result[0].DATE_FINISHED ? moment(response.data.result[0].DATE_FINISHED) : undefined });
@@ -176,7 +176,7 @@ export default class AddTransactionForm extends Component {
         PAYMENT_AMOUNT: values.AMOUNT_SETTLED,
       };
 
-      console.log("updatedValues", updatedValues);
+      //console.log("updatedValues", updatedValues);
 
       const response = await axios.post('http://13.200.220.236:3001/addTransaction', updatedValues);
 

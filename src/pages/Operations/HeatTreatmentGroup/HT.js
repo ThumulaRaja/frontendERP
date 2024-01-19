@@ -43,7 +43,7 @@ class HT extends Component {
     async fetchReferenceOptions() {
         try {
             const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
-            console.log('response', response);
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -112,10 +112,10 @@ class HT extends Component {
                     tableData: customers,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -137,7 +137,7 @@ class HT extends Component {
 
     handleAddCustomer(values) {
         // Implement logic to add a new Heat Treatment Group using the provided values
-        console.log('Add Heat Treatment Group:', values);
+        //console.log('Add Heat Treatment Group:', values);
 
         // Close the modal after adding Heat Treatment Group
         this.toggleAddCustomerModal();

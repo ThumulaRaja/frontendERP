@@ -44,7 +44,7 @@ class AddHeatT extends React.Component {
     async fetchCustomerOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -71,7 +71,7 @@ class AddHeatT extends React.Component {
     async fetchReferenceOptions() {
         try {
             const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
-            console.log('response', response);
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -99,7 +99,7 @@ class AddHeatT extends React.Component {
     async fetchHTGroupOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getAllHT");
-            console.log("response", response);
+            //console.log("response", response);
             return response.data.result.map((ht) => ({
                 value: ht.HT_ID,
                 label: ht.NAME,
@@ -119,7 +119,7 @@ class AddHeatT extends React.Component {
                 HT_ID: value,
             });
             if (response.data.success) {
-                console.log("response1", response);
+                //console.log("response1", response);
 
                 // Store the result array in the component state
                 this.setState({ resultArray: response.data.result });
@@ -170,8 +170,8 @@ class AddHeatT extends React.Component {
                     this.setState({
                         [imgBBLinkKey]: response.data.data.url,
                     });
-                    console.log('this.state', this.state);
-                    console.log('Image uploaded to ImgBB:', response.data.data.url);
+                    //console.log('this.state', this.state);
+                    //console.log('Image uploaded to ImgBB:', response.data.data.url);
                 }
             }
         } catch (error) {
@@ -220,7 +220,7 @@ class AddHeatT extends React.Component {
                 mainData,
                 subDataArray,
             };
-            console.log('resultArrayData', resultArrayData);
+            //console.log('resultArrayData', resultArrayData);
 
             // Send the request
             const response = await axios.post('http://13.200.220.236:3001/addHeatT', resultArrayData);

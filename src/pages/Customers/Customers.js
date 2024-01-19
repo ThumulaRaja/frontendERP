@@ -95,10 +95,10 @@ class Customers extends Component {
                     tableData: customers,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -120,7 +120,7 @@ class Customers extends Component {
 
     handleAddCustomer(values) {
         // Implement logic to add a new customer using the provided values
-        console.log('Add customer:', values);
+        //console.log('Add customer:', values);
 
         // Close the modal after adding customer
         this.toggleAddCustomerModal();

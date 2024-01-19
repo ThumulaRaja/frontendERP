@@ -28,12 +28,12 @@ class UpdateCustomerForm extends Component {
         });
     }
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
     async getCustomerTransactions() {
@@ -46,13 +46,13 @@ class UpdateCustomerForm extends Component {
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
                 this.setState({ tablePayment: items });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,

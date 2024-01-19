@@ -22,7 +22,7 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
     const fetchReferenceOptions = async () => {
         try {
             const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
-            console.log('response', response);
+            //console.log('response', response);
             const options = response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,

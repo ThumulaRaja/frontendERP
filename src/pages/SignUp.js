@@ -60,9 +60,9 @@ export default class SignUp extends Component {
 
           const imgBBLinkKey = `imgBBLink${uploaderNumber}`;
           this.setState({ [imgBBLinkKey]: response.data.data.url });
-          console.log('Image uploaded to ImgBB:', response.data.data.url);
+          //console.log('Image uploaded to ImgBB:', response.data.data.url);
 
-          console.log('this.state', this.state);
+          //console.log('this.state', this.state);
         }
       }
     } catch (error) {

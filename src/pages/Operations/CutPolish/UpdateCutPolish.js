@@ -48,7 +48,7 @@ class UpdateCutPolish extends Component {
     async fetchCustomerOptions() {
         try {
             const response = await axios.post("http://13.200.220.236:3001/getAllCustomers");
-            console.log("responseCus", response);
+            //console.log("responseCus", response);
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -74,7 +74,7 @@ class UpdateCutPolish extends Component {
     async fetchReferenceOptions() {
         try {
             const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
-            console.log('response', response);
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -89,7 +89,7 @@ class UpdateCutPolish extends Component {
 
     loadReferenceCPDetails = async (value) => {
         const form = this.formRef.current;
-        console.log("this.props", this.props);
+        //console.log("this.props", this.props);
         // form.resetFields(['CODE_AFTER_CUTTING']);
         try {
             this.setState({
@@ -100,7 +100,7 @@ class UpdateCutPolish extends Component {
                 ITEM_ID_AI: value,
             });
             if (response.data.success) {
-                console.log("response1", response);
+                //console.log("response1", response);
                 form.setFieldsValue({ CP_TYPE: response.data.result[0].CP_TYPE });
                 form.setFieldsValue({ CP_COLOR: response.data.result[0].CP_COLOR });
                 form.setFieldsValue({ SHAPE: response.data.result[0].SHAPE });
@@ -150,9 +150,9 @@ class UpdateCutPolish extends Component {
 
                     const imgBBLinkKey = `imgBBLink${uploaderNumber}`;
                     this.setState({ [imgBBLinkKey]: response.data.data.url });
-                    console.log('Image uploaded to ImgBB:', response.data.data.url);
+                    //console.log('Image uploaded to ImgBB:', response.data.data.url);
 
-                    console.log('this.state', this.state);
+                    //console.log('this.state', this.state);
                 }
             }
         } catch (error) {
@@ -195,7 +195,7 @@ class UpdateCutPolish extends Component {
             };
 
 
-            console.log('resultArrayData', resultArrayData);
+            //console.log('resultArrayData', resultArrayData);
 
             // Send the request
             const response = await axios.post('http://13.200.220.236:3001/updateCutPolish', resultArrayData);

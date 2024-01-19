@@ -44,7 +44,7 @@ class CutPolish extends Component {
     async fetchReferenceOptions() {
         try {
             const response = await axios.post('http://13.200.220.236:3001/getItemsForReference');
-            console.log('response', response);
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -114,10 +114,10 @@ class CutPolish extends Component {
                     tableData: customers,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -139,7 +139,7 @@ class CutPolish extends Component {
 
     handleAddCustomer(values) {
         // Implement logic to add a new Cut & Polish using the provided values
-        console.log('Add Cut & Polish:', values);
+        //console.log('Add Cut & Polish:', values);
 
         // Close the modal after adding Cut & Polish
         this.toggleAddCustomerModal();

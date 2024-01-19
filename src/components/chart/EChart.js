@@ -33,13 +33,13 @@ function EChart() {
       const response = await axios.post('http://13.200.220.236:3001/getSoldItemCountData');
 
       if (response.data.success) {
-        console.log('ResponseDashboard:', response.data.result);
+        //console.log('ResponseDashboard:', response.data.result);
         setSoldCountData(response.data.result);
       } else {
-        console.log('Error:', response.data.message);
+        //console.log('Error:', response.data.message);
       }
     } catch (error) {
-      console.log('Error:', error.message);
+      //console.log('Error:', error.message);
     } finally {
       setLoading(false);
     }
