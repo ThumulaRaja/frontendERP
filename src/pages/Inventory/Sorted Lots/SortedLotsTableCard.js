@@ -1,4 +1,4 @@
-// RoughTableCard.js
+// /* eslint-disable */
 import React from 'react';
 import { Button, Card, Table, Tooltip, Divider, Popconfirm } from 'antd';
 import {EyeOutlined, EditOutlined, DeleteOutlined, QrcodeOutlined} from '@ant-design/icons';

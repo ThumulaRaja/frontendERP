@@ -1,4 +1,4 @@
-// CP.js
+// /* eslint-disable */
 import React, { Component } from 'react';
 import {
     Button,

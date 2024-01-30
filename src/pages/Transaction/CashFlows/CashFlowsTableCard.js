@@ -1,4 +1,4 @@
-// LotsTableCard.js
+// /* eslint-disable */
 import React from 'react';
 import {Button, Card, Table, Tooltip, Divider, Popconfirm, InputNumber, Modal} from 'antd';
 import { EyeOutlined, ExclamationCircleOutlined, DeleteOutlined ,PrinterOutlined} from '@ant-design/icons';

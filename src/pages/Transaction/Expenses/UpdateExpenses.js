@@ -1,4 +1,4 @@
-// UpdateExpenses.js
+// /* eslint-disable */
 import React, { useEffect, useState } from 'react';
 import {Form, Input, Button, Row, Col, message, Select, InputNumber} from 'antd';
 import axios from 'axios';

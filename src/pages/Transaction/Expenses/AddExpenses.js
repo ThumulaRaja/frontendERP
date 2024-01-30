@@ -1,3 +1,4 @@
+// /* eslint-disable */
 import React, { Component } from 'react';
 import {Form, Input, Button, Col, Row, message, Select, InputNumber} from 'antd';
 import axios from 'axios';

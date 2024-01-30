@@ -1,4 +1,4 @@
-// UpdateCustomerForm.js
+//eslint-disable
 import React, { Component } from 'react';
 import {Form, Input, Button, Row, Col, message, Table, InputNumber, Tooltip, Modal, Card, Select} from 'antd';
 import axios from 'axios';

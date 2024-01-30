@@ -1,3 +1,4 @@
+//eslint-disable
 import React, { Component } from "react";
 import {Card, Row, Col, Form, Input, Button, message, Upload, Modal, Select} from "antd";
 import Password from "antd/es/input/Password";
