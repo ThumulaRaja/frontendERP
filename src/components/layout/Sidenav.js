@@ -128,7 +128,7 @@ function Sidenav({ color }) {
         rememberedUser = JSON.parse(rememberedUser);
         const { USER_ID, NAME, ROLE } = rememberedUser;
         ROLE1 = ROLE;
-        console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
+        //console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
     }
     else{
         Cookies.remove('rememberedUser');

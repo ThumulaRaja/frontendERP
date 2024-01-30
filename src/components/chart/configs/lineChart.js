@@ -1,7 +1,7 @@
 // const currentMonth = new Date().toLocaleString('default', { month: 'short' });
 const currentMonth = new Date().toLocaleString('default', { month: 'short' });
 
-console.log('Current month:', currentMonth);
+//console.log('Current month:', currentMonth);
 
 const months = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
