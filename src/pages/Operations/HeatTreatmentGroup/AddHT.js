@@ -27,7 +27,7 @@ class AddHT extends React.Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -61,7 +61,7 @@ class AddHT extends React.Component {
                 REFERENCE: referenceString,
             };
 
-            const response = await axios.post('http://localhost:3001/addHT', updatedValues);
+            const response = await axios.post('http://35.154.1.99:3001/addHT', updatedValues);
 
             if (response.data.success) {
                 message.success('Heat Treatment Group added successfully');
@@ -88,19 +88,19 @@ class AddHT extends React.Component {
         const { referenceOptions } = this.state;
         return (
             <Form ref={this.formRef} layout="vertical" onFinish={this.handleSubmit}>
-                <Row gutter={16}>
-                    <Col span={24}>
-                        <Form.Item
-                            name="NAME"
-                            label="Group Name"
-                            rules={[{ required: true, message: 'Please enter group name' }]}
-                        >
-                            <Input placeholder="Enter a group name" />
-                        </Form.Item>
-                    </Col>
-                </Row>
-                <Row gutter={16}>
-                    <Col span={24}>
+                {/*<Row gutter={[16, 16]} justify="left" align="top">*/}
+                {/*    <Col xs={24} sm={24} md={24} lg={24}>*/}
+                {/*        <Form.Item*/}
+                {/*            name="NAME"*/}
+                {/*            label="Group Name"*/}
+                {/*            rules={[{ required: true, message: 'Please enter group name' }]}*/}
+                {/*        >*/}
+                {/*            <Input placeholder="Enter a group name" />*/}
+                {/*        </Form.Item>*/}
+                {/*    </Col>*/}
+                {/*</Row>*/}
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item name="REFERENCE" label="Reference"
                                    rules={[{ required: true, message: 'Please select reference' }]}>
                             <Select
@@ -127,8 +127,8 @@ class AddHT extends React.Component {
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="REMARK"
                             label="Remarks"
@@ -138,8 +138,8 @@ class AddHT extends React.Component {
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
                                 Add Heat Treatment Group

@@ -27,7 +27,7 @@ class AddExpenses extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -50,19 +50,15 @@ class AddExpenses extends Component {
                 USER_ID = rememberedUser.USER_ID;
             }
 
-            const referenceString = Array.isArray(values.REFERENCE)
-                ? values.REFERENCE.join(',')
-                : values.REFERENCE ? values.REFERENCE.toString() : '';
 
             // Add IS_ACTIVE and CREATED_BY to the values object
             const updatedValues = {
                 ...values,
                 CREATED_BY: USER_ID,
-                REFERENCE: referenceString,
             };
             console.log('updatedValues', updatedValues);
 
-            const response = await axios.post('http://localhost:3001/addExpenses', updatedValues);
+            const response = await axios.post('http://35.154.1.99:3001/addExpenses', updatedValues);
 
             if (response.data.success) {
                 message.success('Expenses added successfully');
@@ -89,8 +85,8 @@ class AddExpenses extends Component {
 
         return (
             <Form ref={this.formRef} layout="vertical" onFinish={this.handleSubmit}>
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="AMOUNT"
                             label="Amount (RS)"
@@ -99,16 +95,30 @@ class AddExpenses extends Component {
                             <InputNumber min={0} step={0.01} placeholder="Enter Sold Amount" style={{ width : '100%' }}/>
                         </Form.Item>
                     </Col>
-
                 </Row>
-
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
+                        <Form.Item name="METHOD" label="Method"
+                            rules={[{ required: true, message: 'Please select method' }]}
+                                   initialValue={'Cash'}>
+                            <Select
+                                placeholder="Method"
+                                style={{ width: '100%'}}
+                                allowClear
+                                showSearch
+                            >
+                                <Option value="Cash">Cash</Option>
+                                <Option value="Bank">Bank</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item name="REFERENCE" label="Reference"
                             rules={[{ required: true, message: 'Please select reference' }]}>
                             <Select
                                 placeholder="Select Reference"
-                                mode="multiple"
                                 allowClear
                                 showSearch
                                 filterOption={(input, option) =>
@@ -130,16 +140,16 @@ class AddExpenses extends Component {
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item name="REASON" label="Reason">
                             <Input.TextArea rows={4} placeholder="Enter remarks" />
                         </Form.Item>
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
                                 Add Expenses

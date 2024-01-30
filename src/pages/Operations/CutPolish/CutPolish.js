@@ -43,7 +43,7 @@ class CutPolish extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -83,7 +83,7 @@ class CutPolish extends Component {
     handleDelete = async (Id) => {
         try {
             // Make an API call to deactivate the Cut & Polish
-            const response = await axios.post('http://localhost:3001/deactivateCP', {
+            const response = await axios.post('http://35.154.1.99:3001/deactivateCP', {
                 CP_ID: Id,
             });
 
@@ -105,7 +105,7 @@ class CutPolish extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllCutPolish');
+            const response = await axios.post('http://35.154.1.99:3001/getAllCutPolish');
 
             if (response.data.success) {
                 const customers = response.data.result;
@@ -166,7 +166,7 @@ class CutPolish extends Component {
         return (
             <>
                 <div className="tabled">
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <Card
                                 bordered={false}
@@ -214,7 +214,7 @@ class CutPolish extends Component {
                                                 width: '120px',
                                                 align: 'center',
                                                 render: (row) => (
-                                                    <span style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                    <span style={{ display: 'flex', justifyContent: 'center' }}>
                                                         <Tooltip titile="View">
                                 <Button
                                     type="default"
@@ -225,6 +225,7 @@ class CutPolish extends Component {
                                 />
                                 </Tooltip>
                                                         <Divider type="vertical" style={{ height: '50px', display: 'flex', alignItems: 'center' }} />
+                                                        {row.IS_APPROVED === 0 && (
                             <Tooltip title="Edit">
                               <Button
                                   type="primary"
@@ -234,7 +235,10 @@ class CutPolish extends Component {
                                   onClick={() => this.handleUpdateShow(row, 'edit')}
                               />
                             </Tooltip>
+                        )}
+                                                        {row.IS_APPROVED === 0 && (
                             <Divider type="vertical" style={{ height: '50px', display: 'flex', alignItems: 'center' }} />
+                        )}
                             <Tooltip title="Delete">
   <Popconfirm
       title="Are you sure you want to delete this Cut & Polish?"

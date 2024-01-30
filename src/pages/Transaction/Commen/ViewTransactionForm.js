@@ -24,6 +24,13 @@ class ViewTransactionForm extends Component {
         super(props);
         this.state = {
             customerOptions: [],
+            buyerOptions: [],
+            sellerOptions: [],
+            salesPersonOptions: [],
+            partnerOptions: [],
+            htByOptions: [],
+            cpByOptions: [],
+            preformerOptions: [],
             ReferenceOptions: [],
             type: this.props.initialValues.TYPE,
         };
@@ -45,8 +52,60 @@ class ViewTransactionForm extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             console.log("response", response);
+
+            // BuyerOptions Filter TYPE = Buyer
+            const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SellerOptions Filter TYPE = Seller
+            const sellerOptions = response.data.result.filter((customer) => customer.TYPE === 'Seller').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SalesPersonOptions Filter TYPE = Sales Person
+            const salesPersonOptions = response.data.result.filter((customer) => customer.TYPE === 'Sales Person').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PartnerOptions Filter TYPE = Partner
+            const partnerOptions = response.data.result.filter((customer) => customer.TYPE === 'Partner').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // HTByOptions Filter TYPE = HT By
+            const htByOptions = response.data.result.filter((customer) => customer.TYPE === 'Heat T').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // CPByOptions Filter TYPE = CP By
+            const cpByOptions = response.data.result.filter((customer) => customer.TYPE === 'C&P').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PreformerOptions Filter TYPE = Preformer
+            const preformerOptions = response.data.result.filter((customer) => customer.TYPE === 'Preformer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -59,7 +118,7 @@ class ViewTransactionForm extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getItemsForReference");
+            const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
             console.log("response", response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -86,7 +145,7 @@ class ViewTransactionForm extends Component {
 
             <>
                 <div className="tabled">
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <Card
                                 className="criclebox tablespace mb-24"
@@ -97,8 +156,8 @@ class ViewTransactionForm extends Component {
                                     style={{ margin: '20px' }}
                                     ref={this.formRef}
                                 >
-                                    <Row gutter={16}>
-                                        <Col span={6}>
+                                    <Row gutter={[16, 16]} justify="left" align="top">
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             {/* Gem Type */}
                                             <Form.Item
                                                 name="TYPE"
@@ -117,7 +176,7 @@ class ViewTransactionForm extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             {/* Gem Type */}
                                             <Form.Item
                                                 name="METHOD"
@@ -136,7 +195,7 @@ class ViewTransactionForm extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             {/* Status */}
                                             <Form.Item
                                                 name="STATUS"
@@ -162,7 +221,7 @@ class ViewTransactionForm extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             {/* Date */}
                                             <Form.Item
                                                 name="DATE"
@@ -176,7 +235,7 @@ class ViewTransactionForm extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={12}>
+                                        <Col xs={24} sm={12} md={12} lg={12}>
                                             <Form.Item
                                                 name="REFERENCE"
                                                 label="Reference"
@@ -196,7 +255,7 @@ class ViewTransactionForm extends Component {
                                                 </Select>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="CUSTOMER"
                                                 label="Customer"
@@ -216,14 +275,14 @@ class ViewTransactionForm extends Component {
                                             </Form.Item>
                                         </Col>
                                         {this.props.initialValues.TYPE === 'Selling' ?
-                                            <Col span={6}>
+                                            <Col xs={24} sm={12} md={8} lg={6}>
                                                 <Form.Item name="BEARER" label="Bearer" initialValue={this.props.initialValues.BEARER}>
                                                     <Select style={inputStyle} placeholder="Select Bearer" allowClear showSearch
                                                             filterOption={(input, option) =>
                                                                 (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                                                 (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                                             }>
-                                                        {customerOptions.map((option) => (
+                                                        {this.state.salesPersonOptions.map((option) => (
                                                             <Option key={option.value} value={option.value} title={option.label}>
                                                                 {option.label}
                                                             </Option>
@@ -236,8 +295,8 @@ class ViewTransactionForm extends Component {
                                     </Row>
                                     <Divider />
 
-                                    <Row gutter={16}>
-                                        <Col span={6}>
+                                    <Row gutter={[16, 16]} justify="left" align="top">
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="AMOUNT"
                                                 label="Amount"
@@ -247,7 +306,7 @@ class ViewTransactionForm extends Component {
                                                 <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Amount" />
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="PAYMENT_AMOUNT"
                                                 label="Payment Amount"
@@ -257,7 +316,7 @@ class ViewTransactionForm extends Component {
                                                 <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Payment Amount" />
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="AMOUNT_SETTLED"
                                                 label="Amount Settled"
@@ -267,7 +326,7 @@ class ViewTransactionForm extends Component {
                                                 <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Amount Settled" />
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="DUE_AMOUNT"
                                                 label="Due Amount"
@@ -282,8 +341,8 @@ class ViewTransactionForm extends Component {
                                     <Divider />
 
                                     {this.props.initialValues.TYPE === 'Selling' || this.props.initialValues.TYPE === 'Buying' ?
-                                    <Row gutter={16}>
-                                        <Col span={6}>
+                                    <Row gutter={[16, 16]} justify="left" align="top">
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="PAYMENT_ETA_START"
                                                 label="Payment ETA - Start"
@@ -292,7 +351,7 @@ class ViewTransactionForm extends Component {
                                                 <DatePicker style={inputStyle} />
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="PAYMENT_ETA_END"
                                                 label="Payment ETA - End"
@@ -301,7 +360,7 @@ class ViewTransactionForm extends Component {
                                                 <DatePicker style={inputStyle} />
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="DATE_FINISHED"
                                                 label="Date Finished"
@@ -318,7 +377,7 @@ class ViewTransactionForm extends Component {
                                                                : undefined
                                                        }>
                                                 <Select style={inputStyle} placeholder="Select Share Holders" mode="multiple" showSearch>
-                                                    {customerOptions.map((option) => (
+                                                    {this.state.partnerOptions.map((option) => (
                                                         <Option key={option.value} value={option.value} title={option.label}>
                                                             {option.label}
                                                         </Option>
@@ -326,7 +385,7 @@ class ViewTransactionForm extends Component {
                                                 </Select>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={3}>
+                                        <Col xs={24} sm={24} md={24} lg={3}>
                                             <Form.Item
                                                 name="SHARE_PERCENTAGE"
                                                 label="Share Percentage %"
@@ -335,7 +394,7 @@ class ViewTransactionForm extends Component {
                                                 <InputNumber style={inputStyle} min={0} max={100} placeholder="Enter Share" />
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="SHARE_VALUE"
                                                 label="Share Value"
@@ -344,7 +403,7 @@ class ViewTransactionForm extends Component {
                                                 <InputNumber style={inputStyle} step={0.01} placeholder="Enter Value" />
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="OTHER_SHARES"
                                                 label="Other Shares"
@@ -354,7 +413,7 @@ class ViewTransactionForm extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={24}>
+                                        <Col xs={24} sm={24} md={24} lg={24}>
                                             <Form.Item
                                                 name="COMMENTS"
                                                 label="Comments"

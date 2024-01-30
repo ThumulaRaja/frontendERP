@@ -127,7 +127,6 @@ function Sidenav({ color }) {
     if (rememberedUser) {
         rememberedUser = JSON.parse(rememberedUser);
         const { USER_ID, NAME, ROLE } = rememberedUser;
-        NAME1 = NAME;
         ROLE1 = ROLE;
         console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
     }
@@ -140,7 +139,7 @@ function Sidenav({ color }) {
     <>
       <div className="brand">
         <img src={logo} alt="" />
-        <span>Nihal Gems ERP</span>
+        <span>Nihal Gems System</span>
       </div>
       <hr />
       <Menu theme="light" mode="inline">
@@ -229,6 +228,7 @@ function Sidenav({ color }) {
               </Menu.Item>
           </SubMenu>
 
+          {ROLE1 === "ADMIN" ? (
           <SubMenu
               key="21"
               title={
@@ -250,21 +250,36 @@ function Sidenav({ color }) {
                       <span className="label">Add Payments</span>
                   </NavLink>
               </Menu.Item>
-              <Menu.Item key="25" style={menuItemStyle}>
-                  <NavLink to="/cash-dashboard">
-                      <span className="label">Cash Dashboard</span>
+              {/*<Menu.Item key="25" style={menuItemStyle}>*/}
+              {/*    <NavLink to="/cash-dashboard">*/}
+              {/*        <span className="label">Cash Dashboard</span>*/}
+              {/*    </NavLink>*/}
+              {/*</Menu.Item>*/}
+              <Menu.Item key="31" style={menuItemStyle}>
+                  <NavLink to="/cash-book">
+                      <span className="label">Cash Book</span>
                   </NavLink>
               </Menu.Item>
-              <Menu.Item key="23" style={menuItemStyle}>
-                  <NavLink to="/cash-flows">
-                      <span className="label">Cash Flows</span>
+              <Menu.Item key="30" style={menuItemStyle}>
+                  <NavLink to="/buying">
+                      <span className="label">Buying</span>
                   </NavLink>
               </Menu.Item>
-              <Menu.Item key="24" style={menuItemStyle}>
-                  <NavLink to="/bank">
-                      <span className="label">Bank Transactions</span>
+              <Menu.Item key="31" style={menuItemStyle}>
+                  <NavLink to="/selling">
+                      <span className="label">Selling</span>
                   </NavLink>
               </Menu.Item>
+              {/*<Menu.Item key="23" style={menuItemStyle}>*/}
+              {/*    <NavLink to="/cash-flows">*/}
+              {/*        <span className="label">Cash Flows</span>*/}
+              {/*    </NavLink>*/}
+              {/*</Menu.Item>*/}
+              {/*<Menu.Item key="24" style={menuItemStyle}>*/}
+              {/*    <NavLink to="/bank">*/}
+              {/*        <span className="label">Bank Transactions</span>*/}
+              {/*    </NavLink>*/}
+              {/*</Menu.Item>*/}
               <Menu.Item key="26" style={menuItemStyle}>
                   <NavLink to="/expenses">
                       <span className="label">Expenses</span>
@@ -277,6 +292,7 @@ function Sidenav({ color }) {
               </Menu.Item>
 
           </SubMenu>
+                ) : null}
 
 
         <Menu.Item key="12" style={menuItemStyle}>

@@ -9,7 +9,7 @@ function Footer() {
       <Row className="just">
         <Col xs={24} md={12} lg={12}>
           <div className="copyright">
-            © 2024 Nihal Gems ERP System. All Rights Reserved. Copyright by Beego.
+            © 2024 Nihal Gems Management System. All Rights Reserved. Copyright by Beego.
           </div>
         </Col>
       </Row>

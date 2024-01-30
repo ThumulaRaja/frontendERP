@@ -86,7 +86,7 @@ class Expenses extends Component {
     handleDelete = async (Id) => {
         try {
             // Make an API call to deactivate the Expenses
-            const response = await axios.post('http://localhost:3001/deactivateExpenses', {
+            const response = await axios.post('http://35.154.1.99:3001/deactivateExpenses', {
                 EXPENSES_ID: Id,
             });
 
@@ -108,7 +108,7 @@ class Expenses extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllExpenses');
+            const response = await axios.post('http://35.154.1.99:3001/getAllExpenses');
 
             if (response.data.success) {
                 const customers = response.data.result;
@@ -158,7 +158,7 @@ class Expenses extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -183,7 +183,7 @@ class Expenses extends Component {
         return (
             <>
                 <div className="tabled">
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <Card
                                 bordered={false}
@@ -215,51 +215,62 @@ class Expenses extends Component {
                                                 dataIndex: 'CODE',
                                             },
                                             {
+                                                title: 'Method',
+                                                dataIndex: 'METHOD',
+                                            },
+                                            {
                                                 title: 'Amount',
                                                 dataIndex: 'AMOUNT',
                                                 render: (text, record) => {
                                                     return (
-                                                        <InputNumber readOnly
-                                                            defaultValue={text}
-                                                            formatter={(value) =>
-                                                                `Rs. ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                                                            }
-                                                            parser={(value) => value.replace(/\Rs.\s?|(,*)/g, '')}
-                                                        />
+                                                        <span>Rs {text}</span>
                                                     );
                                                 },
                                             },
+                                            // {
+                                            //     title: "References",
+                                            //     dataIndex: "REFERENCE",
+                                            //     width: '40%',
+                                            //     render: (text, record) => {
+                                            //         const designationIds = text.split(",").map(Number);
+                                            //         const isDisabled = true; // Set this to true or false based on your condition
+                                            //
+                                            //         const selectStyle = isDisabled
+                                            //             ? {
+                                            //                 width: "100%",
+                                            //                 pointerEvents: "none", // Disable pointer events to prevent interaction
+                                            //                 background: "#f5f5f5", // Set a background color to indicate it's disabled
+                                            //             }
+                                            //             : { width: "100%" };
+                                            //
+                                            //         return (
+                                            //             <Select
+                                            //                 style={selectStyle}
+                                            //                 mode="tags"
+                                            //                 value={designationIds}
+                                            //                 className={`custom-disabled-select ${isDisabled ? "disabled-select" : ""}`}
+                                            //             >
+                                            //                 {this.state.referenceOptions.map((option) => (
+                                            //                     <Option key={option.value} value={option.value} title={option.label}>
+                                            //                         {option.label}
+                                            //                     </Option>
+                                            //                 ))}
+                                            //             </Select>
+                                            //         );
+                                            //     },
+                                            // },
                                             {
-                                                title: "References",
-                                                dataIndex: "REFERENCE",
-                                                width: '40%',
-                                                render: (text, record) => {
-                                                    const designationIds = text.split(",").map(Number);
-                                                    const isDisabled = true; // Set this to true or false based on your condition
-
-                                                    const selectStyle = isDisabled
-                                                        ? {
-                                                            width: "100%",
-                                                            pointerEvents: "none", // Disable pointer events to prevent interaction
-                                                            background: "#f5f5f5", // Set a background color to indicate it's disabled
-                                                        }
-                                                        : { width: "100%" };
-
-                                                    return (
-                                                        <Select
-                                                            style={selectStyle}
-                                                            mode="tags"
-                                                            value={designationIds}
-                                                            className={`custom-disabled-select ${isDisabled ? "disabled-select" : ""}`}
+                                                title: 'Reference',
+                                                dataIndex: 'REFERENCE',
+                                                render: (text, record) => (
+                                                    <Button type="default" style={{ height: 'auto' }}
+                                                            // onClick={() => this.showReferenceItem(record.ITEM_ID_AI)}
                                                         >
-                                                            {this.state.referenceOptions.map((option) => (
-                                                                <Option key={option.value} value={option.value} title={option.label}>
-                                                                    {option.label}
-                                                                </Option>
-                                                            ))}
-                                                        </Select>
-                                                    );
-                                                },
+                                <span>
+                <div>{record.REFERENCE_CODE}</div>
+                                </span>
+                                                    </Button>
+                                                ),
                                             },
                                             {
                                                 title: 'Reason',

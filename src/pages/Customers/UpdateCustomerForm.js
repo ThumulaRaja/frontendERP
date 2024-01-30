@@ -1,9 +1,10 @@
 // UpdateCustomerForm.js
 import React, { Component } from 'react';
-import {Form, Input, Button, Row, Col, message, Table, InputNumber, Tooltip, Modal, Card} from 'antd';
+import {Form, Input, Button, Row, Col, message, Table, InputNumber, Tooltip, Modal, Card, Select} from 'antd';
 import axios from 'axios';
 import {EyeOutlined} from "@ant-design/icons";
 import ViewTransactionForm from "../Transaction/Commen/ViewTransactionForm";
+import Item from "../GlobalViewModels/Item";
 
 class UpdateCustomerForm extends Component {
     constructor(props) {
@@ -40,7 +41,7 @@ class UpdateCustomerForm extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getCustomerTransactions', {
+            const response = await axios.post('http://35.154.1.99:3001/getCustomerTransactions', {
                 CUSTOMER_ID: this.props.initialValues.CUSTOMER_ID,
             });
 
@@ -79,7 +80,7 @@ class UpdateCustomerForm extends Component {
                 CUSTOMER_ID: initialValues.CUSTOMER_ID,
             };
 
-            const response = await axios.post('http://localhost:3001/updateCustomer', updatedValues);
+            const response = await axios.post('http://35.154.1.99:3001/updateCustomer', updatedValues);
 
             if (response.data.success) {
                 message.success('Customer updated successfully');
@@ -94,6 +95,14 @@ class UpdateCustomerForm extends Component {
             message.error('Internal server error');
         }
     };
+
+    showReferenceItem(itemId){
+        console.log('itemId', itemId);
+        this.setState({
+            selectedRefferenceItem: itemId,
+            isViewItemModalVisible: true,
+        });
+    }
 
     render() {
         const { form } = this.state;
@@ -125,8 +134,8 @@ class UpdateCustomerForm extends Component {
         // };
         return (
             <Form form={form} layout="vertical" onFinish={this.handleSubmit}>
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="NAME"
                             label="Customer Name"
@@ -138,21 +147,42 @@ class UpdateCustomerForm extends Component {
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={12}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item name="PHONE_NUMBER" label="Phone Number" initialValue={this.props.initialValues.PHONE_NUMBER}>
                             <Input placeholder="Enter phone number" style={type === "view" ? inputStyle : { width: "100%" }} />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item name="NIC" label="NIC Number" initialValue={this.props.initialValues.NIC}>
                             <Input placeholder="Enter NIC number" style={type === "view" ? inputStyle : { width: "100%" }} />
                         </Form.Item>
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={12}>
+                        <Form.Item
+                            name="TYPE"
+                            label="Customer Type"
+                            initialValue={this.props.initialValues.TYPE}
+                        >
+                            <Select
+                                placeholder="Select a customer type"
+                                allowClear
+                            >
+                                <Select.Option value="Seller">Seller</Select.Option>
+                                <Select.Option value="Buyer">Buyer</Select.Option>
+                                <Select.Option value="Sales Person">Sales Person</Select.Option>
+                                <Select.Option value="Partner">Partner</Select.Option>
+                                <Select.Option value="Preformer">Preformer</Select.Option>
+                                <Select.Option value="C&P">C&P</Select.Option>
+                                <Select.Option value="Electric">Electric</Select.Option>
+                                <Select.Option value="Heat T">Heat T</Select.Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={24} md={24} lg={12}>
                         <Form.Item
                             name="COMPANY"
                             label="Company"
@@ -163,25 +193,25 @@ class UpdateCustomerForm extends Component {
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item name="ADDRESS" label="Customer Address" initialValue={this.props.initialValues.ADDRESS}>
                             <Input.TextArea rows={4} placeholder="Enter customer address" style={type === "view" ? inputStyle : { width: "100%" }} />
                         </Form.Item>
                     </Col>
                 </Row>
 
-                {type === "view" ? null : (
-                    <Row gutter={16}>
-                        <Col span={24}>
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                    Update Customer
-                                </Button>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                )}
+                {type === "edit" ? (
+                        <Row gutter={[16, 16]} justify="left" align="top">
+                            <Col xs={24} sm={24} md={24} lg={24}>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit">
+                                        Update Customer
+                                    </Button>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    ) : null}
 
                 {type === "view" ? (
                     <Card
@@ -197,7 +227,6 @@ class UpdateCustomerForm extends Component {
                                     padding: '8px 16px',
                                     cursor: 'default',
                                 }}
-                                onClick={() => { }}
                             >
                                 Transactions Related To This Customer
                             </button>
@@ -228,6 +257,14 @@ class UpdateCustomerForm extends Component {
                                     {
                                         title: 'Reference Item',
                                         dataIndex: 'ITEM_CODE',
+                                        render: (text, record) => (
+                                            <Button type="default" style={{ height: 'auto' }}
+                                                    onClick={() => this.showReferenceItem(record.ITEM_ID_AI)}>
+                                <span>
+                <div>{record.ITEM_CODE}</div>
+                                </span>
+                                            </Button>
+                                        ),
                                     },
                                     {
                                         title: 'Initial Payment',
@@ -239,7 +276,7 @@ class UpdateCustomerForm extends Component {
                                                              formatter={(value) =>
                                                                  `Rs. ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                                                              }
-                                                             parser={(value) => value.replace(/\Rs.\s?|(,*)/g, '')}
+                                                             parser={(value) => value.replace(/Rs.\s?|(,*)/g, '')}
                                                 />
                                             );
                                         },
@@ -270,39 +307,6 @@ class UpdateCustomerForm extends Component {
                         onClick={() => this.handleViewShow(row)}
                     />
                   </Tooltip>
-                                                {/*<Divider*/}
-                                                {/*    type="vertical"*/}
-                                                {/*    style={{ height: '50px', display: 'flex', alignItems: 'center' }}*/}
-                                                {/*/>*/}
-                                                {/*                  <Tooltip title="Print">*/}
-                                                {/*  <Button*/}
-                                                {/*      type="default"*/}
-                                                {/*      icon={<PrinterOutlined />}*/}
-                                                {/*      size="large"*/}
-                                                {/*      style={buttonStylePrint}*/}
-                                                {/*      onClick={() => handlePrint(row)}*/}
-                                                {/*  />*/}
-                                                {/*</Tooltip>*/}
-                                                {/*<Divider*/}
-                                                {/*    type="vertical"*/}
-                                                {/*    style={{ height: '50px', display: 'flex', alignItems: 'center' }}*/}
-                                                {/*/>*/}
-                                                {/*<Tooltip title="Delete">*/}
-                                                {/*  <Popconfirm*/}
-                                                {/*      title={`Are you sure you want to delete this ${title}?`}*/}
-                                                {/*      onConfirm={() => showDeleteAllPaymentsConfirm(row.TRANSACTION_ID)}*/}
-                                                {/*      okText="Yes"*/}
-                                                {/*      cancelText="No"*/}
-                                                {/*  >*/}
-                                                {/*    <Button*/}
-                                                {/*        danger*/}
-                                                {/*        type="primary"*/}
-                                                {/*        icon={<DeleteOutlined />}*/}
-                                                {/*        size="large"*/}
-                                                {/*        style={buttonStyle}*/}
-                                                {/*    />*/}
-                                                {/*</Popconfirm>*/}
-                                                {/*                  </Tooltip>*/}
                 </span>
                                         ),
                                     },
@@ -364,6 +368,21 @@ class UpdateCustomerForm extends Component {
                                 <ViewTransactionForm
                                     key={this.state.selectedItem.TRANSACTION_ID}
                                     initialValues={this.state.selectedItem}
+                                />
+                            )}
+                        </Modal>
+
+                        <Modal
+                            title="View Item"
+                            visible={this.state.isViewItemModalVisible}
+                            onCancel={() => this.setState({ isViewItemModalVisible: false })}
+                            footer={null}
+                            width={1250}
+                        >
+                            {this.state.selectedRefferenceItem && (
+                                <Item
+                                    key={this.state.selectedRefferenceItem} // Pass a key to ensure a new instance is created
+                                    itemId={this.state.selectedRefferenceItem}
                                 />
                             )}
                         </Modal>

@@ -1,7 +1,7 @@
 // LotsTableCard.js
 import React from 'react';
 import { Button, Card, Table, Tooltip, Divider, Popconfirm } from 'antd';
-import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import {EyeOutlined, EditOutlined, DeleteOutlined, QrcodeOutlined} from '@ant-design/icons';
 
 let LotsTableCard = ({
                             title,
@@ -11,12 +11,24 @@ let LotsTableCard = ({
                             handleViewShow,
                             handleDelete,
                             loading,
+    handlePrint,
                         }) => {
     const buttonStyle = {
         width: '50px',
         height: '50px',
         borderRadius: '20px',
         display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    };
+
+    const buttonStylePrint = {
+        width: '50px',
+        height: '50px',
+        borderRadius: '20px',
+        backgroundColor: '#52c41a',
+        display: 'flex',
+        color: '#FFFFFF',
         alignItems: 'center',
         justifyContent: 'center',
     };
@@ -56,10 +68,10 @@ let LotsTableCard = ({
                             title: 'Status',
                             dataIndex: 'STATUS',
                         },
-                        {
-                            title: 'Item ID',
-                            dataIndex: 'ITEM_ID',
-                        },
+                        // {
+                        //     title: 'Item ID',
+                        //     dataIndex: 'ITEM_ID',
+                        // },
                         {
                             title: 'No of Pieces',
                             dataIndex: 'PIECES',
@@ -115,6 +127,19 @@ let LotsTableCard = ({
                           style={buttonStyle}
                       />
                     </Popconfirm>
+                  </Tooltip>
+                                    <Divider
+                                        type="vertical"
+                                        style={{ height: '50px', display: 'flex', alignItems: 'center' }}
+                                    />
+                                    <Tooltip title="Print QR">
+                    <Button
+                        type="default"
+                        icon={<QrcodeOutlined />}
+                        size="large"
+                        style={buttonStylePrint}
+                        onClick={() => handlePrint(row)}
+                    />
                   </Tooltip>
                 </span>
                             ),

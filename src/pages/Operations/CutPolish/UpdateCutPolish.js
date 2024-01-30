@@ -29,6 +29,13 @@ class UpdateCutPolish extends Component {
         this.state = {
             referenceOptions: [],
             customerOptions: [],
+            buyerOptions: [],
+            sellerOptions: [],
+            salesPersonOptions: [],
+            partnerOptions: [],
+            htByOptions: [],
+            cpByOptions: [],
+            preformerOptions: [],
 
             fileList2: [],  // For the second photo uploader
             previewVisible2: false,
@@ -47,8 +54,60 @@ class UpdateCutPolish extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
-            console.log("responseCus", response);
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
+            console.log("response", response);
+
+            // BuyerOptions Filter TYPE = Buyer
+            const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // SellerOptions Filter TYPE = Seller
+            const sellerOptions = response.data.result.filter((customer) => customer.TYPE === 'Seller').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // SalesPersonOptions Filter TYPE = Sales Person
+            const salesPersonOptions = response.data.result.filter((customer) => customer.TYPE === 'Sales Person').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // PartnerOptions Filter TYPE = Partner
+            const partnerOptions = response.data.result.filter((customer) => customer.TYPE === 'Partner').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // HTByOptions Filter TYPE = HT By
+            const htByOptions = response.data.result.filter((customer) => customer.TYPE === 'Heat T').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // CPByOptions Filter TYPE = CP By
+            const cpByOptions = response.data.result.filter((customer) => customer.TYPE === 'C&P').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // PreformerOptions Filter TYPE = Preformer
+            const preformerOptions = response.data.result.filter((customer) => customer.TYPE === 'Preformer').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -73,7 +132,7 @@ class UpdateCutPolish extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -96,7 +155,7 @@ class UpdateCutPolish extends Component {
                 imgBBLink2: '',
                 fileList2: [],
             });
-            const response = await axios.post('http://localhost:3001/getReferenceCPDetails', {
+            const response = await axios.post('http://35.154.1.99:3001/getReferenceCPDetails', {
                 ITEM_ID_AI: value,
             });
             if (response.data.success) {
@@ -198,7 +257,7 @@ class UpdateCutPolish extends Component {
             console.log('resultArrayData', resultArrayData);
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/updateCutPolish', resultArrayData);
+            const response = await axios.post('http://35.154.1.99:3001/updateCutPolish', resultArrayData);
 
             if (response.data.success) {
                 message.success('Cut & Polish update successfully');
@@ -216,13 +275,40 @@ class UpdateCutPolish extends Component {
         }
     };
 
+    handleApprove = async () => {
+        try {
+            const sendObject = {
+                CP_ID: this.props.initialValues.CP_ID,
+                REFERENCE: this.props.initialValues.REFERENCE,
+            }
+
+            // Send the request
+            const response = await axios.post('http://35.154.1.99:3001/approveCutPolish', sendObject);
+
+            if (response.data.success) {
+                message.success('Cut & Polish Approved successfully');
+                // Close the modal
+                this.props.onUpdate();
+                this.props.onCancel();
+                // You can reset the form if needed
+                // this.formRef.current.resetFields();
+            } else {
+                message.error('Failed to Approve Cut & Polish');
+            }
+        } catch (error) {
+            console.error('Error Approving Cut & Polish:', error);
+            message.error('Internal server error');
+        }
+    };
+
+
 
     render() {
         const { referenceOptions,customerOptions,fileList2 } = this.state;
 
         const inputStyle = {
             pointerEvents: "none", // Disable pointer events to prevent interaction
-            background: "#f5f5f5", // Set a background color to indicate it's disabled
+            background: "#FFFFFF", // Set a background color to indicate it's disabled
             width: "100%"
         }
 
@@ -234,9 +320,9 @@ class UpdateCutPolish extends Component {
 
         return (
             <Form ref={this.formRef} layout="vertical" onFinish={this.handleSubmit}>
-                <Row gutter={16}>
+                <Row gutter={[16, 16]} justify="left" align="top">
 
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="REFERENCE_ID_CP"
                             label="Reference"
@@ -256,7 +342,7 @@ class UpdateCutPolish extends Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Gem Type */}
                         <Form.Item
                             name="CP_TYPE"
@@ -277,7 +363,7 @@ class UpdateCutPolish extends Component {
                         </Form.Item>
                     </Col>
 
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Status */}
                         <Form.Item
                             name="STATUS"
@@ -302,7 +388,7 @@ class UpdateCutPolish extends Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="CODE_AFTER_CUTTING"
                             label="Code After C&P"
@@ -317,7 +403,7 @@ class UpdateCutPolish extends Component {
                         </Form.Item>
                     </Col>
 
-                    <Col span={3}>
+                    <Col xs={24} sm={24} md={24} lg={3}>
                         <Form.Item
                             name="TOTAL_COST"
                             label="Total Cost (RS)"
@@ -326,7 +412,7 @@ class UpdateCutPolish extends Component {
                             <InputNumber min={0} step={0.01} placeholder="Enter Total Cost" style={ type === 'view' ? inputStyle : { width: '100%' }} />
                         </Form.Item>
                     </Col>
-                    <Col span={3}>
+                    <Col xs={24} sm={24} md={24} lg={3}>
                         {/* Weight (ct) */}
                         <Form.Item
                             name="WEIGHT_AFTER_CP"
@@ -335,7 +421,7 @@ class UpdateCutPolish extends Component {
                             <InputNumber min={0} step={0.01} placeholder="Enter Weight" style={ type === 'view' ? inputStyle : { width: '100%' }} />
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="CP_BY"
                             label="Cutting & Polished By"
@@ -346,7 +432,7 @@ class UpdateCutPolish extends Component {
                                         (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                     }
                                     style={ type === 'view' ? inputStyle : { width: '100%' }}>
-                                {customerOptions.map((option) => (
+                                {this.state.cpByOptions.map((option) => (
                                     <Option key={option.value} value={option.value} title={option.label}>
                                         {option.label}
                                     </Option>
@@ -355,7 +441,7 @@ class UpdateCutPolish extends Component {
                         </Form.Item>
                     </Col>
 
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="CP_COLOR"
                             label="Color"
@@ -363,7 +449,7 @@ class UpdateCutPolish extends Component {
                             <Input  placeholder="Enter Color" style={ type === 'view' ? inputStyle : { width: '100%' }} />
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="SHAPE"
                             label="Shape"
@@ -382,7 +468,7 @@ class UpdateCutPolish extends Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={3}>
+                    <Col xs={24} sm={24} md={24} lg={3}>
                         {/* File Upload */}
                         <Form.Item
                             name="PHOTO"
@@ -442,13 +528,22 @@ class UpdateCutPolish extends Component {
                     </Col>
                 </Row>
                 {type !== 'view' && (
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={12} sm={12} md={12} lg={12}>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
                                 Update Cut and Polish
                             </Button>
                         </Form.Item>
+
+                    </Col>
+                    <Col xs={12} sm={12} md={12} lg={12}>
+                        <Form.Item>
+                            <Button type="default" style={{float: 'right'}} onClick={this.handleApprove}>
+                                Approve
+                            </Button>
+                        </Form.Item>
+
                     </Col>
                 </Row>
                 )}

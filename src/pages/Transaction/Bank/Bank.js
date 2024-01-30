@@ -86,7 +86,7 @@ class Bank extends Component {
     handlePrint = async (row) => {
         console.log('row', row);
         try {
-            const response = await axios.post('http://localhost:3001/generateInvoice', {
+            const response = await axios.post('http://35.154.1.99:3001/generateInvoice', {
                 data: row,
             });
 
@@ -130,7 +130,7 @@ class Bank extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchBank', searchData);
+            const response = await axios.post('http://35.154.1.99:3001/searchBank', searchData);
 
 
             if (response.data.success) {
@@ -202,7 +202,7 @@ class Bank extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchBank', searchData);
+            const response = await axios.post('http://35.154.1.99:3001/searchBank', searchData);
 
 
             if (response.data.success) {
@@ -274,7 +274,7 @@ class Bank extends Component {
         console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
+            const response = await axios.post('http://35.154.1.99:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -296,7 +296,7 @@ class Bank extends Component {
         console.log('id', id);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deletePayment', {
+            const response = await axios.post('http://35.154.1.99:3001/deletePayment', {
                 TRANSACTION_ID: id,
                 PAYMENT_AMOUNT: paymentAmount,
                 AMOUNT_SETTLED: amountSettled,
@@ -322,7 +322,7 @@ class Bank extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllBankTransactions');
+            const response = await axios.post('http://35.154.1.99:3001/getAllBankTransactions');
 
             if (response.data.success) {
                 const items = response.data.result;
@@ -418,8 +418,8 @@ class Bank extends Component {
                         }}
                         onFinish={this.handleSearch}
                     >
-                        <Row gutter={[24, 0]}>
-                            <Col xs={6} xl={6}>
+                        <Row gutter={[16, 16]} justify="left" align="top">
+                            <Col xs={24} sm={24} md={24} lg={6}>
                                 <Form.Item name="searchCode">
                                     <Input
                                         placeholder="Search by Transaction Code"
@@ -429,7 +429,7 @@ class Bank extends Component {
                                     />
                                 </Form.Item>
                             </Col>
-                            <Col xs={6} xl={6}>
+                            <Col xs={24} sm={24} md={24} lg={6}>
                                 <Form.Item name="searchStatus">
                                     <Select
                                         placeholder="Filter by Status"
@@ -454,7 +454,7 @@ class Bank extends Component {
                                     </Select>
                                 </Form.Item>
                             </Col>
-                            <Col xs={6} xl={6}>
+                            <Col xs={24} sm={24} md={24} lg={6}>
                                 <Form.Item name="searchDateRange">
                                     <RangePicker
                                         style={{ width: '100%' }}
@@ -467,7 +467,7 @@ class Bank extends Component {
                                     />
                                 </Form.Item>
                             </Col>
-                            <Col xs={6} xl={6}>
+                            <Col xs={24} sm={24} md={24} lg={6}>
                                 <Form.Item>
                                     <Button type="default" htmlType="submit" style={{ marginRight: '8px' }}>
                                         Filter
@@ -484,7 +484,7 @@ class Bank extends Component {
                 {/* Cards and Tables */}
                 <div className="tabled">
                     {this.state.tableBuying.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <BankTableCard
                                 title="Buying"
@@ -502,7 +502,7 @@ class Bank extends Component {
                     </Row>
                     )}
                     {this.state.tableSelling.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <BankTableCard
                                 title="Selling"
@@ -520,7 +520,7 @@ class Bank extends Component {
                     </Row>
                     )}
                     {this.state.tablePayment.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <Card
                                 bordered={false}

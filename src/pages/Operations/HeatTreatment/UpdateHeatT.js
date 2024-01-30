@@ -30,6 +30,13 @@ class UpdateHeatT extends Component {
             referenceOptions: [],
             heatTreatmentGroupOptions: [],
             customerOptions: [],
+            buyerOptions: [],
+            sellerOptions: [],
+            salesPersonOptions: [],
+            partnerOptions: [],
+            htByOptions: [],
+            cpByOptions: [],
+            preformerOptions: [],
 
             fileList: {}, // Change fileList1 to fileList
             previewVisible: {}, // Change previewVisible1 to previewVisible
@@ -45,8 +52,60 @@ class UpdateHeatT extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             console.log("response", response);
+
+            // BuyerOptions Filter TYPE = Buyer
+            const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SellerOptions Filter TYPE = Seller
+            const sellerOptions = response.data.result.filter((customer) => customer.TYPE === 'Seller').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SalesPersonOptions Filter TYPE = Sales Person
+            const salesPersonOptions = response.data.result.filter((customer) => customer.TYPE === 'Sales Person').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PartnerOptions Filter TYPE = Partner
+            const partnerOptions = response.data.result.filter((customer) => customer.TYPE === 'Partner').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // HTByOptions Filter TYPE = HT By
+            const htByOptions = response.data.result.filter((customer) => customer.TYPE === 'Heat T').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // CPByOptions Filter TYPE = CP By
+            const cpByOptions = response.data.result.filter((customer) => customer.TYPE === 'C&P').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PreformerOptions Filter TYPE = Preformer
+            const preformerOptions = response.data.result.filter((customer) => customer.TYPE === 'Preformer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -72,7 +131,7 @@ class UpdateHeatT extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -100,7 +159,7 @@ class UpdateHeatT extends Component {
 
     async fetchHTGroupOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllHT");
+            const response = await axios.post("http://35.154.1.99:3001/getAllHT");
             console.log("response", response);
             return response.data.result.map((ht) => ({
                 value: ht.HT_ID,
@@ -118,7 +177,7 @@ class UpdateHeatT extends Component {
         console.log("value", this.props);
         try {
             this.setState({ resultArray: [] });
-            const response = await axios.post('http://localhost:3001/getReferenceFromHTGroup', {
+            const response = await axios.post('http://35.154.1.99:3001/getReferenceFromHTGroup', {
                 HT_ID: value,
             });
             if (response.data.success) {
@@ -210,8 +269,8 @@ class UpdateHeatT extends Component {
         return resultArray.map((referenceData, index) => (
             <div key={index}>
                 <Divider />
-                <Row gutter={16}>
-                    <Col span={6}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item name={`REFERENCE_${index + 1}`} label={`Reference ${index + 1}` } initialValue={referenceData.ITEM_ID_AI}>
                             <Select
                                 placeholder="Select Reference"
@@ -226,7 +285,7 @@ class UpdateHeatT extends Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Status */}
                         <Form.Item
                             name={`STATUS_${index + 1}`}
@@ -251,7 +310,7 @@ class UpdateHeatT extends Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Weight (ct) */}
                         <Form.Item
                             name={`WEIGHT_${index + 1}`}
@@ -291,7 +350,7 @@ class UpdateHeatT extends Component {
                             </Form.Item>
                         </Col>
                     ) : null}
-                    <Col span={3}>
+                    <Col xs={24} sm={24} md={24} lg={3}>
                         <Form.Item
                             name={`IS_HEAT_TREATED_${index + 1}`}
                             label={`Is Heat Treated Already ${index + 1}`}
@@ -304,7 +363,7 @@ class UpdateHeatT extends Component {
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Status */}
                         <Form.Item
                             name={`AFTER_STATUS_${index + 1}`}
@@ -328,7 +387,7 @@ class UpdateHeatT extends Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Weight (ct) */}
                         <Form.Item
                             name={`WEIGHT_AFTER_HT_${index + 1}`}
@@ -338,7 +397,7 @@ class UpdateHeatT extends Component {
                             <InputNumber min={0} step={0.01} placeholder="Enter Weight" style={ type === 'view' ? disableStyle : { width: '100%' } } />
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name={`HT_BY_${index + 1}`}
                             label={`Heat Treated By ${index + 1}`}
@@ -388,7 +447,7 @@ class UpdateHeatT extends Component {
 
                     ) : null}
                     {type === 'edit' ? (
-                    <Col span={3}>
+                    <Col xs={24} sm={24} md={24} lg={3}>
                         {/* File Upload */}
                         <Form.Item
                             name={`PHOTOS_AFTER_HT_LINK_${index + 1}`}
@@ -479,7 +538,7 @@ class UpdateHeatT extends Component {
             console.log('resultArrayData', resultArrayData);
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/updateHeatT', resultArrayData);
+            const response = await axios.post('http://35.154.1.99:3001/updateHeatT', resultArrayData);
 
             if (response.data.success) {
                 message.success('Heat Treatment added successfully');
@@ -514,18 +573,18 @@ class UpdateHeatT extends Component {
 
         return (
             <Form ref={this.formRef} layout="vertical" onFinish={this.handleSubmit}>
-                <Row gutter={16}>
-                    <Col span={12}>
-                        <Form.Item
-                            name="NAME"
-                            label="Group Name"
-                            rules={[{ required: true, message: 'Please enter group name' }]}
-                            initialValue={this.props.initialValues.NAME}
-                        >
-                            <Input placeholder="Enter a group name" style={ type === 'view' ? disableStyle : null } />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    {/*<Col xs={24} sm={12} md={12} lg={12}>*/}
+                    {/*    <Form.Item*/}
+                    {/*        name="NAME"*/}
+                    {/*        label="Group Name"*/}
+                    {/*        rules={[{ required: true, message: 'Please enter group name' }]}*/}
+                    {/*        initialValue={this.props.initialValues.NAME}*/}
+                    {/*    >*/}
+                    {/*        <Input placeholder="Enter a group name" style={ type === 'view' ? disableStyle : null } />*/}
+                    {/*    </Form.Item>*/}
+                    {/*</Col>*/}
+                    <Col xs={24} sm={12} md={12} lg={24}>
                         <Form.Item
                             name="HT_ID"
                             label="Heat Treatment Group"
@@ -547,7 +606,7 @@ class UpdateHeatT extends Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item
                             name="HT_BY"
                             label="Heat Treated By"
@@ -560,7 +619,7 @@ class UpdateHeatT extends Component {
                                         (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                     }
                                     style={ type === 'view' ? disableStyle : null }>
-                                {customerOptions.map((option) => (
+                                {this.state.htByOptions.map((option) => (
                                     <Option key={option.value} value={option.value} title={option.label}>
                                         {option.label}
                                     </Option>
@@ -568,7 +627,7 @@ class UpdateHeatT extends Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    <Col xs={24} sm={12} md={12} lg={12}>
                         {/* Date */}
                         <Form.Item
                             name="DATE"
@@ -578,7 +637,7 @@ class UpdateHeatT extends Component {
                             <DatePicker style={ type === 'view' ? disableStyle : { width: '100%' }} />
                         </Form.Item>
                     </Col>
-                    <Col span={24}>
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="REMARK"
                             label="Remarks"
@@ -590,8 +649,8 @@ class UpdateHeatT extends Component {
                 </Row>
                 {this.renderFormFields()}
                 {type === 'edit' ? (
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
                                 Update Heat Treatment

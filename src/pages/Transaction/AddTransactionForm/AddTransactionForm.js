@@ -25,6 +25,13 @@ export default class AddTransactionForm extends Component {
     this.state = {
 
       customerOptions: [],
+            buyerOptions: [],
+            sellerOptions: [],
+            salesPersonOptions: [],
+            partnerOptions: [],
+            htByOptions: [],
+            cpByOptions: [],
+            preformerOptions: [],
       ReferenceOptions: [],
       type: 'Selling',
 
@@ -61,6 +68,7 @@ export default class AddTransactionForm extends Component {
 
   handleTransactionTypeChange = (value) => {
     const form = this.formRef.current;
+    this.formRef.current.resetFields();
     this.setState({ type: value });
     if (value === 'Buying') {
       form.setFieldsValue({ STATUS: 'Working' });
@@ -81,22 +89,74 @@ export default class AddTransactionForm extends Component {
   }
 
   async fetchCustomerOptions() {
-    try {
-      const response = await axios.post("http://localhost:3001/getAllCustomers");
-      console.log("response", response);
-      return response.data.result.map((customer) => ({
-        value: customer.CUSTOMER_ID,
-        label: customer.NAME,
-      }));
-    } catch (error) {
-      console.error("Error fetching customer options:", error);
-      return [];
+        try {
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
+            console.log("response", response);
+
+            // BuyerOptions Filter TYPE = Buyer
+            const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SellerOptions Filter TYPE = Seller
+            const sellerOptions = response.data.result.filter((customer) => customer.TYPE === 'Seller').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SalesPersonOptions Filter TYPE = Sales Person
+            const salesPersonOptions = response.data.result.filter((customer) => customer.TYPE === 'Sales Person').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PartnerOptions Filter TYPE = Partner
+            const partnerOptions = response.data.result.filter((customer) => customer.TYPE === 'Partner').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // HTByOptions Filter TYPE = HT By
+            const htByOptions = response.data.result.filter((customer) => customer.TYPE === 'Heat T').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // CPByOptions Filter TYPE = CP By
+            const cpByOptions = response.data.result.filter((customer) => customer.TYPE === 'C&P').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PreformerOptions Filter TYPE = Preformer
+            const preformerOptions = response.data.result.filter((customer) => customer.TYPE === 'Preformer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+
+            return response.data.result.map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }));
+        } catch (error) {
+            console.error("Error fetching customer options:", error);
+            return [];
+        }
     }
-  }
 
   async fetchReferenceOptions() {
     try {
-      const response = await axios.post("http://localhost:3001/getItemsForReference");
+      const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
       console.log("response", response);
       return response.data.result.map((ref) => ({
         value: ref.ITEM_ID_AI,
@@ -114,7 +174,7 @@ export default class AddTransactionForm extends Component {
     console.log(`selected ${value}`);
     const form = this.formRef.current;
     try {
-      const response = await axios.post('http://localhost:3001/getItemsDetailsForTransaction', {
+      const response = await axios.post('http://35.154.1.99:3001/getItemsDetailsForTransaction', {
         ITEM_ID_AI: value,
       });
       if (response.data.success) {
@@ -130,12 +190,12 @@ export default class AddTransactionForm extends Component {
           form.setFieldsValue({AMOUNT: response.data.result[0].SOLD_AMOUNT});
           form.setFieldsValue({AMOUNT_SETTLED: response.data.result[0].AMOUNT_RECEIVED});
           form.setFieldsValue({DUE_AMOUNT: response.data.result[0].DUE_AMOUNT});
-          form.setFieldsValue({CUSTOMER: response.data.result[0].SELLER});
+          form.setFieldsValue({CUSTOMER: response.data.result[0].BUYER});
           form.setFieldsValue({BEARER: response.data.result[0].BEARER});
         } else if (this.state.type === 'Buying') {
           form.setFieldsValue({AMOUNT: response.data.result[0].COST});
           form.setFieldsValue({AMOUNT_SETTLED: response.data.result[0].GIVEN_AMOUNT});
-          form.setFieldsValue({CUSTOMER: response.data.result[0].BUYER});
+          form.setFieldsValue({CUSTOMER: response.data.result[0].SELLER});
           form.setFieldsValue({IS_TRANSACTION: response.data.result[0].IS_TRANSACTION ? response.data.result[0].IS_TRANSACTION : false});
         }
       } else {
@@ -178,7 +238,7 @@ export default class AddTransactionForm extends Component {
 
       console.log("updatedValues", updatedValues);
 
-      const response = await axios.post('http://localhost:3001/addTransaction', updatedValues);
+      const response = await axios.post('http://35.154.1.99:3001/addTransaction', updatedValues);
 
       if (response.data.success) {
         message.success('Transaction added successfully');
@@ -211,7 +271,7 @@ export default class AddTransactionForm extends Component {
 
         <>
           <div className="tabled">
-            <Row gutter={[24, 0]}>
+            <Row gutter={[16, 16]} justify="left" align="top">
               <Col xs="24" xl={24}>
                 <Card
                     className="criclebox tablespace mb-24"
@@ -223,8 +283,8 @@ export default class AddTransactionForm extends Component {
                       style={{ margin: '20px' }}
                       ref={this.formRef}
                   >
-                    <Row gutter={16}>
-                      <Col span={6}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Gem Type */}
                         <Form.Item
                             name="TYPE"
@@ -243,7 +303,7 @@ export default class AddTransactionForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Gem Type */}
                         <Form.Item
                             name="METHOD"
@@ -261,7 +321,7 @@ export default class AddTransactionForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Status */}
                         <Form.Item
                             name="STATUS"
@@ -287,7 +347,7 @@ export default class AddTransactionForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Date */}
                         <Form.Item
                             name="DATE"
@@ -301,7 +361,7 @@ export default class AddTransactionForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={12}>
+                      <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item
                             name="REFERENCE"
                             label="Reference"
@@ -321,34 +381,57 @@ export default class AddTransactionForm extends Component {
                           </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
-                        <Form.Item
-                            name="CUSTOMER"
-                            label="Customer"
-                            rules={[{ required: true, message: 'Please select Customer' }]}
-                        >
-                          <Select placeholder="Select Customer" allowClear showSearch
-                                  filterOption={(input, option) =>
-                                      (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
-                                      (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
-                                  }>
-                            {customerOptions.map((option) => (
-                                <Option key={option.value} value={option.value} title={option.label}>
-                                  {option.label}
-                                </Option>
-                            ))}
-                          </Select>
-                        </Form.Item>
-                      </Col>
+
                       {type === 'Selling' ?
-                      <Col span={6}>
+                          <Col xs={24} sm={12} md={8} lg={6}>
+                            <Form.Item
+                                name="CUSTOMER"
+                                label="Buyer"
+                                rules={[{ required: true, message: 'Please select Customer' }]}
+                            >
+                              <Select placeholder="Select Customer" allowClear showSearch
+                                      filterOption={(input, option) =>
+                                          (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
+                                          (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
+                                      }>
+                                {this.state.buyerOptions.map((option) => (
+                                    <Option key={option.value} value={option.value} title={option.label}>
+                                      {option.label}
+                                    </Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                            :
+                          <Col xs={24} sm={12} md={8} lg={6}>
+                            <Form.Item
+                                name="CUSTOMER"
+                                label="Seller"
+                                rules={[{ required: true, message: 'Please select Customer' }]}
+                            >
+                              <Select placeholder="Select Customer" allowClear showSearch
+                                      filterOption={(input, option) =>
+                                          (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
+                                          (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
+                                      }>
+                                {this.state.sellerOptions.map((option) => (
+                                    <Option key={option.value} value={option.value} title={option.label}>
+                                      {option.label}
+                                    </Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                      }
+
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item name="BEARER" label="Bearer">
                           <Select style={inputStyle} placeholder="Select Bearer" allowClear showSearch
                                   filterOption={(input, option) =>
                                       (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                       (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                   }>
-                            {customerOptions.map((option) => (
+                            {this.state.salesPersonOptions.map((option) => (
                                 <Option key={option.value} value={option.value} title={option.label}>
                                   {option.label}
                                 </Option>
@@ -356,13 +439,12 @@ export default class AddTransactionForm extends Component {
                           </Select>
                         </Form.Item>
                       </Col>
-                            : null}
 
                     </Row>
                     <Divider />
 
-                    <Row gutter={16}>
-                      <Col span={6}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="AMOUNT"
                             label="Amount"
@@ -371,7 +453,7 @@ export default class AddTransactionForm extends Component {
                           <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Amount" />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="AMOUNT_SETTLED"
                             label="Amount Settled"
@@ -380,7 +462,7 @@ export default class AddTransactionForm extends Component {
                           <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Amount Settled" />
                         </Form.Item>
                       </Col>
-                      <Col span={1}>
+                      <Col xs={24} sm={24} md={24} lg={1}>
                         <Form.Item
                             label=" "
                             name="CALCULATE_DUE_AMOUNT"
@@ -393,7 +475,7 @@ export default class AddTransactionForm extends Component {
                           </Button>
                         </Form.Item>
                       </Col>
-                      <Col span={5}>
+                      <Col xs={24} sm={24} md={24} lg={5}>
                         <Form.Item
                             name="DUE_AMOUNT"
                             label="Due Amount"
@@ -403,7 +485,7 @@ export default class AddTransactionForm extends Component {
                         </Form.Item>
                       </Col>
                       {type === 'Buying' ?
-                          <Col span={6}>
+                          <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="IS_TRANSACTION"
                             label="Is Buying Transaction Already Added"
@@ -421,8 +503,8 @@ export default class AddTransactionForm extends Component {
 
                     <Divider/>
 
-                    <Row gutter={16}>
-                      <Col span={6}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="PAYMENT_ETA_START"
                             label="Payment ETA - Start"
@@ -430,7 +512,7 @@ export default class AddTransactionForm extends Component {
                           <DatePicker style={inputStyle} />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="PAYMENT_ETA_END"
                             label="Payment ETA - End"
@@ -438,7 +520,7 @@ export default class AddTransactionForm extends Component {
                           <DatePicker style={inputStyle} />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="DATE_FINISHED"
                             label="Date Finished"
@@ -453,7 +535,7 @@ export default class AddTransactionForm extends Component {
                               (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                               (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                           }>
-                            {customerOptions.map((option) => (
+                            {this.state.partnerOptions.map((option) => (
                                 <Option key={option.value} value={option.value} title={option.label}>
                                   {option.label}
                                 </Option>
@@ -461,7 +543,7 @@ export default class AddTransactionForm extends Component {
                           </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={3}>
+                      <Col xs={24} sm={24} md={24} lg={3}>
                         <Form.Item
                             name="SHARE_PERCENTAGE"
                             label="Share Percentage %"
@@ -469,7 +551,7 @@ export default class AddTransactionForm extends Component {
                           <InputNumber style={inputStyle} min={0} max={100} placeholder="Enter Share" />
                         </Form.Item>
                       </Col>
-                      <Col span={1}>
+                      <Col xs={24} sm={24} md={24} lg={1}>
                         <Form.Item
                             name="SHARE_VALUE_CALCULATE"
                             label=" "
@@ -482,7 +564,7 @@ export default class AddTransactionForm extends Component {
                           </Button>
                         </Form.Item>
                       </Col>
-                      <Col span={5}>
+                      <Col xs={24} sm={24} md={24} lg={5}>
                         <Form.Item
                             name="SHARE_VALUE"
                             label="Share Value"
@@ -490,7 +572,7 @@ export default class AddTransactionForm extends Component {
                           <InputNumber style={inputStyle} step={0.01} placeholder="Enter Value" />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="OTHER_SHARES"
                             label="Other Shares"
@@ -499,7 +581,7 @@ export default class AddTransactionForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={24}>
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="COMMENTS"
                             label="Comments"
@@ -509,8 +591,8 @@ export default class AddTransactionForm extends Component {
                       </Col>
                     </Row>
 
-                    <Row gutter={16}>
-                      <Col span={24}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item>
                           <Button type="primary" htmlType="submit">
                             Add Transaction

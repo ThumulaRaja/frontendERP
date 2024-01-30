@@ -21,7 +21,7 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
 
     const fetchReferenceOptions = async () => {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             console.log('response', response);
             const options = response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -48,7 +48,7 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
             };
 
             // Make API call to update customer
-            const response = await axios.post('http://localhost:3001/updateHT', updatedValues);
+            const response = await axios.post('http://35.154.1.99:3001/updateHT', updatedValues);
 
             if (response.data.success) {
                 message.success('Heat Treatment Group updated successfully');
@@ -72,19 +72,19 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
 
     return (
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-            <Row gutter={16}>
-                <Col span={24}>
-                    <Form.Item
-                        name="NAME"
-                        label="Group Name"
-                        rules={[{ required: true, message: 'Please enter group name' }]}
-                    >
-                        <Input placeholder="Enter a group name" />
-                    </Form.Item>
-                </Col>
-            </Row>
-            <Row gutter={16}>
-                <Col span={24}>
+            {/*<Row gutter={[16, 16]} justify="left" align="top">*/}
+            {/*    <Col xs={24} sm={24} md={24} lg={24}>*/}
+            {/*        <Form.Item*/}
+            {/*            name="NAME"*/}
+            {/*            label="Group Name"*/}
+            {/*            rules={[{ required: true, message: 'Please enter group name' }]}*/}
+            {/*        >*/}
+            {/*            <Input placeholder="Enter a group name" />*/}
+            {/*        </Form.Item>*/}
+            {/*    </Col>*/}
+            {/*</Row>*/}
+            <Row gutter={[16, 16]} justify="left" align="top">
+                <Col xs={24} sm={24} md={24} lg={24}>
                     <Form.Item
                         name="REFERENCE"
                         label="Reference"
@@ -114,8 +114,8 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
                 </Col>
             </Row>
 
-            <Row gutter={16}>
-                <Col span={24}>
+            <Row gutter={[16, 16]} justify="left" align="top">
+                <Col xs={24} sm={24} md={24} lg={24}>
                     <Form.Item
                         name="REMARK"
                         label="Remarks"
@@ -125,8 +125,8 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
                 </Col>
             </Row>
 
-            <Row gutter={16}>
-                <Col span={24}>
+            <Row gutter={[16, 16]} justify="left" align="top">
+                <Col xs={24} sm={24} md={24} lg={24}>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
                             Update Heat Treatment Group

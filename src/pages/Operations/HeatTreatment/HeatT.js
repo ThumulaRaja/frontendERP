@@ -43,7 +43,7 @@ class HeatT extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -83,7 +83,7 @@ class HeatT extends Component {
     handleDelete = async (Id) => {
         try {
             // Make an API call to deactivate the Heat Treatment
-            const response = await axios.post('http://localhost:3001/deactivateHeatT', {
+            const response = await axios.post('http://35.154.1.99:3001/deactivateHeatT', {
                 HEAT_ID: Id,
             });
 
@@ -105,7 +105,7 @@ class HeatT extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllHeatT');
+            const response = await axios.post('http://35.154.1.99:3001/getAllHeatT');
 
             if (response.data.success) {
                 const customers = response.data.result;
@@ -166,7 +166,7 @@ class HeatT extends Component {
         return (
             <>
                 <div className="tabled">
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <Card
                                 bordered={false}
@@ -197,10 +197,10 @@ class HeatT extends Component {
                                                 title: 'HT Code',
                                                 dataIndex: 'CODE',
                                             },
-                                            {
-                                                title: 'HT Name',
-                                                dataIndex: 'NAME',
-                                            },
+                                            // {
+                                            //     title: 'HT Name',
+                                            //     dataIndex: 'NAME',
+                                            // },
                                             {
                                                 title: 'HT Group',
                                                 dataIndex: 'GROUP_NAME',

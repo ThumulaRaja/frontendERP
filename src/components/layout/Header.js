@@ -179,7 +179,7 @@ function Header({
       <div className="setting-drwer" onClick={showDrawer}>
         {setting}
       </div>
-      <Row gutter={[24, 0]}>
+      <Row gutter={[16, 16]} justify="left" align="top">
         <Col span={24} md={6}>
           <Breadcrumb>
             <Breadcrumb.Item>
@@ -227,42 +227,6 @@ function Header({
               </div>
 
               <div className="sidebar-color">
-                {/*<Title level={5}>Sidebar Color</Title>*/}
-                {/*<div className="theme-color mb-2">*/}
-                {/*  <ButtonContainer>*/}
-                {/*    <Button*/}
-                {/*      type="primary"*/}
-                {/*      onClick={() => handleSidenavColor("#1890ff")}*/}
-                {/*    >*/}
-                {/*      1*/}
-                {/*    </Button>*/}
-                {/*    <Button*/}
-                {/*      type="success"*/}
-                {/*      onClick={() => handleSidenavColor("#52c41a")}*/}
-                {/*    >*/}
-                {/*      1*/}
-                {/*    </Button>*/}
-                {/*    <Button*/}
-                {/*      type="danger"*/}
-                {/*      onClick={() => handleSidenavColor("#d9363e")}*/}
-                {/*    >*/}
-                {/*      1*/}
-                {/*    </Button>*/}
-                {/*    <Button*/}
-                {/*      type="yellow"*/}
-                {/*      onClick={() => handleSidenavColor("#fadb14")}*/}
-                {/*    >*/}
-                {/*      1*/}
-                {/*    </Button>*/}
-
-                {/*    <Button*/}
-                {/*      type="black"*/}
-                {/*      onClick={() => handleSidenavColor("#111")}*/}
-                {/*    >*/}
-                {/*      1*/}
-                {/*    </Button>*/}
-                {/*  </ButtonContainer>*/}
-                {/*</div>*/}
 
                 <div className="sidebarnav-color mb-2">
                   <Title level={5}>Sidenav Type</Title>

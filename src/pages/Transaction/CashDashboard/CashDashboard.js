@@ -56,7 +56,7 @@ class CashDashboard extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getCashDashboardData');
+            const response = await axios.post('http://35.154.1.99:3001/getCashDashboardData');
 
             if (response.data.success) {
                 console.log('ResponseDashboard:', response.data.result);
@@ -86,7 +86,7 @@ class CashDashboard extends Component {
         console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
+            const response = await axios.post('http://35.154.1.99:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -107,7 +107,7 @@ class CashDashboard extends Component {
     handlePrint = async (row) => {
         console.log('row', row);
         try {
-            const response = await axios.post('http://localhost:3001/generateInvoice', {
+            const response = await axios.post('http://35.154.1.99:3001/generateInvoice', {
                 data: row,
             });
 
@@ -134,7 +134,7 @@ class CashDashboard extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllDueTransactions');
+            const response = await axios.post('http://35.154.1.99:3001/getAllDueTransactions');
 
             if (response.data.success) {
                 const items = response.data.result;
@@ -172,7 +172,7 @@ class CashDashboard extends Component {
                                     <Title level={3} style={{ marginBottom: 20,color: '#fff',marginLeft: 20 }}>Cash 💸</Title>
                                 </Row>
                                 <Row align="middle" gutter={[24, 0]}>
-                                    <Col xs={8}>
+                                    <Col xs={24} sm={24} md={24} lg={8}>
                                         <Card
                                             bordered
                                             className="circlebox-subcard"
@@ -193,7 +193,7 @@ class CashDashboard extends Component {
                                             </div>
                                         </Card>
                                     </Col>
-                                    <Col xs={8}>
+                                    <Col xs={24} sm={24} md={24} lg={8}>
                                         <Card
                                             bordered
                                             className="circlebox-subcard"
@@ -214,7 +214,7 @@ class CashDashboard extends Component {
                                             </div>
                                         </Card>
                                     </Col>
-                                    <Col xs={8}>
+                                    <Col xs={24} sm={24} md={24} lg={8}>
                                         <Card
                                             bordered
                                             className="circlebox-subcard"
@@ -251,7 +251,7 @@ class CashDashboard extends Component {
                                 <Row align="middle" gutter={[24, 0]}>
                                     <Title level={3} style={{ marginBottom: 20,color: '#fff',marginLeft: 20 }}>Bank 🏛</Title></Row>
                                 <Row align="middle" gutter={[24, 0]}>
-                                    <Col xs={8}>
+                                    <Col xs={24} sm={24} md={24} lg={8}>
                                         <Card
                                             bordered
                                             className="circlebox-subcard"
@@ -272,7 +272,7 @@ class CashDashboard extends Component {
                                             </div>
                                         </Card>
                                     </Col>
-                                    <Col xs={8}>
+                                    <Col xs={24} sm={24} md={24} lg={8}>
                                         <Card
                                             bordered
                                             className="circlebox-subcard"
@@ -293,7 +293,7 @@ class CashDashboard extends Component {
                                             </div>
                                         </Card>
                                     </Col>
-                                    <Col xs={8}>
+                                    <Col xs={24} sm={24} md={24} lg={8}>
                                         <Card
                                             bordered
                                             className="circlebox-subcard"
@@ -330,7 +330,7 @@ class CashDashboard extends Component {
                                 <Row align="middle" gutter={[24, 0]}>
                                     <Title level={3} style={{ marginBottom: 20,color: '#fff',marginLeft: 20 }}>Total Transactions</Title></Row>
                                 <Row align="middle" gutter={[24, 0]}>
-                                    <Col xs={8}>
+                                    <Col xs={24} sm={24} md={24} lg={8}>
                                         <Card
                                             bordered
                                             className="circlebox-subcard"
@@ -351,7 +351,7 @@ class CashDashboard extends Component {
                                             </div>
                                         </Card>
                                     </Col>
-                                    <Col xs={8}>
+                                    <Col xs={24} sm={24} md={24} lg={8}>
                                         <Card
                                             bordered
                                             className="circlebox-subcard"
@@ -372,7 +372,7 @@ class CashDashboard extends Component {
                                             </div>
                                         </Card>
                                     </Col>
-                                    <Col xs={8}>
+                                    <Col xs={24} sm={24} md={24} lg={8}>
                                         <Card
                                             bordered
                                             className="circlebox-subcard"
@@ -402,7 +402,7 @@ class CashDashboard extends Component {
                         <Card bordered={false} className="circlebox">
                             <div className="number">
                                 <Row align="middle" gutter={[24, 0]}>
-                                    <Col xs={8}>
+                                    <Col xs={24} sm={24} md={24} lg={8}>
                                         <Card
                                             bordered
                                             className="circlebox-subcard"
@@ -468,7 +468,7 @@ class CashDashboard extends Component {
         return (
             <>
                 <div className="layout-content">
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs={24} sm={24} md={24} lg={24} xl={24} className="mb-24">
                             <Card bordered={false} className="criclebox h-full">
                                 <LineChart />

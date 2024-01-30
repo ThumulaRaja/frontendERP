@@ -19,7 +19,6 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import BgProfile from "../assets/images/bg-profile.jpg";
-import profilavatar from "../assets/images/user.png";
 import Cookies from "js-cookie";
 import axios from "axios";
 import Password from "antd/es/input/Password";
@@ -122,7 +121,7 @@ class Profile extends Component {
       }
 
       // Check if the user entered the old password correctly
-      const response = await axios.post("http://localhost:3001/checkPassword", {
+      const response = await axios.post("http://35.154.1.99:3001/checkPassword", {
         USER_ID: USER_ID,
         PASSWORD: OLD_PASSWORD,
       });
@@ -139,7 +138,7 @@ class Profile extends Component {
         console.log("Updated values:", updatedValues);
 
         const response = await axios.post(
-            "http://localhost:3001/updateProfile",
+            "http://35.154.1.99:3001/updateProfile",
             updatedValues
         );
         if (response.data.success) {
@@ -230,7 +229,7 @@ class Profile extends Component {
               }
           ></Card>
 
-          <Row gutter={[24, 0]}>
+          <Row gutter={[16, 16]} justify="left" align="top">
             <Col span={24} md={24} className="mb-24">
               <Card
                   bordered={false}
@@ -246,17 +245,17 @@ class Profile extends Component {
                   <Descriptions.Item label="Location" span={3}>
                     Sri Lanka
                   </Descriptions.Item>
-                  <Descriptions.Item label="Social" span={3}>
-                    <a href="#" className="mx-5 px-5">
-                      {<TwitterOutlined />}
-                    </a>
-                    <a href="#" className="mx-5 px-5">
-                      {<FacebookOutlined style={{ color: "#344e86" }} />}
-                    </a>
-                    <a href="#" className="mx-5 px-5">
-                      {<InstagramOutlined style={{ color: "#e1306c" }} />}
-                    </a>
-                  </Descriptions.Item>
+                  {/*<Descriptions.Item label="Social" span={3}>*/}
+                  {/*  <a href="#" className="mx-5 px-5">*/}
+                  {/*    {<TwitterOutlined />}*/}
+                  {/*  </a>*/}
+                  {/*  <a href="#" className="mx-5 px-5">*/}
+                  {/*    {<FacebookOutlined style={{ color: "#344e86" }} />}*/}
+                  {/*  </a>*/}
+                  {/*  <a href="#" className="mx-5 px-5">*/}
+                  {/*    {<InstagramOutlined style={{ color: "#e1306c" }} />}*/}
+                  {/*  </a>*/}
+                  {/*</Descriptions.Item>*/}
                 </Descriptions>
               </Card>
             </Col>
@@ -267,13 +266,13 @@ class Profile extends Component {
                   title="Change Profile Details"
               >
                 <Form form={form} layout="vertical" onFinish={this.handleSubmit}>
-                  <Row gutter={16}>
+                  <Row gutter={[16, 16]} justify="left" align="top">
                     <Col span={21}>
                       <Form.Item name="NAME" label="Name">
                         <Input placeholder="Enter Name" />
                       </Form.Item>
                     </Col>
-                    <Col span={3}>
+                    <Col xs={24} sm={24} md={24} lg={3}>
                       {/* File Upload */}
                       <Form.Item
                           name="PHOTO"
@@ -323,13 +322,13 @@ class Profile extends Component {
                     </Col>
                   </Row>
 
-                  <Row gutter={16}>
-                    <Col span={12}>
+                  <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={12} md={12} lg={12}>
                       <Form.Item name="PASSWORD" label="New Password">
                         <Password placeholder="Enter New Password" />
                       </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    <Col xs={24} sm={12} md={12} lg={12}>
                       <Form.Item
                           name="OLD_PASSWORD"
                           label="Old Password"
@@ -342,8 +341,8 @@ class Profile extends Component {
                     </Col>
                   </Row>
 
-                  <Row gutter={16}>
-                    <Col span={24}>
+                  <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                       <Form.Item>
                         <Button type="primary" htmlType="submit">
                           Update Customer

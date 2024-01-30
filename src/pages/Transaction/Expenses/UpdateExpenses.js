@@ -12,9 +12,7 @@ const UpdateExpenses = ({ initialValues, onUpdate, onCancel }) => {
     useEffect(() => {
         // Set initial values when the form mounts
         form.setFieldsValue({
-            ...initialValues,
-            REFERENCE: initialValues.REFERENCE ? initialValues.REFERENCE.split(',').map(Number) : [],
-        });
+            ...initialValues,});
 
         // Fetch reference options
         fetchReferenceOptions();
@@ -22,7 +20,7 @@ const UpdateExpenses = ({ initialValues, onUpdate, onCancel }) => {
 
     const fetchReferenceOptions = async () => {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             console.log('response', response);
             const options = response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -38,17 +36,15 @@ const UpdateExpenses = ({ initialValues, onUpdate, onCancel }) => {
         try {
             // Add IS_ACTIVE to the values object
 
-            const referenceString = Array.isArray(values.REFERENCE)
-                ? values.REFERENCE.join(',')
-                : values.REFERENCE ? values.REFERENCE.toString() : '';
             const updatedValues = {
                 ...values,
                 EXPENSES_ID: initialValues.EXPENSES_ID, // Pass the CUSTOMER_ID to identify the Expenses
-                REFERENCE: referenceString,
+                OLD_AMOUNT: initialValues.AMOUNT,
+                OLD_REFERENCE: initialValues.REFERENCE,
             };
 
             // Make API call to update Expenses
-            const response = await axios.post('http://localhost:3001/updateExpenses', updatedValues);
+            const response = await axios.post('http://35.154.1.99:3001/updateExpenses', updatedValues);
 
             if (response.data.success) {
                 message.success('Expenses updated successfully');
@@ -72,8 +68,8 @@ const UpdateExpenses = ({ initialValues, onUpdate, onCancel }) => {
 
     return (
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-            <Row gutter={16}>
-                <Col span={24}>
+            <Row gutter={[16, 16]} justify="left" align="top">
+                <Col xs={24} sm={24} md={24} lg={24}>
                     <Form.Item
                         name="AMOUNT"
                         label="Amount (RS)"
@@ -83,9 +79,26 @@ const UpdateExpenses = ({ initialValues, onUpdate, onCancel }) => {
                     </Form.Item>
                 </Col>
             </Row>
+            <Row gutter={[16, 16]} justify="left" align="top">
+                <Col xs={24} sm={24} md={24} lg={24}>
+                    <Form.Item name="METHOD" label="Method"
+                               rules={[{ required: true, message: 'Please select method' }]}
+                               initialValue={'Cash'}>
+                        <Select
+                            placeholder="Method"
+                            style={{ width: '100%'}}
+                            allowClear
+                            showSearch
+                        >
+                            <Option value="Cash">Cash</Option>
+                            <Option value="Bank">Bank</Option>
+                        </Select>
+                    </Form.Item>
+                </Col>
+            </Row>
 
-            <Row gutter={16}>
-                <Col span={24}>
+            <Row gutter={[16, 16]} justify="left" align="top">
+                <Col xs={24} sm={24} md={24} lg={24}>
                     <Form.Item
                         name="REFERENCE"
                         label="Reference"
@@ -93,7 +106,6 @@ const UpdateExpenses = ({ initialValues, onUpdate, onCancel }) => {
                     >
                         <Select
                             placeholder="Select Reference"
-                            mode="multiple"
                             allowClear
                             showSearch
                             filterOption={(input, option) =>
@@ -115,16 +127,16 @@ const UpdateExpenses = ({ initialValues, onUpdate, onCancel }) => {
                 </Col>
             </Row>
 
-            <Row gutter={16}>
-                <Col span={24}>
+            <Row gutter={[16, 16]} justify="left" align="top">
+                <Col xs={24} sm={24} md={24} lg={24}>
                     <Form.Item name="REASON" label="Reason">
                         <Input.TextArea rows={4} placeholder="Enter remarks" />
                     </Form.Item>
                 </Col>
             </Row>
 
-            <Row gutter={16}>
-                <Col span={24}>
+            <Row gutter={[16, 16]} justify="left" align="top">
+                <Col xs={24} sm={24} md={24} lg={24}>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
                             Update Expenses Details

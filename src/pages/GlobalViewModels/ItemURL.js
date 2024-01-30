@@ -11,16 +11,15 @@ import {
     Switch,
     Button,
     DatePicker,
-    Input, Divider, Modal, Table, Tooltip, Popconfirm, message
+    Input, Divider, Modal,
 } from "antd";
 import axios from "axios";
 import moment from 'moment';
-import {DeleteOutlined, ExclamationCircleOutlined, EyeOutlined} from "@ant-design/icons";
-import ViewTransactionForm  from "../Transaction/Commen/ViewTransactionForm";
+
 
 const { Option } = Select;
 
-class Item extends Component {
+class ItemURL extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -58,9 +57,6 @@ class Item extends Component {
         };
         this.showProps();
         this.getModelItemDetails();
-        this.getAllTransactions();
-        this.handleViewShow = this.handleViewShow.bind(this);
-        this.toggleViewModal = this.toggleViewModal.bind(this);
     }
 
     formRef = React.createRef();
@@ -80,9 +76,24 @@ class Item extends Component {
 
     async getModelItemDetails() {
         try {
-            let id = this.props.itemId;
-            console.log('id', id);
-            const response = await axios.post('http://35.154.1.99:3001/getItemDetails', { id });
+            const { match: { params } } = this.props;
+            const { code } = params;
+
+            this.setState({ code });
+            console.log('code', code);
+
+            if (code) {
+                console.log('roughId1', code);
+                // const lowerCaseRoughId = code.toLowerCase();
+                //
+                // this.state.tableData.forEach(item => {
+                //     console.log('item.CODE', item.CODE);
+                //     if (item.CODE.toLowerCase() === lowerCaseRoughId) {
+                //         this.handleUpdateShow(item);
+                //     }
+                // });
+            }
+            const response = await axios.post('http://35.154.1.99:3001/getItemDetailsUsingCode', { code });
 
             if (response.data.success) {
                 const items = response.data.result;
@@ -150,32 +161,6 @@ class Item extends Component {
     }
 
 
-
-    async getAllTransactions() {
-        this.setState({ loading: true });
-
-        try {
-            let id = this.props.itemId;
-            console.log('id1', id);
-            const response = await axios.post('http://35.154.1.99:3001/getAllTransactions', { id });
-
-            if (response.data.success) {
-                const items = response.data.result;
-                console.log('items', items);
-                this.setState({ tableTransaction: items });
-                console.log('tableTransaction1', this.state.tableTransaction);
-            } else {
-                console.log('Error:', response.data.message);
-            }
-        } catch (error) {
-            console.log('Error:', error.message);
-        } finally {
-            this.setState({
-                loading: false,
-            });
-        }
-    }
-
     showProps = () => {
         console.log("this.props",this.props);
     }
@@ -189,19 +174,63 @@ class Item extends Component {
         this.setState({ isTransaction: checked });
     }
 
-    toggleViewModal() {
-        this.setState({
-            isViewModalVisible: !this.state.isViewModalVisible,
-            selectedItem: null,
-        });
-    }
-
-
 
     async fetchCustomerOptions() {
         try {
             const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
-            console.log("response cus", response);
+            console.log("response", response);
+
+            // BuyerOptions Filter TYPE = Buyer
+            const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SellerOptions Filter TYPE = Seller
+            const sellerOptions = response.data.result.filter((customer) => customer.TYPE === 'Seller').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SalesPersonOptions Filter TYPE = Sales Person
+            const salesPersonOptions = response.data.result.filter((customer) => customer.TYPE === 'Sales Person').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PartnerOptions Filter TYPE = Partner
+            const partnerOptions = response.data.result.filter((customer) => customer.TYPE === 'Partner').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // HTByOptions Filter TYPE = HT By
+            const htByOptions = response.data.result.filter((customer) => customer.TYPE === 'Heat T').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // CPByOptions Filter TYPE = CP By
+            const cpByOptions = response.data.result.filter((customer) => customer.TYPE === 'C&P').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PreformerOptions Filter TYPE = Preformer
+            const preformerOptions = response.data.result.filter((customer) => customer.TYPE === 'Preformer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -245,37 +274,6 @@ class Item extends Component {
         this.setState({ gemType });
     };
 
-    handleDeleteTranscation = async (id, all) => {
-        console.log('id', id);
-        console.log('all', all);
-        try {
-            // Make an API call to deactivate the customer
-            const response = await axios.post('http://35.154.1.99:3001/deactivateTransaction', {
-                TRANSACTION_ID: id,
-                ALL: all,
-            });
-
-            if (response.data.success) {
-                message.success('Transaction deleted successfully');
-                // Refresh the table
-                await this.getAllCashTransactions();
-            } else {
-                message.error('Failed to delete customer');
-            }
-        } catch (error) {
-            console.error('Error deleting customer:', error);
-            message.error('Internal server error');
-        }
-    };
-
-    handleViewShow(row) {
-        console.log('row', row);
-        this.setState({
-            selectedItem: row,
-            isViewModalVisible: true,
-        });
-        console.log('selectedItem', this.state.selectedItem);
-    }
 
 
     render() {
@@ -287,46 +285,8 @@ class Item extends Component {
             color: "#000000", // Set a text color to indicate it's not editable
         };
 
-        const buttonStyle = {
-            width: '50px',
-            height: '50px',
-            borderRadius: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-        };
 
-
-        const showDeleteAllPaymentsConfirm = (itemId) => {
-            Modal.confirm({
-                title: 'Do you want to delete the transaction with its all payments?',
-                icon: <ExclamationCircleOutlined />,
-                width: '600px',
-                content: (
-                    <div>
-                        'This action will permanently delete the transaction and all associated payments.'
-                        <Button
-                            type="primary"
-                            style={{ float: 'right', marginTop: '20px' }}
-                            onClick={() => { this.handleDeleteTranscation(itemId, true); Modal.destroyAll(); }}
-                        >
-                            Yes, Delete All Payments
-                        </Button>
-                        <Button
-                            danger
-                            style={{ float: 'left', marginTop: '20px' }}
-                            onClick={() => { this.handleDeleteTranscation(itemId, false); Modal.destroyAll(); }}
-                        >
-                            Only Delete Transaction
-                        </Button>
-                    </div>
-                ),
-                footer: null,
-                closable: true,
-            });
-        };
-
-        const {  gemType, customerOptions,heatTreatmentGroupOptions,ReferenceOptions,tableTransaction } = this.state;
+        const {  gemType, customerOptions,heatTreatmentGroupOptions,ReferenceOptions } = this.state;
         return (<>
                 <div className="tabled">
                     <Row gutter={[16, 16]} justify="left" align="top">
@@ -915,8 +875,10 @@ class Item extends Component {
                                         </Col>
                                         <Col span={9}>
                                             <Form.Item name="SHARE_HOLDERS" label="Share Holders"
-                                                       initialValue={this.state.initialValues.SHARE_HOLDERS}>
-                                                <Select placeholder="Select Customer" style={inputStyle}>
+                                                       initialValue={
+                                                           this.state.initialValues.SHARE_HOLDERS
+                                                       }>
+                                                <Select  placeholder="Select Share Holders" mode="multiple" style={inputStyle}>
                                                     {this.state.partnerOptions.map((option) => (
                                                         <Option key={option.value} value={option.value}>
                                                             {option.label}
@@ -1068,184 +1030,14 @@ class Item extends Component {
 
                                 </Form>
                             </Card>
-                            <Card
-                                className="criclebox tablespace mb-24"
-                                title={"Transaction Details Related To " + this.state.initialValues.CODE}
-                            >
-                                <div className="table-responsive">
-                                    <Table
-                                        className="ant-border-space"
-                                        size="small"
-                                        style={{ margin: '15px' }}
-                                        rowKey="TRANSACTION_ID"
-                                        columns={[
-                                            {
-                                                title: 'Transaction Code',
-                                                dataIndex: 'CODE',
-                                            },
-                                            {
-                                                title: 'Method',
-                                                dataIndex: 'METHOD'
-                                            },
-                                            {
-                                                title: 'Status',
-                                                dataIndex: 'STATUS',
-                                            },
-                                            {
-                                                title: 'Date',
-                                                dataIndex: 'DATE',
-                                                render: (row) => (
-                                                    <span> {new Date(row).toLocaleDateString()}</span>
-                                                ),
-                                            },
-                                            // {
-                                            //     title: 'Reference Item',
-                                            //     dataIndex: 'ITEM_CODE',
-                                            // },
-                                            {
-                                                title: 'Customer Name',
-                                                dataIndex: 'C_NAME',
-                                                render: (text, record) => (
-                                                    <span>
-                <div>{record.C_NAME}</div>
-                <div>{record.PHONE_NUMBER}</div>
-                <div>({record.COMPANY})</div>
-            </span>
-                                                ),
-                                            },
-                                            {
-                                                title: 'Initial Payment',
-                                                dataIndex: 'PAYMENT_AMOUNT',
-                                                render: (text, record) => {
-                                                    return (
-                                                        <InputNumber readOnly
-                                                                     defaultValue={text}
-                                                                     formatter={(value) =>
-                                                                         `Rs. ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                                                                     }
-                                                                     parser={(value) => value.replace(/\Rs.\s?|(,*)/g, '')}
-                                                        />
-                                                    );
-                                                },
-                                            },
-                                            {
-                                                title: 'Amount',
-                                                dataIndex: 'AMOUNT',
-                                                render: (text, record) => (
-                                                    <span>
-                <div>Amount: Rs. {record.AMOUNT}</div>
-                <div style={{ color: 'green' }}>Amount Settled: Rs. {record.AMOUNT_SETTLED}</div>
-                <div style={{ color: 'red' }}>Amount Due: Rs. {record.DUE_AMOUNT}</div>
-            </span>
-                                                ),
-                                            },
-                                            {
-                                                title: 'Action',
-                                                width: '120px',
-                                                align: 'center',
-                                                render: (row) => (
-                                                    <span style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Tooltip title="View">
-                    <Button
-                        type="default"
-                        icon={<EyeOutlined />}
-                        size="large"
-                        style={buttonStyle}
-                        onClick={() => this.handleViewShow(row)}
-                    />
-                  </Tooltip>
-                  <Divider
-                      type="vertical"
-                      style={{ height: '50px', display: 'flex', alignItems: 'center' }}
-                  />
-                  <Tooltip title="Delete">
-                    <Popconfirm
-                        title={`Are you sure you want to delete this transaction?`}
-                        onConfirm={() => showDeleteAllPaymentsConfirm(row.TRANSACTION_ID)}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-    <Button
-        danger
-        type="primary"
-        icon={<DeleteOutlined />}
-        size="large"
-        style={buttonStyle}
-    />
-</Popconfirm>
-                  </Tooltip>
-                </span>
-                                                ),
-                                            },
-                                        ]}
-                                        dataSource={tableTransaction}
-                                        pagination={true}
-                                        loading={this.state.loading}
-                                        expandedRowRender={(record) => (
-                                            record.PAYMENTS && record.PAYMENTS.length > 0 ? (
-                                                <Table
-                                                    size="small"
-                                                    rowKey="TRANSACTION_ID"
-                                                    columns={[
-                                                        {
-                                                            title: 'Transaction Code',
-                                                            dataIndex: 'CODE',
-                                                        },
-                                                        {
-                                                            title: 'Status',
-                                                            dataIndex: 'STATUS',
-                                                        },
-                                                        {
-                                                            title: 'Date',
-                                                            dataIndex: 'DATE',
-                                                            render: (row) => (
-                                                                <span> {new Date(row).toLocaleDateString()}</span>
-                                                            ),
-                                                        },
-                                                        {
-                                                            title: 'Method',
-                                                            dataIndex: 'METHOD'
-                                                        },
-                                                        {
-                                                            title: 'Amount',
-                                                            dataIndex: 'PAYMENT_AMOUNT'
-                                                        },
-                                                        {
-                                                            title: 'Note',
-                                                            dataIndex: 'COMMENTS'
-                                                        },
-                                                    ]
-                                                    }
-                                                    dataSource={record.PAYMENTS}
-                                                    pagination={false}
-                                                >
-                                                </Table>
-                                            ) : null
-                                        )}
-                                    />
-                                </div>
-                            </Card>
+
 
                         </Col>
                     </Row>
                 </div>
-                <Modal
-                    title="View Transaction"
-                    visible={this.state.isViewModalVisible}
-                    onCancel={this.toggleViewModal}
-                    footer={null}
-                    width={1250}
-                >
-                    {this.state.selectedItem && (
-                        <ViewTransactionForm
-                            key={this.state.selectedItem.TRANSACTION_ID} // Pass a key to ensure a new instance is created
-                            initialValues={this.state.selectedItem}
-                        />
-                    )}
-                </Modal>
             </>
         );
     }
 }
 
-export default Item;
+export default ItemURL;

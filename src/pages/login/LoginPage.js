@@ -21,7 +21,7 @@ const Login = () => {
 
         try {
             console.log('Login values:', values);
-            const response = await axios.post('http://localhost:3001/login', values);
+            const response = await axios.post('http://35.154.1.99:3001/login', values);
 
             if (response.status === 200) {
                 message.success('Login successful');
@@ -32,7 +32,8 @@ const Login = () => {
                     // console.log('rememberedUser', { USER_ID, NAME,EMAIL,ROLE });
                 }
                 // Navigate to the dashboard using history.push
-                history.push('/dashboard');
+                // history.push('/dashboard');
+                window.location.href = "/dashboard";
             } else {
                 message.error('Invalid username or password');
             }
@@ -61,7 +62,7 @@ const Login = () => {
                     onFinishFailed={onFinishFailed}
                     className="login-form"
                 >
-                    <p className="form-title">Welcome To Nihal Gems ERP System</p>
+                    <p className="form-title">Welcome To Nihal Gems Management System</p>
                     <p>Login to the Dashboard</p>
                     <Form.Item
                         name="user"

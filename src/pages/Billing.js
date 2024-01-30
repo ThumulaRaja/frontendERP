@@ -320,9 +320,9 @@ function Billing() {
 
   return (
     <>
-      <Row gutter={[24, 0]}>
+      <Row gutter={[16, 16]} justify="left" align="top">
         <Col xs={24} md={16}>
-          <Row gutter={[24, 0]}>
+          <Row gutter={[16, 16]} justify="left" align="top">
             <Col xs={24} xl={12} className="mb-24">
               <Card
                 title={wifi}
@@ -397,7 +397,7 @@ function Billing() {
                   </>
                 }
               >
-                <Row gutter={[24, 0]}>
+                <Row gutter={[16, 16]} justify="left" align="top">
                   <Col span={24} md={12}>
                     <Card className="payment-method-card">
                       <img src={mastercard} alt="mastercard" />
@@ -451,7 +451,7 @@ function Billing() {
           </Card>
         </Col>
       </Row>
-      <Row gutter={[24, 0]}>
+      <Row gutter={[16, 16]} justify="left" align="top">
         <Col span={24} md={16} className="mb-24">
           <Card
             className="header-solid h-full"

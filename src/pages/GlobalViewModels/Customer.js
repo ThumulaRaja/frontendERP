@@ -45,7 +45,7 @@ class Customer extends Component {
 
         try {
             console.log('this.props.customerId', this.props);
-            const response = await axios.post('http://localhost:3001/getCustomerDetails', {
+            const response = await axios.post('http://35.154.1.99:3001/getCustomerDetails', {
                 CUSTOMER_ID: this.props.customerId,
             });
 
@@ -79,7 +79,7 @@ class Customer extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getCustomerTransactions', {
+            const response = await axios.post('http://35.154.1.99:3001/getCustomerTransactions', {
                 CUSTOMER_ID: this.props.customerId,
             });
 
@@ -120,8 +120,8 @@ class Customer extends Component {
 
         return (
             <Form ref={this.formRef} layout="vertical">
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="NAME"
                             label="Customer Name"
@@ -132,21 +132,21 @@ class Customer extends Component {
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={12}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item name="PHONE_NUMBER" label="Phone Number">
                             <Input placeholder="Enter phone number" style={inputStyle} />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item name="NIC" label="NIC Number">
                             <Input placeholder="Enter NIC number" style={inputStyle} />
                         </Form.Item>
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="COMPANY"
                             label="Company"
@@ -156,8 +156,8 @@ class Customer extends Component {
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item name="ADDRESS" label="Customer Address">
                             <Input.TextArea rows={4} placeholder="Enter customer address" style={inputStyle} />
                         </Form.Item>

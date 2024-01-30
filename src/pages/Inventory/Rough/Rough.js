@@ -14,20 +14,24 @@ import axios from 'axios';
 import RoughTableCard from './RoughTableCard';
 import UpdateItemsForm from "../Items/UpdateItemsForm";
 import ViewItemsForm  from "../Items/ViewItemsForm";
+import { withRouter } from 'react-router-dom';
 
 
 const { Option } = Select;
 
 class Rough extends Component {
+
     constructor(props) {
         super(props);
         this.formRef = React.createRef();
         this.state = {
             loading: false,
+            tableData: [],
             filteredTableData: [],
             isUpdateModalVisible: false,
             isViewModalVisible: false,
             selectedItem: null,
+            code: null,
             tableDataBlueSapphireNatural : [],
             tableDataBlueSapphireGeuda : [],
             tableDataYellowSapphire  : [],
@@ -43,6 +47,8 @@ class Rough extends Component {
             searchItemId: null,
         };
 
+
+
         // Bind methods
         this.handleUpdateShow = this.handleUpdateShow.bind(this);
         this.handleViewShow = this.handleViewShow.bind(this);
@@ -53,11 +59,60 @@ class Rough extends Component {
         this.handleUpdate = this.handleUpdate.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
 
+
     }
 
-    componentDidMount() {
-        this.getAllRough();
+
+
+    async componentDidMount() {
+        await this.getAllRough();
+        this.initialModelOpen();
     }
+
+    initialModelOpen() {
+        const { match: { params } } = this.props;
+        const { code } = params;
+
+        this.setState({ code });
+        console.log('code', code);
+
+        if (code) {
+            console.log('roughId1', code);
+            const lowerCaseRoughId = code.toLowerCase();
+
+            this.state.tableData.forEach(item => {
+                console.log('item.CODE', item.CODE);
+                if (item.CODE.toLowerCase() === lowerCaseRoughId) {
+                    this.handleUpdateShow(item);
+                }
+            });
+        }
+    }
+
+    handlePrint = async (row) => {
+        console.log('row', row);
+        try {
+            const response = await axios.post('http://35.154.1.99:3001/generateQR', {
+                data: row
+            });
+
+            if (response.data.success) {
+                const blob = new Blob([new Uint8Array(atob(response.data.data).split('').map(char => char.charCodeAt(0)))], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                // Removed the line that sets the 'download' attribute
+                link.target = '_blank'; // This line makes it open in a new tab
+                link.click();
+            } else {
+                console.error('Error generating QR:', response.data.message);
+                // Handle error, e.g., display an error message
+            }
+        } catch (error) {
+            console.error('Error generating QR:', error.message);
+            // Handle error, e.g., display an error message
+        }
+    };
 
     handleClear = async () => {
         this.setState({ loading: true });
@@ -79,7 +134,7 @@ class Rough extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchRough', searchData);
+            const response = await axios.post('http://35.154.1.99:3001/searchRough', searchData);
 
 
             if (response.data.success) {
@@ -174,7 +229,7 @@ class Rough extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://localhost:3001/searchRough', searchData);
+            const response = await axios.post('http://35.154.1.99:3001/searchRough', searchData);
 
 
             if (response.data.success) {
@@ -279,7 +334,7 @@ class Rough extends Component {
         console.log('id', id);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deactivateItem', {
+            const response = await axios.post('http://35.154.1.99:3001/deactivateItem', {
                 ITEM_ID_AI: id,
             });
 
@@ -301,7 +356,7 @@ class Rough extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllRough');
+            const response = await axios.post('http://35.154.1.99:3001/getAllRough');
 
             if (response.data.success) {
                 const items = response.data.result;
@@ -439,8 +494,8 @@ class Rough extends Component {
                         }}
                         onFinish={this.handleSearch}
                     >
-                        <Row gutter={[24, 0]}>
-                            <Col xs={6} xl={6}>
+                        <Row gutter={[16, 16]} justify="left" align="top">
+                            <Col xs={24} sm={24} md={24} lg={6}>
                                 <Form.Item name="searchCode">
                                     <Input
                                         placeholder="Search by Code"
@@ -450,7 +505,7 @@ class Rough extends Component {
                                     />
                                 </Form.Item>
                             </Col>
-                            <Col xs={6} xl={6}>
+                            <Col xs={24} sm={24} md={24} lg={6}>
                                 <Form.Item name="searchStatus">
                                     <Select
                                         placeholder="Filter by Status"
@@ -475,7 +530,7 @@ class Rough extends Component {
                                     </Select>
                                 </Form.Item>
                             </Col>
-                            <Col xs={6} xl={6}>
+                            <Col xs={24} sm={24} md={24} lg={6}>
                                 <Form.Item name="searchItemId">
                                     <InputNumber
                                         placeholder="Filter by Item ID"
@@ -485,7 +540,7 @@ class Rough extends Component {
                                     />
                                 </Form.Item>
                             </Col>
-                            <Col xs={6} xl={6}>
+                            <Col xs={24} sm={24} md={24} lg={6}>
                                 <Form.Item>
                                     <Button type="default" htmlType="submit" style={{ marginRight: '8px' }}>
                                         Filter
@@ -502,7 +557,7 @@ class Rough extends Component {
                 {/* Cards and Tables */}
                 <div className="tabled">
                     {this.state.tableDataBlueSapphireNatural.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <RoughTableCard
                                 title="Blue Sapphire - Natural"
@@ -511,13 +566,14 @@ class Rough extends Component {
                                 handleUpdateShow={this.handleUpdateShow}
                                 handleViewShow={this.handleViewShow}
                                 handleDelete={this.handleDelete}
+                                handlePrint={this.handlePrint}
                                 loading={this.state.loading}
                             />
                         </Col>
                     </Row>
                     )}
                     {this.state.tableDataBlueSapphireGeuda.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <RoughTableCard
                                 title="Blue Sapphire - Geuda"
@@ -526,13 +582,14 @@ class Rough extends Component {
                                 handleUpdateShow={this.handleUpdateShow}
                                 handleViewShow={this.handleViewShow}
                                 handleDelete={this.handleDelete}
+                                handlePrint={this.handlePrint}
                                 loading={this.state.loading}
                             />
                         </Col>
                     </Row>
                     )}
                     {this.state.tableDataYellowSapphire.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <RoughTableCard
                                 title="Yellow Sapphire"
@@ -541,13 +598,14 @@ class Rough extends Component {
                                 handleUpdateShow={this.handleUpdateShow}
                                 handleViewShow={this.handleViewShow}
                                 handleDelete={this.handleDelete}
+                                handlePrint={this.handlePrint}
                                 loading={this.state.loading}
                             />
                         </Col>
                     </Row>
                     )}
                     {this.state.tablePinkSapphireNatural.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <RoughTableCard
                                 title="Pink Sapphire - Natural"
@@ -556,13 +614,14 @@ class Rough extends Component {
                                 handleUpdateShow={this.handleUpdateShow}
                                 handleViewShow={this.handleViewShow}
                                 handleDelete={this.handleDelete}
+                                handlePrint={this.handlePrint}
                                 loading={this.state.loading}
                             />
                         </Col>
                     </Row>
                     )}
                     {this.state.tablePurpleSapphireNatural.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <RoughTableCard
                                 title="Purple Sapphire - Natural"
@@ -571,13 +630,14 @@ class Rough extends Component {
                                 handleUpdateShow={this.handleUpdateShow}
                                 handleViewShow={this.handleViewShow}
                                 handleDelete={this.handleDelete}
+                                handlePrint={this.handlePrint}
                                 loading={this.state.loading}
                             />
                         </Col>
                     </Row>
                     )}
                     {this.state.tableVioletSapphire.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <RoughTableCard
                                 title="Violet Sapphire"
@@ -586,13 +646,14 @@ class Rough extends Component {
                                 handleUpdateShow={this.handleUpdateShow}
                                 handleViewShow={this.handleViewShow}
                                 handleDelete={this.handleDelete}
+                                handlePrint={this.handlePrint}
                                 loading={this.state.loading}
                             />
                         </Col>
                     </Row>
                     )}
                     {this.state.tablePadparadschaSapphire.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <RoughTableCard
                                 title="Padparadscha Sapphire"
@@ -601,13 +662,14 @@ class Rough extends Component {
                                 handleUpdateShow={this.handleUpdateShow}
                                 handleViewShow={this.handleViewShow}
                                 handleDelete={this.handleDelete}
+                                handlePrint={this.handlePrint}
                                 loading={this.state.loading}
                             />
                         </Col>
                     </Row>
                     )}
                     {this.state.tableMix.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <RoughTableCard
                                 title="Mix"
@@ -616,13 +678,14 @@ class Rough extends Component {
                                 handleUpdateShow={this.handleUpdateShow}
                                 handleViewShow={this.handleViewShow}
                                 handleDelete={this.handleDelete}
+                                handlePrint={this.handlePrint}
                                 loading={this.state.loading}
                             />
                         </Col>
                     </Row>
                     )}
                     {this.state.tableFancy.length > 0 && (
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <RoughTableCard
                                 title="Fancy"
@@ -631,6 +694,7 @@ class Rough extends Component {
                                 handleUpdateShow={this.handleUpdateShow}
                                 handleViewShow={this.handleViewShow}
                                 handleDelete={this.handleDelete}
+                                handlePrint={this.handlePrint}
                                 loading={this.state.loading}
                             />
                         </Col>

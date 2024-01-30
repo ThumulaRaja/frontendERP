@@ -32,6 +32,13 @@ export default class AddItemsForm extends Component {
       fileList: [],
       gemType: 'Rough',
       customerOptions: [],
+      buyerOptions: [],
+      sellerOptions: [],
+      salesPersonOptions: [],
+      partnerOptions: [],
+      htByOptions: [],
+      cpByOptions: [],
+      preformerOptions: [],
       heatTreatmentGroupOptions: [],
       ReferenceOptions: [],
 
@@ -130,22 +137,74 @@ export default class AddItemsForm extends Component {
   }
 
   async fetchCustomerOptions() {
-    try {
-      const response = await axios.post("http://localhost:3001/getAllCustomers");
-      console.log("response", response);
-      return response.data.result.map((customer) => ({
-        value: customer.CUSTOMER_ID,
-        label: customer.NAME,
-      }));
-    } catch (error) {
-      console.error("Error fetching customer options:", error);
-      return [];
-    }
+        try {
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
+            console.log("response", response);
+
+            // BuyerOptions Filter TYPE = Buyer
+            const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SellerOptions Filter TYPE = Seller
+            const sellerOptions = response.data.result.filter((customer) => customer.TYPE === 'Seller').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SalesPersonOptions Filter TYPE = Sales Person
+            const salesPersonOptions = response.data.result.filter((customer) => customer.TYPE === 'Sales Person').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PartnerOptions Filter TYPE = Partner
+            const partnerOptions = response.data.result.filter((customer) => customer.TYPE === 'Partner').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // HTByOptions Filter TYPE = HT By
+            const htByOptions = response.data.result.filter((customer) => customer.TYPE === 'Heat T').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // CPByOptions Filter TYPE = CP By
+            const cpByOptions = response.data.result.filter((customer) => customer.TYPE === 'C&P').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PreformerOptions Filter TYPE = Preformer
+            const preformerOptions = response.data.result.filter((customer) => customer.TYPE === 'Preformer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+
+            return response.data.result.map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }));
+        } catch (error) {
+            console.error("Error fetching customer options:", error);
+            return [];
+        }
   }
 
   async fetchReferenceOptions() {
     try {
-      const response = await axios.post("http://localhost:3001/getItemsForReference");
+      const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
       console.log("response", response);
       return response.data.result.map((ref) => ({
         value: ref.ITEM_ID_AI,
@@ -159,7 +218,7 @@ export default class AddItemsForm extends Component {
 
   async fetchHTGroupOptions() {
     try {
-      const response = await axios.post("http://localhost:3001/getAllHT");
+      const response = await axios.post("http://35.154.1.99:3001/getAllHT");
       console.log("response", response);
       return response.data.result.map((ht) => ({
         value: ht.HT_ID,
@@ -218,7 +277,7 @@ export default class AddItemsForm extends Component {
 
       console.log("updatedValues", updatedValues);
 
-      const response = await axios.post('http://localhost:3001/addItem', updatedValues);
+      const response = await axios.post('http://35.154.1.99:3001/addItem', updatedValues);
 
       if (response.data.success) {
         message.success('Item added successfully');
@@ -265,7 +324,7 @@ export default class AddItemsForm extends Component {
 
         <>
           <div className="tabled">
-            <Row gutter={[24, 0]}>
+            <Row gutter={[16, 16]} justify="left" align="top">
               <Col xs="24" xl={24}>
                 <Card
                     className="criclebox tablespace mb-24"
@@ -277,8 +336,8 @@ export default class AddItemsForm extends Component {
                       style={{ margin: '20px' }}
                       ref={this.formRef}
                   >
-                    <Row gutter={16}>
-                      <Col span={6}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Gem Type */}
                         <Form.Item
                             name="TYPE"
@@ -299,7 +358,7 @@ export default class AddItemsForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Status */}
                         <Form.Item
                             name="STATUS"
@@ -324,21 +383,21 @@ export default class AddItemsForm extends Component {
                             </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
-                        {/* No of Pieces */}
-                        <Form.Item
-                            name="ITEM_ID"
-                            label="Item ID"
-                            type="number"
-                            rules={[
-                              { required: true, message: 'Please enter Item ID' },
-                            ]}
-                        >
-                            <InputNumber style={inputStyle}  placeholder="Enter ID" />
-                        </Form.Item>
-                      </Col>
+                      {/*<Col xs={24} sm={12} md={8} lg={6}>*/}
+                      {/*  /!* No of Pieces *!/*/}
+                      {/*  <Form.Item*/}
+                      {/*      name="ITEM_ID"*/}
+                      {/*      label="Item ID"*/}
+                      {/*      type="number"*/}
+                      {/*      rules={[*/}
+                      {/*        { required: true, message: 'Please enter Item ID' },*/}
+                      {/*      ]}*/}
+                      {/*  >*/}
+                      {/*      <InputNumber style={inputStyle}  placeholder="Enter ID" />*/}
+                      {/*  </Form.Item>*/}
+                      {/*</Col>*/}
 
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Weight (ct) */}
                         <Form.Item
                             name="WEIGHT"
@@ -348,7 +407,7 @@ export default class AddItemsForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* No of Pieces */}
                         <Form.Item
                             name="PIECES"
@@ -360,7 +419,7 @@ export default class AddItemsForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Date */}
                         <Form.Item
                             name="DATE"
@@ -371,7 +430,7 @@ export default class AddItemsForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Gem Type */}
                         <Form.Item
                             name="POLICY"
@@ -385,7 +444,7 @@ export default class AddItemsForm extends Component {
                             </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* File Upload */}
                         <Form.Item
                             name="PHOTO"
@@ -439,8 +498,8 @@ export default class AddItemsForm extends Component {
 
 
                     {gemType === 'Rough' && (
-                    <Row gutter={16}>
-                      <Col span={24}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         {/* Gem Type */}
                         <Form.Item
                             name="ROUGH_TYPE"
@@ -465,8 +524,8 @@ export default class AddItemsForm extends Component {
 
 
                     {gemType === 'Lots' && (
-                    <Row gutter={16}>
-                        <Col span={12}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                        <Col xs={24} sm={12} md={12} lg={12}>
                           {/* Gem Type */}
                           <Form.Item
                               name="LOT_TYPE"
@@ -480,7 +539,7 @@ export default class AddItemsForm extends Component {
                             </Select>
                           </Form.Item>
                         </Col>
-                      <Col span={12}>
+                      <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item
                             name="REFERENCE_ID_LOTS"
                             label="Reference"
@@ -502,8 +561,8 @@ export default class AddItemsForm extends Component {
                     </Row>
                     )}
                     {gemType === 'Sorted Lots' && (
-                    <Row gutter={16}>
-                      <Col span={24}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         {/* Gem Type */}
                         <Form.Item
                             name="SORTED_LOT_TYPE"
@@ -518,7 +577,7 @@ export default class AddItemsForm extends Component {
                           </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="REFERENCE_ID_LOTS"
                             label="Reference"
@@ -536,7 +595,7 @@ export default class AddItemsForm extends Component {
                             </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="FULL_LOT_COST"
                             label="Full Lot Cost (RS)"
@@ -545,7 +604,7 @@ export default class AddItemsForm extends Component {
                           <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Lot Cost" />
                         </Form.Item>
                       </Col>
-                      <Col span={12}>
+                      <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item
                             name="PERFORMER"
                             label="Performer"
@@ -566,8 +625,8 @@ export default class AddItemsForm extends Component {
                     </Row>
                     )}
                     {gemType === 'Cut and Polished' && (
-                    <Row gutter={16}>
-                      <Col span={24}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         {/* Gem Type */}
                         <Form.Item
                             name="CP_TYPE"
@@ -587,7 +646,7 @@ export default class AddItemsForm extends Component {
                           </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={3}>
+                      <Col xs={24} sm={24} md={24} lg={3}>
                         <Form.Item
                             name="REFERENCE_ID_CP"
                             label="Reference"
@@ -605,7 +664,7 @@ export default class AddItemsForm extends Component {
                             </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={3}>
+                      <Col xs={24} sm={24} md={24} lg={3}>
                         <Form.Item
                             name="TOTAL_COST"
                             label="Total Cost (RS)"
@@ -614,7 +673,7 @@ export default class AddItemsForm extends Component {
                           <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Total Cost" />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="CP_BY"
                             label="Cutting & Polished By"
@@ -624,7 +683,7 @@ export default class AddItemsForm extends Component {
                                         (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                         (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                     }>
-                              {customerOptions.map((option) => (
+                              {this.state.cpByOptions.map((option) => (
                                   <Option key={option.value} value={option.value} title={option.label}>
                                     {option.label}
                                   </Option>
@@ -633,7 +692,7 @@ export default class AddItemsForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="CP_COLOR"
                             label="Color"
@@ -641,7 +700,7 @@ export default class AddItemsForm extends Component {
                           <Input style={inputStyle} placeholder="Enter Color" />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="SHAPE"
                             label="Shape"
@@ -664,8 +723,8 @@ export default class AddItemsForm extends Component {
                     )}
                     <Divider />
 
-                    <Row gutter={16}>
-                      <Col span={3}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={24} md={24} lg={3}>
                         <Form.Item
                             name="IS_HEAT_TREATED"
                             label="Is Heat Treated"
@@ -677,7 +736,7 @@ export default class AddItemsForm extends Component {
                           />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="HT_ID"
                             label="Heat Treatment Group"
@@ -695,7 +754,7 @@ export default class AddItemsForm extends Component {
                           </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={3}>
+                      <Col xs={24} sm={24} md={24} lg={3}>
                         {/* Weight (ct) */}
                         <Form.Item
                             name="WEIGHT_AFTER_HT"
@@ -707,7 +766,7 @@ export default class AddItemsForm extends Component {
                           <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Weight" disabled={!this.state.isHeatTreated} />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="HT_BY"
                             label="Heat Treated By"
@@ -717,7 +776,7 @@ export default class AddItemsForm extends Component {
                                       (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                       (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                   }>
-                            {customerOptions.map((option) => (
+                            {this.state.htByOptions.map((option) => (
                                 <Option key={option.value} value={option.value} title={option.label}>
                                   {option.label}
                                 </Option>
@@ -725,7 +784,7 @@ export default class AddItemsForm extends Component {
                           </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* File Upload */}
                         <Form.Item
                             name="PHOTOS_AFTER_HT"
@@ -778,20 +837,20 @@ export default class AddItemsForm extends Component {
                     </Row>
                     <Divider />
 
-                    <Row gutter={16}>
-                      <Col span={24}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item>
                         <span style={{ fontSize: '15px', fontWeight: 'bold' }}>Buying Details</span>
                         </Form.Item>
                         </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
-                            name="BUYER"
-                            label="Buyer"
+                            name="SELLER"
+                            label="Seller"
                             rules={[
                               {
                                 required: this.state.isTransaction,
-                                message: 'Please enter Buyer',
+                                message: 'Please enter Seller',
                               },
                             ]}
                         >
@@ -800,7 +859,7 @@ export default class AddItemsForm extends Component {
                                       (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                       (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                   }>
-                            {customerOptions.map((option) => (
+                            {this.state.sellerOptions.map((option) => (
                                 <Option key={option.value} value={option.value} title={option.label}>
                                   {option.label}
                                 </Option>
@@ -809,7 +868,7 @@ export default class AddItemsForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={3}>
+                      <Col xs={24} sm={24} md={24} lg={3}>
                         <Form.Item
                             name="COST"
                             label="Cost (RS)"
@@ -824,7 +883,7 @@ export default class AddItemsForm extends Component {
                           <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Cost" />
                         </Form.Item>
                       </Col>
-                      <Col span={3}>
+                      <Col xs={24} sm={24} md={24} lg={3}>
                         <Form.Item
                             name="GIVEN_AMOUNT"
                             label="Amount Given"
@@ -839,7 +898,7 @@ export default class AddItemsForm extends Component {
                           <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Amount" />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Gem Type */}
                         <Form.Item
                             name="PAYMENT_METHOD"
@@ -856,7 +915,7 @@ export default class AddItemsForm extends Component {
                           </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="IS_TRANSACTION"
                             label="Add Buying Datails as a Transaction"
@@ -870,7 +929,7 @@ export default class AddItemsForm extends Component {
                         </Form.Item>
                       </Col>
                     </Row>
-                    <Row gutter={16}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                       <Col span={9}>
                         <Form.Item name="SHARE_HOLDERS" label="Share Holders">
                           <Select style={inputStyle} placeholder="Select Share Holders" mode="multiple" allowClear showSearch
@@ -878,7 +937,7 @@ export default class AddItemsForm extends Component {
                                       (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                       (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                   }>
-                            {customerOptions.map((option) => (
+                            {this.state.partnerOptions.map((option) => (
                                 <Option key={option.value} value={option.value} title={option.label}>
                                   {option.label}
                                 </Option>
@@ -886,7 +945,7 @@ export default class AddItemsForm extends Component {
                           </Select>
                         </Form.Item>
                       </Col>
-                      <Col span={3}>
+                      <Col xs={24} sm={24} md={24} lg={3}>
                         <Form.Item
                             name="SHARE_PERCENTAGE"
                             label="Share Percentage %"
@@ -894,7 +953,7 @@ export default class AddItemsForm extends Component {
                           <InputNumber style={inputStyle} min={0} max={100} placeholder="Enter Share" />
                         </Form.Item>
                       </Col>
-                      <Col span={12}>
+                      <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item
                             name="OTHER_SHARES"
                             label="Other Shares"
@@ -902,7 +961,7 @@ export default class AddItemsForm extends Component {
                           <Input style={inputStyle}  placeholder="Enter Other Shares" />
                         </Form.Item>
                       </Col>
-                      <Col span={24}>
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="COMMENTS"
                             label="Comments"
@@ -910,7 +969,7 @@ export default class AddItemsForm extends Component {
                           <Input.TextArea rows={2} placeholder="Enter comments" />
                         </Form.Item>
                       </Col>
-                      <Col span={24}>
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="EXPENSE_AMOUNT"
                             label="Total Expense Amount"
@@ -923,21 +982,21 @@ export default class AddItemsForm extends Component {
 
                     <Divider/>
 
-                    <Row gutter={16}>
-                      <Col span={24}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item>
                           <span style={{ fontSize: '15px', fontWeight: 'bold' }}>Selling Details</span>
                         </Form.Item>
                       </Col>
 
-                      <Col span={12}>
-                        <Form.Item name="SELLER" label="Seller">
-                          <Select style={inputStyle} placeholder="Select Seller" allowClear showSearch
+                      <Col xs={24} sm={12} md={12} lg={12}>
+                        <Form.Item name="BUYER" label="Buyer">
+                          <Select style={inputStyle} placeholder="Select Buyer" allowClear showSearch
                                   filterOption={(input, option) =>
                                       (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                       (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                   }>
-                            {customerOptions.map((option) => (
+                            {this.state.buyerOptions.map((option) => (
                                 <Option key={option.value} value={option.value} title={option.label}>
                                   {option.label}
                                 </Option>
@@ -946,14 +1005,14 @@ export default class AddItemsForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      <Col span={12}>
+                      <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item name="BEARER" label="Bearer">
                           <Select style={inputStyle} placeholder="Select Bearer" allowClear showSearch
                                   filterOption={(input, option) =>
                                       (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                       (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                   }>
-                            {customerOptions.map((option) => (
+                            {this.state.salesPersonOptions.map((option) => (
                                 <Option key={option.value} value={option.value} title={option.label}>
                                   {option.label}
                                 </Option>
@@ -962,19 +1021,9 @@ export default class AddItemsForm extends Component {
                         </Form.Item>
                       </Col>
 
-                      {/* Expenses, Exp. Amount */}
-                      {/*<Col span={12}>*/}
-                      {/*  <Form.Item*/}
-                      {/*      name="EXPENSES"*/}
-                      {/*      label="Expenses"*/}
-                      {/*  >*/}
-                      {/*    <Input style={inputStyle} placeholder="Enter Expenses" />*/}
-                      {/*  </Form.Item>*/}
-                      {/*</Col>*/}
-
 
                       {/* Date Sold, Sold Amount, Amount Received, Due Amount */}
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="DATE_SOLD"
                             label="Date Sold"
@@ -982,7 +1031,7 @@ export default class AddItemsForm extends Component {
                           <DatePicker style={inputStyle} />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="SOLD_AMOUNT"
                             label="Sold Amount"
@@ -990,7 +1039,7 @@ export default class AddItemsForm extends Component {
                           <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Sold Amount" />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="AMOUNT_RECEIVED"
                             label="Amount Received"
@@ -998,7 +1047,7 @@ export default class AddItemsForm extends Component {
                           <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Amount Received" />
                         </Form.Item>
                       </Col>
-                      <Col span={1}>
+                      <Col xs={24} sm={24} md={24} lg={1}>
                         <Form.Item
                             label=" "
                         >
@@ -1010,7 +1059,7 @@ export default class AddItemsForm extends Component {
                           </Button>
                           </Form.Item>
                       </Col>
-                      <Col span={5}>
+                      <Col xs={24} sm={24} md={24} lg={5}>
                         <Form.Item
                             name="DUE_AMOUNT"
                             label="Due Amount"
@@ -1020,7 +1069,7 @@ export default class AddItemsForm extends Component {
                       </Col>
 
                       {/* Payment ETA - Start, Payment ETA - End, Date Finished */}
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="PAYMENT_ETA_START"
                             label="Payment ETA - Start"
@@ -1028,7 +1077,7 @@ export default class AddItemsForm extends Component {
                           <DatePicker style={inputStyle} />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="PAYMENT_ETA_END"
                             label="Payment ETA - End"
@@ -1036,7 +1085,7 @@ export default class AddItemsForm extends Component {
                           <DatePicker style={inputStyle} />
                         </Form.Item>
                       </Col>
-                      <Col span={6}>
+                      <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
                             name="DATE_FINISHED"
                             label="Date Finished"
@@ -1047,8 +1096,8 @@ export default class AddItemsForm extends Component {
 
                     </Row>
 
-                    <Row gutter={16}>
-                      <Col span={24}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item>
                           <Button type="primary" htmlType="submit">
                             Add Item

@@ -1,4 +1,3 @@
-// Lots.js
 import React, { Component} from 'react';
 import {
     Button, Card,
@@ -11,9 +10,8 @@ import {
     Select, Table, Tooltip
 } from 'antd';
 import axios from 'axios';
-import CashFlowsTableCard from './CashFlowsTableCard';
 import ViewTransactionForm  from "../Commen/ViewTransactionForm";
-import {DeleteOutlined, EyeOutlined, PrinterOutlined} from "@ant-design/icons";
+import {DeleteOutlined, ExclamationCircleOutlined, EyeOutlined, PrinterOutlined} from "@ant-design/icons";
 import Item from "../../GlobalViewModels/Item";
 import Customer from "../../GlobalViewModels/Customer";
 
@@ -22,7 +20,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 
-class CashFlows extends Component {
+class Buying extends Component {
     constructor(props) {
         super(props);
         this.formRef = React.createRef();
@@ -32,9 +30,15 @@ class CashFlows extends Component {
             isUpdateModalVisible: false,
             isViewModalVisible: false,
             selectedItem: null,
-            tableBuying : [],
-            tableSelling  : [],
-            tablePayment : [],
+            tableData: [],
+            customerOptions: [],
+            buyerOptions: [],
+            sellerOptions: [],
+            salesPersonOptions: [],
+            partnerOptions: [],
+            htByOptions: [],
+            cpByOptions: [],
+            preformerOptions: [],
 
 
             searchCode: '',
@@ -46,15 +50,84 @@ class CashFlows extends Component {
         // Bind methods
         this.handleViewShow = this.handleViewShow.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
-        this.getAllCashTransactions = this.getAllCashTransactions.bind(this);
+        this.getAllBuyingTransactions = this.getAllBuyingTransactions.bind(this);
         this.toggleViewModal = this.toggleViewModal.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
         this.showReferenceItem = this.showReferenceItem.bind(this);
         this.showCustomer = this.showCustomer.bind(this);
     }
 
-    componentDidMount() {
-        this.getAllCashTransactions();
+    async fetchCustomerOptions() {
+        try {
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
+            console.log("response", response);
+
+            // BuyerOptions Filter TYPE = Buyer
+            const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SellerOptions Filter TYPE = Seller
+            const sellerOptions = response.data.result.filter((customer) => customer.TYPE === 'Seller').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SalesPersonOptions Filter TYPE = Sales Person
+            const salesPersonOptions = response.data.result.filter((customer) => customer.TYPE === 'Sales Person').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PartnerOptions Filter TYPE = Partner
+            const partnerOptions = response.data.result.filter((customer) => customer.TYPE === 'Partner').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // HTByOptions Filter TYPE = HT By
+            const htByOptions = response.data.result.filter((customer) => customer.TYPE === 'Heat T').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // CPByOptions Filter TYPE = CP By
+            const cpByOptions = response.data.result.filter((customer) => customer.TYPE === 'C&P').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PreformerOptions Filter TYPE = Preformer
+            const preformerOptions = response.data.result.filter((customer) => customer.TYPE === 'Preformer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+
+            return response.data.result.map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }));
+        } catch (error) {
+            console.error("Error fetching customer options:", error);
+            return [];
+        }
+    }
+
+    async componentDidMount() {
+        const customerOptions = await this.fetchCustomerOptions();
+        this.setState({customerOptions});
+
+        this.getAllBuyingTransactions();
     }
 
     showReferenceItem(itemId){
@@ -75,77 +148,9 @@ class CashFlows extends Component {
     }
 
     handleClear = async () => {
-        this.setState({ loading: true });
+        this.getAllBuyingTransactions();
+        this.formRef.current.resetFields();
 
-        try {
-            // Prepare the search criteria
-            const searchData = {
-                code: null,
-                status: null,
-                startDate: null,
-                endDate: null,
-            };
-
-            this.formRef.current.resetFields();
-
-            this.setState({
-                searchCode: null,
-                searchStatus: null,
-                searchStartDate: null,
-                searchEndDate: null,
-            });
-
-            // Make an AJAX request to search for data
-            const response = await axios.post('http://35.154.1.99:3001/searchCash', searchData);
-
-
-            if (response.data.success) {
-                const filteredItems = response.data.result;
-
-                console.log('filteredItems', filteredItems);
-
-                // Categorize filtered items based on CP_TYPE
-                const categorizedTables = {
-                    Buying: [],
-                    Payment: [],
-                    Selling: [],
-                };
-
-                filteredItems.forEach(item => {
-                    const { TYPE } = item;
-                    switch (TYPE) {
-                        case 'Buying':
-                            categorizedTables.Buying.push(item);
-                            break;
-                        case 'Selling':
-                            categorizedTables.Selling.push(item);
-                            break;
-                        case 'B Payment':
-                            categorizedTables.Payment.push(item);
-                            break;
-                        case 'S Payment':
-                            categorizedTables.Payment.push(item);
-                            break;
-                        default:
-                            break;
-                    }
-                });
-
-                this.setState({
-                    tableBuying: categorizedTables.Buying,
-                    tableSelling: categorizedTables.Selling,
-                    tablePayment: categorizedTables.Payment,
-                });
-            } else {
-                console.log('Error:', response.data.message);
-            }
-        } catch (error) {
-            console.log('Error:', error.message);
-        } finally {
-            this.setState({
-                loading: false,
-            });
-        }
     };
 
     handleSearch = async () => {
@@ -168,7 +173,7 @@ class CashFlows extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://35.154.1.99:3001/searchCash', searchData);
+            const response = await axios.post('http://35.154.1.99:3001/searchBuying', searchData);
 
 
             if (response.data.success) {
@@ -179,38 +184,8 @@ class CashFlows extends Component {
 
                 this.formRef.current.resetFields();
 
-                // Categorize filtered items based on TYPE
-                const categorizedTables = {
-                    Buying: [],
-                    Payment: [],
-                    Selling: [],
-                };
+                this.state.tableData = filteredItems;
 
-                filteredItems.forEach(item => {
-                    const { TYPE } = item;
-                    switch (TYPE) {
-                        case 'Buying':
-                            categorizedTables.Buying.push(item);
-                            break;
-                        case 'Selling':
-                            categorizedTables.Selling.push(item);
-                            break;
-                        case 'B Payment':
-                            categorizedTables.Payment.push(item);
-                            break;
-                        case 'S Payment':
-                            categorizedTables.Payment.push(item);
-                            break;
-                        default:
-                            break;
-                    }
-                });
-
-                this.setState({
-                    tableBuying: categorizedTables.Buying,
-                    tablePayment: categorizedTables.Payment,
-                    tableSelling: categorizedTables.Selling,
-                });
             } else {
                 console.log('Error:', response.data.message);
             }
@@ -248,7 +223,7 @@ class CashFlows extends Component {
             if (response.data.success) {
                 message.success('Transaction deleted successfully');
                 // Refresh the table
-                await this.getAllCashTransactions();
+                await this.getAllBuyingTransactions();
             } else {
                 message.error('Failed to delete customer');
             }
@@ -285,76 +260,17 @@ class CashFlows extends Component {
 
 
 
-    deletePayment = async (id ,paymentAmount , amountSettled , dueAmount,referenceTransaction) => {
-        console.log('id', id);
-        try {
-            // Make an API call to deactivate the customer
-            const response = await axios.post('http://35.154.1.99:3001/deletePayment', {
-                TRANSACTION_ID: id,
-                PAYMENT_AMOUNT: paymentAmount,
-                AMOUNT_SETTLED: amountSettled,
-                DUE_AMOUNT: dueAmount,
-                REFERENCE_TRANSACTION: referenceTransaction,
-            });
-
-            if (response.data.success) {
-                message.success('Payment deleted successfully');
-                // Refresh the table
-                await this.getAllCashTransactions();
-            } else {
-                message.error('Failed to delete payment');
-            }
-        } catch (error) {
-            console.error('Error deleting payment:', error);
-            message.error('Internal server error');
-        }
-    }
-
-
-    async getAllCashTransactions() {
+    async getAllBuyingTransactions() {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getAllCashTransactions');
+            const response = await axios.post('http://35.154.1.99:3001/getAllBuyingTransactions');
 
             if (response.data.success) {
                 const items = response.data.result;
                 console.log('items', items);
 
-
-                // Categorize items based on TYPE
-                const categorizedTables = {
-                    Buying: [],
-                    Payment: [],
-                    Selling: [],
-                };
-
-                items.forEach(item => {
-                    const { TYPE } = item;
-                    switch (TYPE) {
-                        case 'Buying':
-                            categorizedTables.Buying.push(item);
-                            break;
-                        case 'B Payment':
-                            categorizedTables.Payment.push(item);
-                            break;
-                        case 'S Payment':
-                            categorizedTables.Payment.push(item);
-                            break;
-                        case 'Selling':
-                            categorizedTables.Selling.push(item);
-                            break;
-                        default:
-                            break;
-                    }
-                });
-
-                this.setState({
-                    tableBuying: categorizedTables.Buying,
-                    tablePayment: categorizedTables.Payment,
-                    tableSelling: categorizedTables.Selling,
-                });
-                console.log('tablePayment', this.state.tablePayment);
+                this.state.tableData = items;
             } else {
                 console.log('Error:', response.data.message);
             }
@@ -372,6 +288,49 @@ class CashFlows extends Component {
             isViewModalVisible: !this.state.isViewModalVisible,
             selectedItem: null,
         });
+    }
+
+    filterDue = async () => {
+        this.setState({ loading: true });
+        await this.getAllBuyingTransactions();
+        let filteredDueItems = [];
+
+        this.state.tableData.map((item) => {
+            if(item.DUE === true){
+                filteredDueItems.push(item);
+            }
+        }
+        );
+        this.state.tableData = filteredDueItems;
+        this.setState({ loading: false });
+
+    }
+
+    filterByShareholder = async (value) => {
+        this.setState({ loading: true });
+        try {
+            const response = await axios.post('http://35.154.1.99:3001/filterByShareholderBuying', {
+                shareholder: value,
+            });
+
+            if (response.data.success) {
+                const items = response.data.result;
+                console.log('items', items);
+                this.state.tableData = items;
+            }
+            else {
+                this.state.tableData = [];
+            }
+        }
+        catch (error) {
+            console.log('Error:', error.message);
+            this.state.tableData = [];
+        }
+        finally {
+            this.setState({
+                loading: false,
+            });
+        }
     }
 
 
@@ -397,6 +356,35 @@ class CashFlows extends Component {
             color: '#FFFFFF',
             alignItems: 'center',
             justifyContent: 'center',
+        };
+
+        const showDeleteAllPaymentsConfirm = (itemId) => {
+            Modal.confirm({
+                title: 'Do you want to delete the transaction with its all payments?',
+                icon: <ExclamationCircleOutlined />,
+                width: '600px',
+                content: (
+                    <div>
+                        'This action will permanently delete the transaction and all associated payments.'
+                        <Button
+                            type="primary"
+                            style={{ float: 'right', marginTop: '20px' }}
+                            onClick={() => { this.handleDelete(itemId, true); Modal.destroyAll(); }}
+                        >
+                            Yes, Delete All Payments
+                        </Button>
+                        <Button
+                            danger
+                            style={{ float: 'left', marginTop: '20px' }}
+                            onClick={() => { this.handleDelete(itemId, false); Modal.destroyAll(); }}
+                        >
+                            Only Delete Transaction
+                        </Button>
+                    </div>
+                ),
+                footer: null,
+                closable: true,
+            });
         };
         return (
             <>
@@ -425,25 +413,14 @@ class CashFlows extends Component {
                             <Col xs={24} sm={24} md={24} lg={6}>
                                 <Form.Item name="searchStatus">
                                     <Select
-                                        placeholder="Filter by Status"
+                                        placeholder="Filter by Method"
                                         onChange={(value) => this.setState({ searchStatus: value })}
                                         style={{ width: '100%'}}
                                         allowClear
                                         showSearch
                                     >
-                                        <Option value="Working">Working</Option>
-                                        <Option value="Treatment">Treatment</Option>
-                                        <Option value="Sold">Sold</Option>
-                                        <Option value="Finished">Finished</Option>
-                                        <Option value="Stuck">Stuck</Option>
-                                        <Option value="With Seller">With Seller</Option>
-                                        <Option value="Cutting">Cutting</Option>
-                                        <Option value="Ready for Selling">Ready for Selling</Option>
-                                        <Option value="Heat Treatment">Heat Treatment</Option>
-                                        <Option value="Electric Treatment">Electric Treatment</Option>
-                                        <Option value="C&P">C&P</Option>
-                                        <Option value="Preformed">Preformed</Option>
-                                        <Option value="Added to a lot">Added to a lot</Option>
+                                        <Option value="Cash">Cash</Option>
+                                        <Option value="Bank">Bank</Option>
                                     </Select>
                                 </Form.Item>
                             </Col>
@@ -465,74 +442,46 @@ class CashFlows extends Component {
                                     <Button type="default" htmlType="submit" style={{ marginRight: '8px' }}>
                                         Filter
                                     </Button>
+                                    <Button type="primary" onClick={this.filterDue} style={{ marginRight: '8px' }}>
+                                        Filter Due
+                                    </Button>
                                     <Button type="default" danger onClick={this.handleClear} style={{ marginRight: '8px' }}>
                                         Clear
                                     </Button>
                                 </Form.Item>
                             </Col>
                         </Row>
+                        <Row gutter={[16, 16]} justify="left" align="top">
+                            <Col xs={24} sm={24} md={24} lg={6}>
+                                <Form.Item
+                                    name="shareholder"
+                                >
+                                    <Select placeholder="Select Share Holder" allowClear showSearch onChange={this.filterByShareholder}
+                                            filterOption={(input, option) =>
+                                                (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
+                                                (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
+                                            }>
+                                        {this.state.customerOptions.map((option) => (
+                                            <Option key={option.value} value={option.value} title={option.label}>
+                                                {option.label}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                        </Row>
                     </Form>
+
                 </div>
 
                 {/* Cards and Tables */}
                 <div className="tabled">
-                    {this.state.tableBuying.length > 0 && (
-                    <Row gutter={[16, 16]} justify="left" align="top">
-                        <Col xs="24" xl={24}>
-                            <CashFlowsTableCard
-                                title="Buying"
-                                backgroundColor="#E2445C"
-                                dataSource={this.state.tableBuying}
-                                handleUpdateShow={this.handleUpdateShow}
-                                handleViewShow={this.handleViewShow}
-                                handlePrint={this.handlePrint}
-                                handleDelete={this.handleDelete}
-                                showReferenceItem={this.showReferenceItem}
-                                showCustomer={this.showCustomer}
-                                loading={this.state.loading}
-                            />
-                        </Col>
-                    </Row>
-                    )}
-                    {this.state.tableSelling.length > 0 && (
-                    <Row gutter={[16, 16]} justify="left" align="top">
-                        <Col xs="24" xl={24}>
-                            <CashFlowsTableCard
-                                title="Selling"
-                                backgroundColor="#579AFA"
-                                dataSource={this.state.tableSelling}
-                                handleUpdateShow={this.handleUpdateShow}
-                                handleViewShow={this.handleViewShow}
-                                handlePrint={this.handlePrint}
-                                handleDelete={this.handleDelete}
-                                showReferenceItem={this.showReferenceItem}
-                                showCustomer={this.showCustomer}
-                                loading={this.state.loading}
-                            />
-                        </Col>
-                    </Row>
-                    )}
-                    {this.state.tablePayment.length > 0 && (
                     <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <Card
                                 bordered={false}
                                 className="criclebox tablespace mb-24"
-                                title={
-                                    <button
-                                        style={{
-                                            color: '#FFFFFF',
-                                            background: `#52c41a`,
-                                            border: 'none',
-                                            borderRadius: '5px',
-                                            padding: '8px 16px',
-                                            cursor: 'default',
-                                        }}
-                                        onClick={() => {}}
-                                    >
-                                        Payment
-                                    </button>
-                                }
+                                title='Buyings'
                             >
                                 <div className="table-responsive">
                                     <Table
@@ -545,19 +494,17 @@ class CashFlows extends Component {
                                                 title: 'Transaction Code',
                                                 dataIndex: 'CODE',
                                                 render: (text, record) => (
-                                                    <span>
-                                                        <div>Code : {record.CODE}</div>
-                                                        {record.REF_CODE.length > 0 ? (
-                                                        <div>Ref Code {record.REF_CODE[0].REF_CODE}</div>
-                                                        ): (
-                                                            <div>Ref Code : N/A</div>
-                                                        )}
-                                                    </span>
+                                                    record.DUE === true ? (
+                                                        <span style={{ color: 'red' }}>{record.CODE} - {record.NO_OF_LATE_DAYS} Days Late</span>
+                                                    ) : (
+                                                        <span>{record.CODE}</span>
+                                                    )
                                                 ),
                                             },
+
                                             {
-                                                title: 'Status',
-                                                dataIndex: 'STATUS',
+                                                title: 'Method',
+                                                dataIndex: 'METHOD',
                                             },
                                             {
                                                 title: 'Date',
@@ -582,48 +529,34 @@ class CashFlows extends Component {
                                                 title: 'Customer Name',
                                                 dataIndex: 'C_NAME',
                                                 render: (text, record) => (
-                                                    <Button type="default" style={{ height: 'auto' , width: '100%' }} onClick={() => this.showCustomer(record.CUSTOMER_ID)}>
+                                                    <Button type="default" style={{ height: 'auto'  }} onClick={() => this.showCustomer(record.CUSTOMER_ID)}>
                                 <span>
                 <div>{record.C_NAME}</div>
-                <div>{record.PHONE_NUMBER}</div>
-                <div>({record.COMPANY})</div>
             </span>
                                                     </Button>
                                                 ),
                                             },
                                             {
-                                                title: 'Payment',
-                                                dataIndex: 'PAYMENT_AMOUNT',
-                                                render: (text, record) => {
-                                                    return (
-                                                        <InputNumber readOnly
-                                                                     defaultValue={text}
-                                                                     formatter={(value) =>
-                                                                         `Rs. ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                                                                     }
-                                                                     parser={(value) => value.replace(/\Rs.\s?|(,*)/g, '')}
-                                                        />
-                                                    );
-                                                },
-                                            },
-                                            {
                                                 title: 'Amount',
                                                 dataIndex: 'AMOUNT',
                                                 render: (text, record) => (
-                                                    <span>
-            {record.REF_CODE.length > 0 ? (
-                <>
-                    <div>Amount: Rs. {record.REF_CODE[0].REF_AMOUNT}</div>
-                    <div style={{ color: 'green' }}>Amount Settled: Rs. {record.REF_CODE[0].REF_AMOUNT_SETTLED}</div>
-                    <div style={{ color: 'red' }}>Due Amount: Rs. {record.REF_CODE[0].REF_DUE_AMOUNT}</div>
-                </>
-            ) : (
-                <div>Amount: N/A</div>
-            )}
-        </span>
+                                                    <div>Rs. {record.AMOUNT}</div>
                                                 ),
                                             },
-
+                                            {
+                                                title: 'Settled',
+                                                dataIndex: 'AMOUNT_SETTLED',
+                                                render: (text, record) => (
+                                                    <div style={{ color: 'green' }}>Rs. {record.AMOUNT_SETTLED}</div>
+                                                ),
+                                            },
+                                            {
+                                                title: 'Due',
+                                                dataIndex: 'DUE_AMOUNT',
+                                                render: (text, record) => (
+                                                    <div style={{ color: 'red' }}>Rs. {record.DUE_AMOUNT}</div>
+                                                ),
+                                            },
                                             {
                                                 title: 'Action',
                                                 width: '120px',
@@ -652,14 +585,14 @@ class CashFlows extends Component {
                         onClick={() => this.handlePrint(row)}
                     />
                   </Tooltip>
-                                                        <Divider
-                                                            type="vertical"
-                                                            style={{ height: '50px', display: 'flex', alignItems: 'center' }}
-                                                        />
+                  <Divider
+                      type="vertical"
+                      style={{ height: '50px', display: 'flex', alignItems: 'center' }}
+                  />
                   <Tooltip title="Delete">
                     <Popconfirm
-                        title={`Are you sure you want to delete this payment?`}
-                        onConfirm={() => this.deletePayment(row.TRANSACTION_ID,row.PAYMENT_AMOUNT, row.AMOUNT_SETTLED,row.DUE_AMOUNT,row.REFERENCE_TRANSACTION)}
+                        title={`Are you sure you want to delete this ?`}
+                        onConfirm={() => showDeleteAllPaymentsConfirm(row.TRANSACTION_ID)}
                         okText="Yes"
                         cancelText="No"
                     >
@@ -672,20 +605,59 @@ class CashFlows extends Component {
     />
 </Popconfirm>
                   </Tooltip>
-
                 </span>
                                                 ),
                                             },
                                         ]}
-                                        dataSource={this.state.tablePayment}
-                                        loading={this.state.loading}
+                                        dataSource={this.state.tableData}
                                         pagination={true}
+                                        loading={this.state.loading}
+                                        expandedRowRender={(record) => (
+                                            record.PAYMENTS && record.PAYMENTS.length > 0 ? (
+                                                <Table
+                                                    size="small"
+                                                    rowKey="TRANSACTION_ID"
+                                                    columns={[
+                                                        {
+                                                            title: 'Transaction Code',
+                                                            dataIndex: 'CODE',
+                                                        },
+                                                        {
+                                                            title: 'Status',
+                                                            dataIndex: 'STATUS',
+                                                        },
+                                                        {
+                                                            title: 'Date',
+                                                            dataIndex: 'DATE',
+                                                            render: (row) => (
+                                                                <span> {new Date(row).toLocaleDateString()}</span>
+                                                            ),
+                                                        },
+                                                        {
+                                                            title: 'Method',
+                                                            dataIndex: 'METHOD'
+                                                        },
+                                                        {
+                                                            title: 'Amount',
+                                                            dataIndex: 'PAYMENT_AMOUNT'
+                                                        },
+                                                        {
+                                                            title: 'Note',
+                                                            dataIndex: 'COMMENTS'
+                                                        },
+                                                    ]
+                                                    }
+                                                    dataSource={record.PAYMENTS}
+                                                    pagination={false}
+                                                >
+                                                </Table>
+                                            ) : null
+                                        )}
                                     />
                                 </div>
                             </Card>
                         </Col>
                     </Row>
-                    )}
                 </div>
 
                 {/* View Transaction Modal */}
@@ -739,4 +711,4 @@ class CashFlows extends Component {
     }
 }
 
-export default CashFlows;
+export default Buying;

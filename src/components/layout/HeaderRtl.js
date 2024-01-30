@@ -273,7 +273,7 @@ function Header({
       <div className="setting-drwer" onClick={showDrawer}>
         {setting}
       </div>
-      <Row gutter={[24, 0]}>
+      <Row gutter={[16, 16]} justify="left" align="top">
         <Col span={24} md={6}>
           <Breadcrumb>
             <Breadcrumb.Item>

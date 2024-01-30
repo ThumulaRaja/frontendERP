@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form, Input, Button, Col, Row, message} from 'antd';
+import {Form, Input, Button, Col, Row, message, Select} from 'antd';
 import axios from "axios";
 import Cookies from 'js-cookie';
 
@@ -25,7 +25,7 @@ class AddCustomerForm extends React.Component {
                 CREATED_BY: USER_ID,
             };
 
-            const response = await axios.post('http://localhost:3001/addCustomer', updatedValues);
+            const response = await axios.post('http://35.154.1.99:3001/addCustomer', updatedValues);
 
             if (response.data.success) {
                 message.success('Customer added successfully');
@@ -51,8 +51,8 @@ class AddCustomerForm extends React.Component {
     render() {
         return (
             <Form ref={this.formRef} layout="vertical" onFinish={this.handleSubmit}>
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="NAME"
                             label="Customer Name"
@@ -63,8 +63,8 @@ class AddCustomerForm extends React.Component {
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={12}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item
                             name="PHONE_NUMBER"
                             label="Phone Number"
@@ -72,7 +72,7 @@ class AddCustomerForm extends React.Component {
                             <Input placeholder="Enter a phone number" />
                         </Form.Item>
                     </Col>
-                    <Col span={12}>
+                    <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item
                             name="NIC"
                             label="NIC Number"
@@ -82,8 +82,30 @@ class AddCustomerForm extends React.Component {
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={24}>
+
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={12}>
+                        <Form.Item
+                            name="TYPE"
+                            label="Customer Type"
+                            initialValue="Seller"  // Corrected typo here
+                        >
+                            <Select
+                                placeholder="Select a customer type"
+                            >
+                                <Select.Option value="Seller">Seller</Select.Option>
+                                <Select.Option value="Buyer">Buyer</Select.Option>
+                                <Select.Option value="Sales Person">Sales Person</Select.Option>
+                                <Select.Option value="Partner">Partner</Select.Option>
+                                <Select.Option value="Performer">Performer</Select.Option>  {/* Corrected typo here */}
+                                <Select.Option value="C&P">C&P</Select.Option>
+                                <Select.Option value="Electric">Electric</Select.Option>
+                                <Select.Option value="Heat T">Heat T</Select.Option>
+                            </Select>
+                        </Form.Item>
+
+                    </Col>
+                    <Col xs={24} sm={24} md={24} lg={12}>
                         <Form.Item
                             name="COMPANY"
                             label="Company"
@@ -93,8 +115,8 @@ class AddCustomerForm extends React.Component {
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="ADDRESS"
                             label="Customer Address"
@@ -104,8 +126,8 @@ class AddCustomerForm extends React.Component {
                     </Col>
                 </Row>
 
-                <Row gutter={16}>
-                    <Col span={24}>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
                                 Add Customer

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Card, Row, Col, Form, Input, Button, message, Upload, Modal} from "antd";
+import {Card, Row, Col, Form, Input, Button, message, Upload, Modal, Select} from "antd";
 import Password from "antd/es/input/Password";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -90,7 +90,7 @@ export default class SignUp extends Component {
 
 
       // Check if the email and username are already in use
-      const checkResponse = await axios.post('http://localhost:3001/checkEmailUsername', { EMAIL, USERNAME });
+      const checkResponse = await axios.post('http://35.154.1.99:3001/checkEmailUsername', { EMAIL, USERNAME });
 
       if (checkResponse.data.used) {
         // Either email or username is already in use
@@ -115,7 +115,7 @@ export default class SignUp extends Component {
         PHOTO: this.state.imgBBLink2,
       };
 
-      const response = await axios.post('http://localhost:3001/addUser', updatedValues);
+      const response = await axios.post('http://35.154.1.99:3001/addUser', updatedValues);
 
       if (response.data.success) {
         message.success('User added successfully');
@@ -137,7 +137,7 @@ export default class SignUp extends Component {
     return (
         <>
           <div className="tabled">
-            <Row gutter={[24, 0]}>
+            <Row gutter={[16, 16]} justify="left" align="top">
               <Col xs="24" xl={24}>
                 <Card
                     bordered={false}
@@ -150,8 +150,8 @@ export default class SignUp extends Component {
                       style={{ margin: '20px' }}
                       ref={this.formRef}
                   >
-                    <Row gutter={16}>
-                      <Col span={21}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col span={12}>
                         <Form.Item
                             name="NAME"
                             label="Name"
@@ -163,7 +163,26 @@ export default class SignUp extends Component {
                           }} />
                         </Form.Item>
                       </Col>
-                      <Col span={3}>
+                        <Col span={9}>
+                            <Form.Item
+                                name="ROLE"
+                                label="Role"
+                                initialValue="USER"
+                                rules={[{ required: true, message: 'Please enter a role' }]}
+                            >
+                              <Select
+                                    placeholder="Select a role"
+                                    style={{
+                                        borderRadius: '6px',
+                                        height: '50px',
+                                    }}
+                                >
+                                    <Select.Option value="ADMIN">Admin</Select.Option>
+                                    <Select.Option value="USER">User</Select.Option>
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                      <Col xs={24} sm={24} md={24} lg={3}>
                           {/* File Upload */}
                           <Form.Item
                               name="PHOTO"
@@ -212,8 +231,8 @@ export default class SignUp extends Component {
                           </Form.Item>
                         </Col>
                     </Row>
-                    <Row gutter={16}>
-                      <Col span={12}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item
                             name="USERNAME"
                             label="User Name"
@@ -225,7 +244,7 @@ export default class SignUp extends Component {
                           }} />
                         </Form.Item>
                       </Col>
-                      <Col span={12}>
+                      <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item
                             name="PASSWORD"
                             label="Password"
@@ -241,8 +260,8 @@ export default class SignUp extends Component {
                         </Form.Item>
                       </Col>
                     </Row>
-                    <Row gutter={16}>
-                      <Col span={24}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="EMAIL"
                             label="Email Address"
@@ -255,8 +274,8 @@ export default class SignUp extends Component {
                         </Form.Item>
                       </Col>
                     </Row>
-                    <Row gutter={16}>
-                      <Col span={24}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
+                      <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item>
                           <Button type="primary" htmlType="submit">
                             Register User

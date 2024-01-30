@@ -103,8 +103,8 @@ let CashFlowsTableCard = ({
                             dataIndex: 'CODE',
                         },
                         {
-                            title: 'Status',
-                            dataIndex: 'STATUS',
+                            title: 'Method',
+                            dataIndex: 'METHOD',
                         },
                         {
                             title: 'Date',
@@ -112,10 +112,6 @@ let CashFlowsTableCard = ({
                             render: (row) => (
                                 <span> {new Date(row).toLocaleDateString()}</span>
                             ),
-                        },
-                        {
-                            title: 'Reference Item',
-                            dataIndex: 'ITEM_CODE',
                         },
                         {
                             title: 'Reference Item',
@@ -133,39 +129,47 @@ let CashFlowsTableCard = ({
                             title: 'Customer Name',
                             dataIndex: 'C_NAME',
                             render: (text, record) => (
-                                <Button type="default" style={{ height: 'auto' , width: '100%' }} onClick={() => showCustomer(record.CUSTOMER_ID)}>
+                                <Button type="default" style={{ height: 'auto'  }} onClick={() => showCustomer(record.CUSTOMER_ID)}>
                                 <span>
                 <div>{record.C_NAME}</div>
-                <div>{record.PHONE_NUMBER}</div>
-                <div>({record.COMPANY})</div>
             </span>
                                 </Button>
                             ),
                         },
-                        {
-                            title: 'Initial Payment',
-                            dataIndex: 'PAYMENT_AMOUNT',
-                            render: (text, record) => {
-                                return (
-                                    <InputNumber readOnly
-                                                 defaultValue={text}
-                                                 formatter={(value) =>
-                                                     `Rs. ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                                                 }
-                                                 parser={(value) => value.replace(/\Rs.\s?|(,*)/g, '')}
-                                    />
-                                );
-                            },
-                        },
+                        // {
+                        //     title: 'Initial Payment',
+                        //     dataIndex: 'PAYMENT_AMOUNT',
+                        //     render: (text, record) => {
+                        //         return (
+                        //             <InputNumber readOnly
+                        //                          defaultValue={text}
+                        //                          formatter={(value) =>
+                        //                              `Rs. ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                        //                          }
+                        //                          parser={(value) => value.replace(/\Rs.\s?|(,*)/g, '')}
+                        //             />
+                        //         );
+                        //     },
+                        // },
                         {
                             title: 'Amount',
                             dataIndex: 'AMOUNT',
                             render: (text, record) => (
-                                <span>
-                <div>Amount: Rs. {record.AMOUNT}</div>
-                <div style={{ color: 'green' }}>Amount Settled: Rs. {record.AMOUNT_SETTLED}</div>
-                <div style={{ color: 'red' }}>Amount Due: Rs. {record.DUE_AMOUNT}</div>
-            </span>
+                <div>Rs. {record.AMOUNT}</div>
+                            ),
+                        },
+                        {
+                            title: 'Settled',
+                            dataIndex: 'AMOUNT_SETTLED',
+                            render: (text, record) => (
+                <div style={{ color: 'green' }}>Rs. {record.AMOUNT_SETTLED}</div>
+                            ),
+                        },
+                        {
+                            title: 'Due',
+                            dataIndex: 'DUE_AMOUNT',
+                            render: (text, record) => (
+                <div style={{ color: 'red' }}>Rs. {record.DUE_AMOUNT}</div>
                             ),
                         },
                         {

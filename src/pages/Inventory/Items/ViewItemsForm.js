@@ -15,8 +15,17 @@ import {
 } from "antd";
 import axios from "axios";
 import moment from 'moment';
-import {DeleteOutlined, EditOutlined, ExclamationCircleOutlined, EyeOutlined, PrinterOutlined} from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    EditOutlined,
+    ExclamationCircleOutlined,
+    EyeOutlined,
+    PlusOutlined,
+    PrinterOutlined
+} from "@ant-design/icons";
 import ViewTransactionForm  from "../../Transaction/Commen/ViewTransactionForm";
+import AddCutPolish from '../../Operations/CutPolish/AddCutPolish';
+import Cookies from "js-cookie";
 
 const { Option } = Select;
 
@@ -29,13 +38,22 @@ class ViewItemsForm extends Component {
             fileList: [],
             gemType: this.props.initialValues.TYPE,
             customerOptions: [],
+            buyerOptions: [],
+            sellerOptions: [],
+            salesPersonOptions: [],
+            partnerOptions: [],
+            htByOptions: [],
+            cpByOptions: [],
+            preformerOptions: [],
             heatTreatmentGroupOptions: [],
             ReferenceOptions: [],
             tableTransaction: [],
+            item_id: this.props.initialValues.ITEM_ID_AI,
             isViewModalVisible: false,
 
             enlargedImageVisible: false,
             enlargedImageVisibleHT: false,
+            isAddCustomerModalVisible: false,
 
 
             fileList1: [],  // For the first photo uploader
@@ -52,6 +70,7 @@ class ViewItemsForm extends Component {
         this.getAllTransactions();
         this.handleViewShow = this.handleViewShow.bind(this);
         this.toggleViewModal = this.toggleViewModal.bind(this);
+        this.toggleAddCustomerModal = this.toggleAddCustomerModal.bind(this);
     }
 
     formRef = React.createRef();
@@ -74,7 +93,7 @@ class ViewItemsForm extends Component {
 
         try {
             let id = this.props.initialValues.ITEM_ID_AI;
-            const response = await axios.post('http://localhost:3001/getAllTransactions', { id });
+            const response = await axios.post('http://35.154.1.99:3001/getAllTransactions', { id });
 
             if (response.data.success) {
                 const items = response.data.result;
@@ -118,8 +137,60 @@ class ViewItemsForm extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             console.log("response", response);
+
+            // BuyerOptions Filter TYPE = Buyer
+            const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SellerOptions Filter TYPE = Seller
+            const sellerOptions = response.data.result.filter((customer) => customer.TYPE === 'Seller').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // SalesPersonOptions Filter TYPE = Sales Person
+            const salesPersonOptions = response.data.result.filter((customer) => customer.TYPE === 'Sales Person').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PartnerOptions Filter TYPE = Partner
+            const partnerOptions = response.data.result.filter((customer) => customer.TYPE === 'Partner').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // HTByOptions Filter TYPE = HT By
+            const htByOptions = response.data.result.filter((customer) => customer.TYPE === 'Heat T').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // CPByOptions Filter TYPE = CP By
+            const cpByOptions = response.data.result.filter((customer) => customer.TYPE === 'C&P').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // PreformerOptions Filter TYPE = Preformer
+            const preformerOptions = response.data.result.filter((customer) => customer.TYPE === 'Preformer').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -132,7 +203,7 @@ class ViewItemsForm extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getItemsForReference");
+            const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
             console.log("response", response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -146,7 +217,7 @@ class ViewItemsForm extends Component {
 
     async fetchHTGroupOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllHT");
+            const response = await axios.post("http://35.154.1.99:3001/getAllHT");
             console.log("response", response);
             return response.data.result.map((ht) => ({
                 value: ht.HT_ID,
@@ -168,7 +239,7 @@ class ViewItemsForm extends Component {
         console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
+            const response = await axios.post('http://35.154.1.99:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -195,8 +266,27 @@ class ViewItemsForm extends Component {
         console.log('selectedItem', this.state.selectedItem);
     }
 
+    toggleAddCustomerModal() {
+        this.setState({
+            isAddCustomerModalVisible: !this.state.isAddCustomerModalVisible,
+        });
+    }
+
 
     render() {
+        let rememberedUser = Cookies.get('rememberedUser');
+
+        let ROLE1 = "USER";
+
+        if (rememberedUser) {
+            rememberedUser = JSON.parse(rememberedUser);
+            const { ROLE } = rememberedUser;
+            ROLE1 = ROLE;
+        }
+        else{
+            Cookies.remove('rememberedUser');
+            window.location.href = '/';
+        }
 
         const inputStyle = {
             width: '100%',
@@ -248,19 +338,26 @@ class ViewItemsForm extends Component {
         return (
             <>
                 <div className="tabled">
-                    <Row gutter={[24, 0]}>
+                    <Row gutter={[16, 16]} justify="left" align="top">
                         <Col xs="24" xl={24}>
                             <Card
                                 className="criclebox tablespace mb-24"
                                 title={this.props.initialValues.CODE}
+                                extra={this.props.initialValues.TYPE === 'Rough' && this.props.initialValues.STATUS !== 'C&P' && (
+                                    <div>
+                                        <Button className="primary" onClick={this.toggleAddCustomerModal}>
+                                            <PlusOutlined /> Add Cut & Polish
+                                        </Button>
+                                    </div>
+                                )}
                             >
                                 <Form
                                     layout="vertical"
                                     style={{ margin: '20px' }}
                                     ref={this.formRef}
                                 >
-                                    <Row gutter={16}>
-                                        <Col span={6}>
+                                    <Row gutter={[16, 16]} justify="left" align="top">
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             {/* No of Pieces */}
                                             <Form.Item
                                                 name="CODE"
@@ -271,7 +368,7 @@ class ViewItemsForm extends Component {
                                                 <Input style={inputStyle}  placeholder="Enter ID"/>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             {/* Gem Type */}
                                             <Form.Item
                                                 name="TYPE"
@@ -292,7 +389,7 @@ class ViewItemsForm extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             {/* Status */}
                                             <Form.Item
                                                 name="STATUS"
@@ -317,22 +414,22 @@ class ViewItemsForm extends Component {
                                                 </Select>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={3}>
-                                            {/* No of Pieces */}
-                                            <Form.Item
-                                                name="ITEM_ID"
-                                                label="Item ID"
-                                                type="number"
-                                                initialValue={this.props.initialValues.ITEM_ID}
-                                                rules={[
-                                                    { required: true, message: 'Please enter Item ID' },
-                                                ]}
-                                            >
-                                                <InputNumber style={inputStyle}  placeholder="Enter ID"/>
-                                            </Form.Item>
-                                        </Col>
+                                        {/*<Col xs={24} sm={24} md={24} lg={3}>*/}
+                                        {/*    /!* No of Pieces *!/*/}
+                                        {/*    <Form.Item*/}
+                                        {/*        name="ITEM_ID"*/}
+                                        {/*        label="Item ID"*/}
+                                        {/*        type="number"*/}
+                                        {/*        initialValue={this.props.initialValues.ITEM_ID}*/}
+                                        {/*        rules={[*/}
+                                        {/*            { required: true, message: 'Please enter Item ID' },*/}
+                                        {/*        ]}*/}
+                                        {/*    >*/}
+                                        {/*        <InputNumber style={inputStyle}  placeholder="Enter ID"/>*/}
+                                        {/*    </Form.Item>*/}
+                                        {/*</Col>*/}
 
-                                        <Col span={3}>
+                                        <Col xs={24} sm={24} md={24} lg={6}>
                                             {/* Weight (ct) */}
                                             <Form.Item
                                                 name="WEIGHT"
@@ -343,7 +440,7 @@ class ViewItemsForm extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             {/* No of Pieces */}
                                             <Form.Item
                                                 name="PIECES"
@@ -356,7 +453,7 @@ class ViewItemsForm extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             {/* Date */}
                                             <Form.Item
                                                 name="DATE"
@@ -367,7 +464,7 @@ class ViewItemsForm extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             {/* Gem Type */}
                                             <Form.Item
                                                 name="POLICY"
@@ -423,8 +520,8 @@ class ViewItemsForm extends Component {
                                     <Divider />
 
                                     {gemType === 'Rough' && (
-                                        <Row gutter={16}>
-                                            <Col span={24}>
+                                        <Row gutter={[16, 16]} justify="left" align="top">
+                                            <Col xs={24} sm={24} md={24} lg={24}>
                                                 {/* Gem Type */}
                                                 <Form.Item
                                                     name="ROUGH_TYPE"
@@ -449,8 +546,8 @@ class ViewItemsForm extends Component {
                                     )}
 
                                     {gemType === 'Lots' && (
-                                        <Row gutter={16}>
-                                            <Col span={12}>
+                                        <Row gutter={[16, 16]} justify="left" align="top">
+                                            <Col xs={24} sm={12} md={12} lg={12}>
                                                 {/* Gem Type */}
                                                 <Form.Item
                                                     name="LOT_TYPE"
@@ -465,7 +562,7 @@ class ViewItemsForm extends Component {
                                                     </Select>
                                                 </Form.Item>
                                             </Col>
-                                            <Col span={12}>
+                                            <Col xs={24} sm={12} md={12} lg={12}>
                                                 <Form.Item
                                                     name="REFERENCE_ID_LOTS"
                                                     label="Reference"
@@ -487,8 +584,8 @@ class ViewItemsForm extends Component {
                                         </Row>
                                     )}
                                     {gemType === 'Sorted Lots' && (
-                                        <Row gutter={16}>
-                                            <Col span={24}>
+                                        <Row gutter={[16, 16]} justify="left" align="top">
+                                            <Col xs={24} sm={24} md={24} lg={24}>
                                                 {/* Gem Type */}
                                                 <Form.Item
                                                     name="SORTED_LOT_TYPE"
@@ -504,7 +601,7 @@ class ViewItemsForm extends Component {
                                                     </Select>
                                                 </Form.Item>
                                             </Col>
-                                            <Col span={6}>
+                                            <Col xs={24} sm={12} md={8} lg={6}>
                                                 <Form.Item
                                                     name="REFERENCE_ID_LOTS"
                                                     label="Reference"
@@ -522,7 +619,7 @@ class ViewItemsForm extends Component {
                                                     </Select>
                                                 </Form.Item>
                                             </Col>
-                                            <Col span={6}>
+                                            <Col xs={24} sm={12} md={8} lg={6}>
                                                 <Form.Item
                                                     name="FULL_LOT_COST"
                                                     label="Full Lot Cost (RS)"
@@ -531,7 +628,7 @@ class ViewItemsForm extends Component {
                                                     <InputNumber min={0} step={0.01} placeholder="Enter Lot Cost" style={inputStyle}/>
                                                 </Form.Item>
                                             </Col>
-                                            <Col span={12}>
+                                            <Col xs={24} sm={12} md={12} lg={12}>
                                                 <Form.Item
                                                     name="PERFORMER"
                                                     label="Performer"
@@ -549,8 +646,8 @@ class ViewItemsForm extends Component {
                                         </Row>
                                     )}
                                     {gemType === 'Cut and Polished' && (
-                                        <Row gutter={16}>
-                                            <Col span={24}>
+                                        <Row gutter={[16, 16]} justify="left" align="top">
+                                            <Col xs={24} sm={24} md={24} lg={24}>
                                                 {/* Gem Type */}
                                                 <Form.Item
                                                     name="CP_TYPE"
@@ -571,7 +668,7 @@ class ViewItemsForm extends Component {
                                                     </Select>
                                                 </Form.Item>
                                             </Col>
-                                            <Col span={3}>
+                                            <Col xs={24} sm={24} md={24} lg={3}>
                                                 <Form.Item
                                                     name="REFERENCE_ID_CP"
                                                     label="Reference"
@@ -586,7 +683,7 @@ class ViewItemsForm extends Component {
                                                     </Select>
                                                 </Form.Item>
                                             </Col>
-                                            <Col span={3}>
+                                            <Col xs={24} sm={24} md={24} lg={3}>
                                                 <Form.Item
                                                     name="TOTAL_COST"
                                                     label="Total Cost (RS)"
@@ -596,14 +693,14 @@ class ViewItemsForm extends Component {
                                                     <InputNumber min={0} step={0.01} placeholder="Enter Total Cost" style={inputStyle}/>
                                                 </Form.Item>
                                             </Col>
-                                            <Col span={6}>
+                                            <Col xs={24} sm={12} md={8} lg={6}>
                                                 <Form.Item
                                                     name="CP_BY"
                                                     label="Cutting & Polished By"
                                                     initialValue={this.props.initialValues.CP_BY}
                                                 >
                                                     <Select placeholder="Select Customer" style={inputStyle}>
-                                                        {customerOptions.map((option) => (
+                                                        {this.state.cpByOptions.map((option) => (
                                                             <Option key={option.value} value={option.value}>
                                                                 {option.label}
                                                             </Option>
@@ -612,7 +709,7 @@ class ViewItemsForm extends Component {
                                                 </Form.Item>
                                             </Col>
 
-                                            <Col span={6}>
+                                            <Col xs={24} sm={12} md={8} lg={6}>
                                                 <Form.Item
                                                     name="CP_COLOR"
                                                     label="Color"
@@ -621,7 +718,7 @@ class ViewItemsForm extends Component {
                                                     <Input  placeholder="Enter Color" style={inputStyle}/>
                                                 </Form.Item>
                                             </Col>
-                                            <Col span={6}>
+                                            <Col xs={24} sm={12} md={8} lg={6}>
                                                 <Form.Item
                                                     name="SHAPE"
                                                     label="Shape"
@@ -645,8 +742,8 @@ class ViewItemsForm extends Component {
                                     )}
                                     <Divider />
 
-                                    <Row gutter={16}>
-                                        <Col span={3}>
+                                    <Row gutter={[16, 16]} justify="left" align="top">
+                                        <Col xs={24} sm={24} md={24} lg={3}>
                                             <Form.Item
                                                 name="IS_HEAT_TREATED"
                                                 label="Is Heat Treated"
@@ -660,7 +757,7 @@ class ViewItemsForm extends Component {
                                                 />
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="HT_ID"
                                                 label="Heat Treatment Group"
@@ -675,7 +772,7 @@ class ViewItemsForm extends Component {
                                                 </Select>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={3}>
+                                        <Col xs={24} sm={24} md={24} lg={3}>
                                             {/* Weight (ct) */}
                                             <Form.Item
                                                 name="WEIGHT_AFTER_HT"
@@ -688,14 +785,14 @@ class ViewItemsForm extends Component {
                                                 <InputNumber  min={0} step={0.01} placeholder="Enter Weight" style={inputStyle} />
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="HT_BY"
                                                 label="Heat Treated By"
                                                 initialValue={this.props.initialValues.HT_BY}
                                             >
                                                 <Select placeholder="Select Customer" style={inputStyle}>
-                                                    {customerOptions.map((option) => (
+                                                    {this.state.htByOptions.map((option) => (
                                                         <Option key={option.value} value={option.value}>
                                                             {option.label}
                                                         </Option>
@@ -741,26 +838,26 @@ class ViewItemsForm extends Component {
                                     </Row>
                                     <Divider />
 
-                                    <Row gutter={16}>
-                                        <Col span={24}>
+                                    <Row gutter={[16, 16]} justify="left" align="top">
+                                        <Col xs={24} sm={24} md={24} lg={24}>
                                             <Form.Item>
                                                 <span style={{ fontSize: '15px', fontWeight: 'bold' }}>Buying Details</span>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
-                                                name="BUYER"
-                                                label="Buyer"
-                                                initialValue={this.props.initialValues.BUYER}
+                                                name="SELLER"
+                                                label="Seller"
+                                                initialValue={this.props.initialValues.SELLER}
                                                 rules={[
                                                     {
                                                         required: this.state.isTransaction,
-                                                        message: 'Please enter Buyer',
+                                                        message: 'Please enter Seller',
                                                     },
                                                 ]}
                                             >
                                                 <Select placeholder="Select Customer" style={inputStyle}>
-                                                    {customerOptions.map((option) => (
+                                                    {this.state.sellerOptions.map((option) => (
                                                         <Option key={option.value} value={option.value}>
                                                             {option.label}
                                                         </Option>
@@ -769,7 +866,7 @@ class ViewItemsForm extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={3}>
+                                        <Col xs={24} sm={24} md={24} lg={3}>
                                             <Form.Item
                                                 name="COST"
                                                 label="Cost (RS)"
@@ -785,7 +882,7 @@ class ViewItemsForm extends Component {
                                                 <InputNumber  min={0} step={0.01} placeholder="Enter Cost" style={inputStyle}/>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={3}>
+                                        <Col xs={24} sm={24} md={24} lg={3}>
                                             <Form.Item
                                                 name="GIVEN_AMOUNT"
                                                 label="Amount Given"
@@ -801,7 +898,7 @@ class ViewItemsForm extends Component {
                                                 <InputNumber  min={0} step={0.01} placeholder="Enter Amount" style={inputStyle}/>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             {/* Gem Type */}
                                             <Form.Item
                                                 name="PAYMENT_METHOD"
@@ -818,7 +915,7 @@ class ViewItemsForm extends Component {
                                                 </Select>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="IS_TRANSACTION"
                                                 label="Add Buying Details as a Transaction"
@@ -836,11 +933,9 @@ class ViewItemsForm extends Component {
                                             <Form.Item name="SHARE_HOLDERS" label="Share Holders"
                                                        initialValue={
                                                            this.props.initialValues.SHARE_HOLDERS
-                                                               ? this.props.initialValues.SHARE_HOLDERS.split(',').map(Number)
-                                                               : undefined
                                                        }>
-                                                <Select  placeholder="Select Share Holders" mode="multiple" style={inputStyle}>
-                                                    {customerOptions.map((option) => (
+                                                <Select  placeholder="Select Share Holders" style={inputStyle}>
+                                                    {this.state.partnerOptions.map((option) => (
                                                         <Option key={option.value} value={option.value}>
                                                             {option.label}
                                                         </Option>
@@ -848,7 +943,7 @@ class ViewItemsForm extends Component {
                                                 </Select>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={3}>
+                                        <Col xs={24} sm={24} md={24} lg={3}>
                                             <Form.Item
                                                 name="SHARE_PERCENTAGE"
                                                 label="Share Percentage %"
@@ -857,7 +952,7 @@ class ViewItemsForm extends Component {
                                                 <InputNumber  min={0} max={100} placeholder="Enter Share" style={inputStyle}/>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={12}>
+                                        <Col xs={24} sm={12} md={12} lg={12}>
                                             <Form.Item
                                                 name="OTHER_SHARES"
                                                 label="Other Shares"
@@ -867,8 +962,8 @@ class ViewItemsForm extends Component {
                                             </Form.Item>
                                         </Col>
                                     </Row>
-                                    <Row gutter={16}>
-                                        <Col span={24}>
+                                    <Row gutter={[16, 16]} justify="left" align="top">
+                                        <Col xs={24} sm={24} md={24} lg={24}>
                                             <Form.Item
                                                 name="COMMENTS"
                                                 label="Comments"
@@ -877,7 +972,7 @@ class ViewItemsForm extends Component {
                                                 <Input.TextArea rows={2} placeholder="Enter comments" style={inputStyle}/>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={24}>
+                                        <Col xs={24} sm={24} md={24} lg={24}>
                                             <Form.Item
                                                 name="EXPENSE_AMOUNT"
                                                 label="Total Expense Amount"
@@ -890,16 +985,16 @@ class ViewItemsForm extends Component {
 
                                     <Divider/>
 
-                                    <Row gutter={16}>
-                                        <Col span={24}>
+                                    <Row gutter={[16, 16]} justify="left" align="top">
+                                        <Col xs={24} sm={24} md={24} lg={24}>
                                             <Form.Item>
                                                 <span style={{ fontSize: '15px', fontWeight: 'bold' }}>Selling Details</span>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={12}>
-                                            <Form.Item name="SELLER" label="Seller" initialValue={this.props.initialValues.SELLER}>
-                                                <Select placeholder="Select Seller" style={inputStyle}>
-                                                    {customerOptions.map((option) => (
+                                        <Col xs={24} sm={12} md={12} lg={12}>
+                                            <Form.Item name="BUYER" label="Buyer" initialValue={this.props.initialValues.BUYER}>
+                                                <Select placeholder="Select Buyer" style={inputStyle}>
+                                                    {this.state.buyerOptions.map((option) => (
                                                         <Option key={option.value} value={option.value}>
                                                             {option.label}
                                                         </Option>
@@ -908,10 +1003,10 @@ class ViewItemsForm extends Component {
                                             </Form.Item>
                                         </Col>
 
-                                        <Col span={12}>
+                                        <Col xs={24} sm={12} md={12} lg={12}>
                                             <Form.Item name="BEARER" label="Bearer" initialValue={this.props.initialValues.BEARER}>
                                                 <Select placeholder="Select Bearer" style={inputStyle}>
-                                                    {customerOptions.map((option) => (
+                                                    {this.state.salesPersonOptions.map((option) => (
                                                         <Option key={option.value} value={option.value}>
                                                             {option.label}
                                                         </Option>
@@ -921,7 +1016,7 @@ class ViewItemsForm extends Component {
                                         </Col>
 
                                         {/* Expenses, Exp. Amount */}
-                                        {/*<Col span={12}>*/}
+                                        {/*<Col xs={24} sm={12} md={12} lg={12}>*/}
                                         {/*    <Form.Item*/}
                                         {/*        name="EXPENSES"*/}
                                         {/*        label="Expenses"*/}
@@ -933,7 +1028,7 @@ class ViewItemsForm extends Component {
 
 
                                         {/* Date Sold, Sold Amount, Amount Received, Due Amount */}
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="DATE_SOLD"
                                                 label="Date Sold"
@@ -942,7 +1037,7 @@ class ViewItemsForm extends Component {
                                                 <DatePicker style={inputStyle}/>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="SOLD_AMOUNT"
                                                 label="Sold Amount"
@@ -951,7 +1046,7 @@ class ViewItemsForm extends Component {
                                                 <InputNumber min={0} placeholder="Enter Sold Amount" style={inputStyle}/>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="AMOUNT_RECEIVED"
                                                 label="Amount Received"
@@ -960,7 +1055,7 @@ class ViewItemsForm extends Component {
                                                 <InputNumber min={0} placeholder="Enter Amount Received" style={inputStyle}/>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="DUE_AMOUNT"
                                                 label="Due Amount"
@@ -971,7 +1066,7 @@ class ViewItemsForm extends Component {
                                         </Col>
 
                                         {/* Payment ETA - Start, Payment ETA - End, Date Finished */}
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="PAYMENT_ETA_START"
                                                 label="Payment ETA - Start"
@@ -980,7 +1075,7 @@ class ViewItemsForm extends Component {
                                                 <DatePicker style={inputStyle}/>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="PAYMENT_ETA_END"
                                                 label="Payment ETA - End"
@@ -989,7 +1084,7 @@ class ViewItemsForm extends Component {
                                                 <DatePicker style={inputStyle}/>
                                             </Form.Item>
                                         </Col>
-                                        <Col span={6}>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="DATE_FINISHED"
                                                 label="Date Finished"
@@ -1003,6 +1098,7 @@ class ViewItemsForm extends Component {
 
                                 </Form>
                             </Card>
+                            {ROLE1 === "ADMIN" ? (
                             <Card
                                 className="criclebox tablespace mb-24"
                                 title={"Transaction Details Related To " + this.props.initialValues.CODE}
@@ -1160,6 +1256,7 @@ class ViewItemsForm extends Component {
                                     />
                                 </div>
                             </Card>
+                            ):null}
 
                         </Col>
                     </Row>
@@ -1177,6 +1274,19 @@ class ViewItemsForm extends Component {
                             initialValues={this.state.selectedItem}
                         />
                     )}
+                </Modal>
+                <Modal
+                    title="Add Cut & Polish"
+                    visible={this.state.isAddCustomerModalVisible}
+                    onCancel={this.toggleAddCustomerModal}
+                    footer={null}
+                    width={1100}
+                >
+                    <AddCutPolish
+                        onClose={this.toggleAddCustomerModal}
+                        refe={this.state.item_id}
+                        currentCode={this.props.initialValues.CODE}
+                    />
                 </Modal>
             </>
         );
