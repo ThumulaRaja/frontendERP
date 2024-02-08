@@ -151,18 +151,24 @@ class Customers extends Component {
 
         const url = `app.nihalgems.com/customer/${encodedCustomerId}`;
 
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(url)
-                .then(() => {
-                    message.success('Customer URL copied to clipboard');
-                })
-                .catch((error) => {
-                    console.error('Error copying to clipboard:', error);
-                });
-        } else {
-            console.error('Clipboard API not supported');
+        // Create a temporary input element to copy the text to the clipboard
+        const tempInput = document.createElement('input');
+        tempInput.value = url;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+
+        try {
+            // Execute the copy command
+            document.execCommand('copy');
+            message.success('Customer URL copied to clipboard');
+        } catch (error) {
+            console.error('Error copying to clipboard:', error);
+        } finally {
+            // Remove the temporary input element
+            document.body.removeChild(tempInput);
         }
     }
+
 
     encodeBase64 = (text) => btoa(text);
 
