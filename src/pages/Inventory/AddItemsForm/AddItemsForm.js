@@ -157,7 +157,7 @@ export default class AddItemsForm extends Component {
 
   async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
@@ -233,7 +233,7 @@ export default class AddItemsForm extends Component {
 
   async fetchReferenceOptions() {
     try {
-      const response = await axios.post("http://localhost:3001/getItemsForReference");
+      const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
       //console.log("response", response);
       return response.data.result.map((ref) => ({
         value: ref.ITEM_ID_AI,
@@ -247,7 +247,7 @@ export default class AddItemsForm extends Component {
 
   async fetchHTGroupOptions() {
     try {
-      const response = await axios.post("http://localhost:3001/getAllHT");
+      const response = await axios.post("http://35.154.1.99:3001/getAllHT");
       //console.log("response", response);
       return response.data.result.map((ht) => ({
         value: ht.HT_ID,
@@ -307,7 +307,7 @@ export default class AddItemsForm extends Component {
 
       //console.log("updatedValues", updatedValues);
 
-      const response = await axios.post('http://localhost:3001/addItem', updatedValues);
+      const response = await axios.post('http://35.154.1.99:3001/addItem', updatedValues);
 
       if (response.data.success) {
         message.success('Item added successfully');

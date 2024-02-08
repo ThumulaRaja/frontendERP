@@ -68,7 +68,7 @@ class ItemURL extends Component {
                 //console.log('roughId1', code);
 
             }
-            const response = await axios.post('http://localhost:3001/getItemDetailsUsingCode', { code });
+            const response = await axios.post('http://35.154.1.99:3001/getItemDetailsUsingCode', { code });
 
             if (response.data.success) {
                 const items = response.data.result;

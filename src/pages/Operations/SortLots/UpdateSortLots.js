@@ -58,7 +58,7 @@ class UpdateSortLots extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             //console.log("response12", response);
 
             // BuyerOptions Filter TYPE = Buyer
@@ -143,7 +143,7 @@ class UpdateSortLots extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             //console.log('response11', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -238,7 +238,7 @@ class UpdateSortLots extends Component {
             //console.log('resultArrayData', resultArrayData);
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/updateSortLot', resultArrayData);
+            const response = await axios.post('http://35.154.1.99:3001/updateSortLot', resultArrayData);
 
             if (response.data.success) {
                 message.success('Cut & Polish update successfully');
@@ -263,7 +263,7 @@ class UpdateSortLots extends Component {
             }
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/approveSortLot', sendObject);
+            const response = await axios.post('http://35.154.1.99:3001/approveSortLot', sendObject);
 
             if (response.data.success) {
                 message.success('Cut & Polish Approved successfully');

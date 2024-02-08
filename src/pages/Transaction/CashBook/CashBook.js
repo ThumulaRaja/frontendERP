@@ -64,7 +64,7 @@ class CashBook extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
@@ -240,7 +240,7 @@ class CashBook extends Component {
         //console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
+            const response = await axios.post('http://35.154.1.99:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -261,7 +261,7 @@ class CashBook extends Component {
     handlePrint = async (row) => {
         //console.log('row', row);
         try {
-            const response = await axios.post('http://localhost:3001/generateInvoice', {
+            const response = await axios.post('http://35.154.1.99:3001/generateInvoice', {
                 data: row,
             });
 
@@ -286,7 +286,7 @@ class CashBook extends Component {
     handleDeleteExp = async (Id) => {
         try {
             // Make an API call to deactivate the Expenses
-            const response = await axios.post('http://localhost:3001/deactivateExpenses', {
+            const response = await axios.post('http://35.154.1.99:3001/deactivateExpenses', {
                 EXPENSES_ID: Id,
             });
 
@@ -309,7 +309,7 @@ class CashBook extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllTransactionsCashBook');
+            const response = await axios.post('http://35.154.1.99:3001/getAllTransactionsCashBook');
 
             if (response.data.success) {
                 const items = response.data.result;
@@ -354,7 +354,7 @@ class CashBook extends Component {
     filterByShareholder = async (value) => {
         this.setState({ loading: true });
         try {
-            const response = await axios.post('http://localhost:3001/filterByShareholderCashBook', {
+            const response = await axios.post('http://35.154.1.99:3001/filterByShareholderCashBook', {
                 shareholder: value,
             });
 
@@ -382,7 +382,7 @@ class CashBook extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getCashBookSumData');
+            const response = await axios.post('http://35.154.1.99:3001/getCashBookSumData');
 
             if (response.data.success) {
                 //console.log('ResponseDashboard:', response.data.result);

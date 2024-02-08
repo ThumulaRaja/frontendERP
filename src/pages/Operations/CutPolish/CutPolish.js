@@ -50,7 +50,7 @@ class CutPolish extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -90,7 +90,7 @@ class CutPolish extends Component {
     handleDelete = async (Id) => {
         try {
             // Make an API call to deactivate the Cut & Polish
-            const response = await axios.post('http://localhost:3001/deactivateCP', {
+            const response = await axios.post('http://35.154.1.99:3001/deactivateCP', {
                 CP_ID: Id,
             });
 
@@ -112,7 +112,7 @@ class CutPolish extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllCutPolish');
+            const response = await axios.post('http://35.154.1.99:3001/getAllCutPolish');
 
             if (response.data.success) {
                 const customers = response.data.result;

@@ -50,7 +50,7 @@ class SortLots extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -90,7 +90,7 @@ class SortLots extends Component {
     handleDelete = async (Id) => {
         try {
             // Make an API call to deactivate the Sort Lots
-            const response = await axios.post('http://localhost:3001/deactivateSL', {
+            const response = await axios.post('http://35.154.1.99:3001/deactivateSL', {
                 SL_ID: Id,
             });
 
@@ -112,7 +112,7 @@ class SortLots extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://localhost:3001/getAllSortLots');
+            const response = await axios.post('http://35.154.1.99:3001/getAllSortLots');
 
             if (response.data.success) {
                 const customers = response.data.result;

@@ -54,7 +54,7 @@ class AddElectricTreatment extends React.Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
@@ -140,7 +140,7 @@ class AddElectricTreatment extends React.Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -168,7 +168,7 @@ class AddElectricTreatment extends React.Component {
 
     async fetchHTGroupOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllHT");
+            const response = await axios.post("http://35.154.1.99:3001/getAllHT");
             //console.log("response", response);
 
             return response.data.result.filter((ht) => ht.TYPE === 'Electric Treatment').map((ht) => ({
@@ -185,7 +185,7 @@ class AddElectricTreatment extends React.Component {
         const form = this.formRef.current;
         try {
             this.setState({ resultArray: [] });
-            const response = await axios.post('http://localhost:3001/getReferenceFromETGroup', {
+            const response = await axios.post('http://35.154.1.99:3001/getReferenceFromETGroup', {
                 HT_ID: value,
             });
             if (response.data.success) {
@@ -301,7 +301,7 @@ class AddElectricTreatment extends React.Component {
             //console.log('resultArrayData', resultArrayData);
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/addElecT', resultArrayData);
+            const response = await axios.post('http://35.154.1.99:3001/addElecT', resultArrayData);
 
             if (response.data.success) {
                 message.success('Elec Treatment added successfully');

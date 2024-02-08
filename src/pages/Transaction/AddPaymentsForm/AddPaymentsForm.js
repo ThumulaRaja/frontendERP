@@ -77,7 +77,7 @@ export default class AddPaymentsForm extends Component {
 
   async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
@@ -150,7 +150,7 @@ export default class AddPaymentsForm extends Component {
 
   async fetchReferenceOptions() {
     try {
-      const response = await axios.post("http://localhost:3001/getItemsForReference");
+      const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
       //console.log("response", response);
       return response.data.result.map((ref) => ({
         value: ref.ITEM_ID_AI,
@@ -164,7 +164,7 @@ export default class AddPaymentsForm extends Component {
 
   async fetchTransactionOptions() {
     try {
-      const response = await axios.post("http://localhost:3001/getTransactionForReference");
+      const response = await axios.post("http://35.154.1.99:3001/getTransactionForReference");
       //console.log("response", response);
       return response.data.result.map((transaction) => ({
         value: transaction.TRANSACTION_ID,
@@ -181,7 +181,7 @@ export default class AddPaymentsForm extends Component {
     handleTransactionChange = async (value) => {
       const form = this.formRef.current;
       try {
-        const response = await axios.post('http://localhost:3001/getTransactionDetails', {
+        const response = await axios.post('http://35.154.1.99:3001/getTransactionDetails', {
           TRANSACTION_ID: value,
         });
         if (response.data.success) {
@@ -229,7 +229,7 @@ export default class AddPaymentsForm extends Component {
 
       //console.log("updatedValues", updatedValues);
 
-      const response = await axios.post('http://localhost:3001/addPayment', updatedValues);
+      const response = await axios.post('http://35.154.1.99:3001/addPayment', updatedValues);
 
       if (response.data.success) {
         message.success('Payment added successfully');
@@ -376,9 +376,6 @@ export default class AddPaymentsForm extends Component {
                             name="DATE"
                             label="Date"
                             rules={[{ required: true, message: 'Please select Date' }]}  // Set the default date to today
-                            rules={[
-                              { required: true, message: 'Please enter Date' },
-                            ]}
                         >
                           <DatePicker style={{ width: '100%' }} />
                         </Form.Item>

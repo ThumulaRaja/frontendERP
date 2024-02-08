@@ -55,7 +55,7 @@ class AddSortLots extends React.Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
@@ -139,7 +139,7 @@ class AddSortLots extends React.Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -234,7 +234,7 @@ class AddSortLots extends React.Component {
             //console.log('resultArrayData', resultArrayData);
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/addSortLot', resultArrayData);
+            const response = await axios.post('http://35.154.1.99:3001/addSortLot', resultArrayData);
 
             if (response.data.success) {
                 message.success('Sort Lot added successfully');

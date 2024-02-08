@@ -55,7 +55,7 @@ class UpdateElectricTreatment extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
@@ -141,7 +141,7 @@ class UpdateElectricTreatment extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -169,7 +169,7 @@ class UpdateElectricTreatment extends Component {
 
     async fetchHTGroupOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllHT");
+            const response = await axios.post("http://35.154.1.99:3001/getAllHT");
             //console.log("response", response);
 
             return response.data.result.filter((ht) => ht.TYPE === 'Electric Treatment').map((ht) => ({
@@ -187,7 +187,7 @@ class UpdateElectricTreatment extends Component {
         //console.log("value", this.props);
         try {
             this.setState({ resultArray: [] });
-            const response = await axios.post('http://localhost:3001/getReferenceFromETGroup', {
+            const response = await axios.post('http://35.154.1.99:3001/getReferenceFromETGroup', {
                 HT_ID: value,
             });
             if (response.data.success) {
@@ -281,7 +281,7 @@ class UpdateElectricTreatment extends Component {
             //console.log('sendObject', sendObject);
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/approveElecT', sendObject);
+            const response = await axios.post('http://35.154.1.99:3001/approveElecT', sendObject);
 
             if (response.data.success) {
                 message.success('Elec Treatment approved successfully');
@@ -594,7 +594,7 @@ class UpdateElectricTreatment extends Component {
             //console.log('resultArrayData', resultArrayData);
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/updateElecT', resultArrayData);
+            const response = await axios.post('http://35.154.1.99:3001/updateElecT', resultArrayData);
 
             if (response.data.success) {
                 message.success('Elec Treatment added successfully');

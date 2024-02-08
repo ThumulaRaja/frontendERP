@@ -24,7 +24,7 @@ function Home() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:3001/getItemCountData');
+      const response = await axios.post('http://35.154.1.99:3001/getItemCountData');
 
       if (response.data.success) {
         //console.log('ResponseDashboard:', response.data.result);
@@ -43,7 +43,7 @@ function Home() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:3001/getTodayTransactionData');
+      const response = await axios.post('http://35.154.1.99:3001/getTodayTransactionData');
       if (response.data.success) {
         //console.log('ResponseDashboard1:', response.data.result);
         setTodayTransactionData(response.data.result);

@@ -93,7 +93,7 @@ export default class AddTransactionForm extends Component {
 
   async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
@@ -166,7 +166,7 @@ export default class AddTransactionForm extends Component {
 
   async fetchReferenceOptions() {
     try {
-      const response = await axios.post("http://localhost:3001/getItemsForReference");
+      const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
       //console.log("response", response);
       return response.data.result.map((ref) => ({
         value: ref.ITEM_ID_AI,
@@ -184,7 +184,7 @@ export default class AddTransactionForm extends Component {
     //console.log(`selected ${value}`);
     const form = this.formRef.current;
     try {
-      const response = await axios.post('http://localhost:3001/getItemsDetailsForTransaction', {
+      const response = await axios.post('http://35.154.1.99:3001/getItemsDetailsForTransaction', {
         ITEM_ID_AI: value,
       });
       if (response.data.success) {
@@ -248,7 +248,7 @@ export default class AddTransactionForm extends Component {
 
       //console.log("updatedValues", updatedValues);
 
-      const response = await axios.post('http://localhost:3001/addTransaction', updatedValues);
+      const response = await axios.post('http://35.154.1.99:3001/addTransaction', updatedValues);
 
       if (response.data.success) {
         message.success('Transaction added successfully');
@@ -367,9 +367,7 @@ export default class AddTransactionForm extends Component {
                             name="DATE"
                             label="Date"
                             rules={[{ required: true, message: 'Please select Date' }]}  // Set the default date to today
-                            rules={[
-                              { required: true, message: 'Please enter Date' },
-                            ]}
+
                         >
                           <DatePicker style={inputStyle} />
                         </Form.Item>

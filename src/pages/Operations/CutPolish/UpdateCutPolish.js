@@ -55,7 +55,7 @@ class UpdateCutPolish extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
             //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
@@ -133,7 +133,7 @@ class UpdateCutPolish extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
             //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
@@ -156,7 +156,7 @@ class UpdateCutPolish extends Component {
                 imgBBLink2: '',
                 fileList2: [],
             });
-            const response = await axios.post('http://localhost:3001/getReferenceCPDetails', {
+            const response = await axios.post('http://35.154.1.99:3001/getReferenceCPDetails', {
                 ITEM_ID_AI: value,
             });
             if (response.data.success) {
@@ -266,7 +266,7 @@ class UpdateCutPolish extends Component {
             //console.log('resultArrayData', resultArrayData);
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/updateCutPolish', resultArrayData);
+            const response = await axios.post('http://35.154.1.99:3001/updateCutPolish', resultArrayData);
 
             if (response.data.success) {
                 message.success('Cut & Polish update successfully');
@@ -292,7 +292,7 @@ class UpdateCutPolish extends Component {
             }
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/approveCutPolish', sendObject);
+            const response = await axios.post('http://35.154.1.99:3001/approveCutPolish', sendObject);
 
             if (response.data.success) {
                 message.success('Cut & Polish Approved successfully');

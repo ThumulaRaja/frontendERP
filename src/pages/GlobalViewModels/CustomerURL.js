@@ -52,7 +52,7 @@ class CustomerURL extends Component {
         try {
             //console.log('this.props.customerId', this.props);
             const decodedId = this.decodeBase64(id);
-            const response = await axios.post('http://localhost:3001/getCustomerDetails', {
+            const response = await axios.post('http://35.154.1.99:3001/getCustomerDetails', {
                 CUSTOMER_ID: decodedId,
             });
 
@@ -82,7 +82,7 @@ class CustomerURL extends Component {
 
         if(this.state.initialValues.TYPE === 'Seller'){
             try {
-                const response = await axios.post('http://localhost:3001/getCustomerSellerTransactions', {
+                const response = await axios.post('http://35.154.1.99:3001/getCustomerSellerTransactions', {
                     CUSTOMER_ID: id,
                 });
 
@@ -103,7 +103,7 @@ class CustomerURL extends Component {
         }
         else if(this.state.initialValues.TYPE === 'Buyer'){
             try {
-                const response = await axios.post('http://localhost:3001/getCustomerBuyerTransactions', {
+                const response = await axios.post('http://35.154.1.99:3001/getCustomerBuyerTransactions', {
                     CUSTOMER_ID: id,
                 });
 
@@ -124,7 +124,7 @@ class CustomerURL extends Component {
         }
         else if(this.state.initialValues.TYPE === 'Sales Person'){
             try {
-                const response = await axios.post('http://localhost:3001/getCustomerSalesPersonTransactions', {
+                const response = await axios.post('http://35.154.1.99:3001/getCustomerSalesPersonTransactions', {
                     CUSTOMER_ID: id,
                 });
 
@@ -145,7 +145,7 @@ class CustomerURL extends Component {
         }
         else if(this.state.initialValues.TYPE === 'Partner'){
             try {
-                const response = await axios.post('http://localhost:3001/getCustomerPartnerTransactions', {
+                const response = await axios.post('http://35.154.1.99:3001/getCustomerPartnerTransactions', {
                     CUSTOMER_ID: id,
                 });
 
@@ -166,7 +166,7 @@ class CustomerURL extends Component {
         }
         else if(this.state.initialValues.TYPE === 'Preformer'){
             try {
-                const response = await axios.post('http://localhost:3001/getCustomerPreformerTransactions', {
+                const response = await axios.post('http://35.154.1.99:3001/getCustomerPreformerTransactions', {
                     CUSTOMER_ID: id,
                 });
 
@@ -187,7 +187,7 @@ class CustomerURL extends Component {
         }
         else if(this.state.initialValues.TYPE === 'C&P'){
             try {
-                const response = await axios.post('http://localhost:3001/getCustomerCPTransactions', {
+                const response = await axios.post('http://35.154.1.99:3001/getCustomerCPTransactions', {
                     CUSTOMER_ID: id,
                 });
 
@@ -208,7 +208,7 @@ class CustomerURL extends Component {
         }
         else if(this.state.initialValues.TYPE === 'Electric'){
             try {
-                const response = await axios.post('http://localhost:3001/getCustomerElectricTransactions', {
+                const response = await axios.post('http://35.154.1.99:3001/getCustomerElectricTransactions', {
                     CUSTOMER_ID: id,
                 });
 
@@ -229,7 +229,7 @@ class CustomerURL extends Component {
         }
         else if(this.state.initialValues.TYPE === 'Heat T'){
             try {
-                const response = await axios.post('http://localhost:3001/getCustomerHeatTTransactions', {
+                const response = await axios.post('http://35.154.1.99:3001/getCustomerHeatTTransactions', {
                     CUSTOMER_ID: id,
                 });
 

@@ -30,7 +30,7 @@ function EChart() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3001/getSoldItemCountData');
+      const response = await axios.post('http://35.154.1.99:3001/getSoldItemCountData');
 
       if (response.data.success) {
         //console.log('ResponseDashboard:', response.data.result);
