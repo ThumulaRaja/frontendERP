@@ -2,9 +2,7 @@
 import React, { Component } from 'react';
 import {Form, Input, Button, Row, Col, Table, InputNumber, Tooltip, Modal, Card} from 'antd';
 import axios from 'axios';
-import {EyeOutlined} from "@ant-design/icons";
-import ViewTransactionForm from "../Transaction/Commen/ViewTransactionForm";
-import Item from "./Item";
+
 
 class CustomerURL extends Component {
     constructor(props) {
@@ -43,6 +41,8 @@ class CustomerURL extends Component {
     decodeBase64 = (text) => atob(text);
 
     async getCustomerDetails() {
+        console.log('getModelItemDetails');
+        console.log('this.props', this.props);
         this.setState({ loading: true });
 
         const { match: { params } } = this.props;

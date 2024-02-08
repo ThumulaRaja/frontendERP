@@ -58,6 +58,8 @@ class ItemURL extends Component {
 
     async getModelItemDetails() {
         try {
+            console.log('getModelItemDetails');
+            console.log('this.props', this.props);
             const { match: { params } } = this.props;
             const { code } = params;
 
