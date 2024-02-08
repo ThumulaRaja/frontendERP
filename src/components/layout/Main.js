@@ -34,12 +34,18 @@ function Main({ children }) {
   let { pathname } = useLocation();
   pathname = pathname.replace("/", "");
 
+  const closeDrawer = () => setVisible(false);
+
+
   useEffect(() => {
     if (pathname === "rtl") {
       setPlacement("left");
     } else {
       setPlacement("right");
     }
+
+    // Close the drawer when the URL changes
+    closeDrawer();
   }, [pathname]);
 
   return (
@@ -63,8 +69,7 @@ function Main({ children }) {
         <Layout
           className={`layout-dashboard ${
             pathname === "rtl" ? "layout-dashboard-rtl" : ""
-          }`}
-        >
+          }`} >
           <Sider
             trigger={null}
             width={250}

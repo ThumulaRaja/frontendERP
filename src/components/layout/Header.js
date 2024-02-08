@@ -200,9 +200,7 @@ function Header({
         </Col>
         <Col span={24} md={18} className="header-control">
 
-          <Button type="link" onClick={showDrawer}>
-            {logsetting}
-          </Button>
+
           <Button
             type="link"
             className="sidebar-toggler"
@@ -210,51 +208,7 @@ function Header({
           >
             {toggler}
           </Button>
-          <Drawer
-            className="settings-drawer"
-            mask={true}
-            width={360}
-            onClose={hideDrawer}
-            placement={placement}
-            visible={visible}
-          >
-            <div layout="vertical">
-              <div className="header-top">
-                <Title level={4}>
-                  Configurator
-                  <Text className="subtitle">Change dashboard options.</Text>
-                </Title>
-              </div>
 
-              <div className="sidebar-color">
-
-                <div className="sidebarnav-color mb-2">
-                  <Title level={5}>Sidenav Type</Title>
-                  <Text>Choose between 2 different sidenav types.</Text>
-                  <ButtonContainer className="trans">
-                    <Button
-                      type={sidenavType === "transparent" ? "primary" : "white"}
-                      onClick={() => {
-                        handleSidenavType("transparent");
-                        setSidenavType("transparent");
-                      }}
-                    >
-                      TRANSPARENT
-                    </Button>
-                    <Button
-                      type={sidenavType === "white" ? "primary" : "white"}
-                      onClick={() => {
-                        handleSidenavType("#fff");
-                        setSidenavType("white");
-                      }}
-                    >
-                      WHITE
-                    </Button>
-                  </ButtonContainer>
-                </div>
-              </div>
-            </div>
-          </Drawer>
 
           <Dropdown overlay={signInMenu} trigger={['click']}>
             <Button type="link" className="btn-sign-in" style={{ fontSize: '15px', display: 'flex', alignItems: 'center' }}>
