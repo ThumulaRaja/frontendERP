@@ -5,6 +5,7 @@ import axios from 'axios';
 import {EyeOutlined} from "@ant-design/icons";
 import ViewTransactionForm from "../Transaction/Commen/ViewTransactionForm";
 import Item from "../GlobalViewModels/Item";
+import Cookies from "js-cookie";
 
 class UpdateCustomerForm extends Component {
     constructor(props) {
@@ -29,36 +30,186 @@ class UpdateCustomerForm extends Component {
         });
     }
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
     async getCustomerTransactions() {
         this.setState({ loading: true });
 
-        try {
-            const response = await axios.post('http://35.154.1.99:3001/getCustomerTransactions', {
-                CUSTOMER_ID: this.props.initialValues.CUSTOMER_ID,
-            });
+        if(this.props.initialValues.TYPE === 'Seller'){
+            try {
+                const response = await axios.post('http://localhost:3001/getCustomerSellerTransactions', {
+                    CUSTOMER_ID: this.props.initialValues.CUSTOMER_ID,
+                });
 
-            if (response.data.success) {
-                const items = response.data.result;
-                console.log('items', items);
-                this.setState({ tablePayment: items });
-            } else {
-                console.log('Error:', response.data.message);
+                if (response.data.success) {
+                    const items = response.data.result;
+                    //console.log('items', items);
+                    this.setState({ tablePayment: items });
+                } else {
+                    //console.log('Error:', response.data.message);
+                }
+            } catch (error) {
+                //console.log('Error:', error.message);
+            } finally {
+                this.setState({
+                    loading: false,
+                });
             }
-        } catch (error) {
-            console.log('Error:', error.message);
-        } finally {
-            this.setState({
-                loading: false,
-            });
         }
+        else if(this.props.initialValues.TYPE === 'Buyer'){
+            try {
+                const response = await axios.post('http://localhost:3001/getCustomerBuyerTransactions', {
+                    CUSTOMER_ID: this.props.initialValues.CUSTOMER_ID,
+                });
+
+                if (response.data.success) {
+                    const items = response.data.result;
+                    //console.log('items', items);
+                    this.setState({ tablePayment: items });
+                } else {
+                    //console.log('Error:', response.data.message);
+                }
+            } catch (error) {
+                //console.log('Error:', error.message);
+            } finally {
+                this.setState({
+                    loading: false,
+                });
+            }
+        }
+        else if(this.props.initialValues.TYPE === 'Sales Person'){
+            try {
+                const response = await axios.post('http://localhost:3001/getCustomerSalesPersonTransactions', {
+                    CUSTOMER_ID: this.props.initialValues.CUSTOMER_ID,
+                });
+
+                if (response.data.success) {
+                    const items = response.data.result;
+                    //console.log('items', items);
+                    this.setState({ tablePayment: items });
+                } else {
+                    //console.log('Error:', response.data.message);
+                }
+            } catch (error) {
+                //console.log('Error:', error.message);
+            } finally {
+                this.setState({
+                    loading: false,
+                });
+            }
+        }
+        else if(this.props.initialValues.TYPE === 'Partner'){
+            try {
+                const response = await axios.post('http://localhost:3001/getCustomerPartnerTransactions', {
+                    CUSTOMER_ID: this.props.initialValues.CUSTOMER_ID,
+                });
+
+                if (response.data.success) {
+                    const items = response.data.result;
+                    //console.log('items', items);
+                    this.setState({ tablePayment: items });
+                } else {
+                    //console.log('Error:', response.data.message);
+                }
+            } catch (error) {
+                //console.log('Error:', error.message);
+            } finally {
+                this.setState({
+                    loading: false,
+                });
+            }
+        }
+        else if(this.props.initialValues.TYPE === 'Preformer'){
+            try {
+                const response = await axios.post('http://localhost:3001/getCustomerPreformerTransactions', {
+                    CUSTOMER_ID: this.props.initialValues.CUSTOMER_ID,
+                });
+
+                if (response.data.success) {
+                    const items = response.data.result;
+                    //console.log('items', items);
+                    this.setState({ tablePayment: items });
+                } else {
+                    //console.log('Error:', response.data.message);
+                }
+            } catch (error) {
+                //console.log('Error:', error.message);
+            } finally {
+                this.setState({
+                    loading: false,
+                });
+            }
+        }
+        else if(this.props.initialValues.TYPE === 'C&P'){
+            try {
+                const response = await axios.post('http://localhost:3001/getCustomerCPTransactions', {
+                    CUSTOMER_ID: this.props.initialValues.CUSTOMER_ID,
+                });
+
+                if (response.data.success) {
+                    const items = response.data.result;
+                    //console.log('items', items);
+                    this.setState({ tablePayment: items });
+                } else {
+                    //console.log('Error:', response.data.message);
+                }
+            } catch (error) {
+                //console.log('Error:', error.message);
+            } finally {
+                this.setState({
+                    loading: false,
+                });
+            }
+        }
+        else if(this.props.initialValues.TYPE === 'Electric'){
+            try {
+                const response = await axios.post('http://localhost:3001/getCustomerElectricTransactions', {
+                    CUSTOMER_ID: this.props.initialValues.CUSTOMER_ID,
+                });
+
+                if (response.data.success) {
+                    const items = response.data.result;
+                    //console.log('items', items);
+                    this.setState({ tablePayment: items });
+                } else {
+                    //console.log('Error:', response.data.message);
+                }
+            } catch (error) {
+                //console.log('Error:', error.message);
+            } finally {
+                this.setState({
+                    loading: false,
+                });
+            }
+        }
+        else if(this.props.initialValues.TYPE === 'Heat T'){
+            try {
+                const response = await axios.post('http://localhost:3001/getCustomerHeatTTransactions', {
+                    CUSTOMER_ID: this.props.initialValues.CUSTOMER_ID,
+                });
+
+                if (response.data.success) {
+                    const items = response.data.result;
+                    //console.log('items', items);
+                    this.setState({ tablePayment: items });
+                } else {
+                    //console.log('Error:', response.data.message);
+                }
+            } catch (error) {
+                //console.log('Error:', error.message);
+            } finally {
+                this.setState({
+                    loading: false,
+                });
+            }
+        }
+
     }
 
     componentDidMount() {
@@ -70,6 +221,8 @@ class UpdateCustomerForm extends Component {
         }
     }
 
+
+
     handleSubmit = async (values) => {
         const { initialValues, onUpdate, onCancel } = this.props;
 
@@ -80,7 +233,7 @@ class UpdateCustomerForm extends Component {
                 CUSTOMER_ID: initialValues.CUSTOMER_ID,
             };
 
-            const response = await axios.post('http://35.154.1.99:3001/updateCustomer', updatedValues);
+            const response = await axios.post('http://localhost:3001/updateCustomer', updatedValues);
 
             if (response.data.success) {
                 message.success('Customer updated successfully');
@@ -97,7 +250,7 @@ class UpdateCustomerForm extends Component {
     };
 
     showReferenceItem(itemId){
-        console.log('itemId', itemId);
+        //console.log('itemId', itemId);
         this.setState({
             selectedRefferenceItem: itemId,
             isViewItemModalVisible: true,
@@ -122,16 +275,14 @@ class UpdateCustomerForm extends Component {
             justifyContent: 'center',
         };
 
-        // const buttonStylePrint = {
-        //     width: '50px',
-        //     height: '50px',
-        //     borderRadius: '20px',
-        //     backgroundColor: '#52c41a',
-        //     display: 'flex',
-        //     color: '#FFFFFF',
-        //     alignItems: 'center',
-        //     justifyContent: 'center',
-        // };
+        let rememberedUser = Cookies.get('rememberedUser');
+        let ROLE = null;
+
+        if (rememberedUser) {
+            rememberedUser = JSON.parse(rememberedUser);
+            ROLE = rememberedUser.ROLE;
+        }
+
         return (
             <Form form={form} layout="vertical" onFinish={this.handleSubmit}>
                 <Row gutter={[16, 16]} justify="left" align="top">
@@ -228,11 +379,12 @@ class UpdateCustomerForm extends Component {
                                     cursor: 'default',
                                 }}
                             >
-                                Transactions Related To This Customer
+                                Details
                             </button>
                         }
                     >
                         <div className="table-responsive">
+                            {(this.props.initialValues.TYPE === 'Seller' || this.props.initialValues.TYPE === 'Buyer') && ROLE === 'ADMIN' ? (
                             <Table
                                 className="ant-border-space"
                                 size="small"
@@ -242,10 +394,6 @@ class UpdateCustomerForm extends Component {
                                     {
                                         title: 'Transaction Code',
                                         dataIndex: 'CODE',
-                                    },
-                                    {
-                                        title: 'Status',
-                                        dataIndex: 'STATUS',
                                     },
                                     {
                                         title: 'Date',
@@ -286,9 +434,25 @@ class UpdateCustomerForm extends Component {
                                         dataIndex: 'AMOUNT',
                                         render: (text, record) => (
                                             <span>
-                <div>Amount: Rs. {record.AMOUNT}</div>
-                <div style={{ color: 'green' }}>Amount Settled: Rs. {record.AMOUNT_SETTLED}</div>
-                <div style={{ color: 'red' }}>Amount Due: Rs. {record.DUE_AMOUNT}</div>
+                <div>Rs. {record.AMOUNT}</div>
+            </span>
+                                        ),
+                                    },
+                                    {
+                                        title: 'Amount Settled',
+                                        dataIndex: 'AMOUNT_SETTLED',
+                                        render: (text, record) => (
+                                            <span>
+                <div style={{ color: 'green' }}>Rs. {record.AMOUNT_SETTLED}</div>
+            </span>
+                                        ),
+                                    },
+                                    {
+                                        title: 'Due Amount',
+                                        dataIndex: 'DUE_AMOUNT',
+                                        render: (text, record) => (
+                                            <span>
+                <div style={{ color: 'red' }}>Rs. {record.DUE_AMOUNT}</div>
             </span>
                                         ),
                                     },
@@ -325,10 +489,6 @@ class UpdateCustomerForm extends Component {
                                                     dataIndex: 'CODE',
                                                 },
                                                 {
-                                                    title: 'Status',
-                                                    dataIndex: 'STATUS',
-                                                },
-                                                {
                                                     title: 'Date',
                                                     dataIndex: 'DATE',
                                                     render: (row) => (
@@ -356,6 +516,100 @@ class UpdateCustomerForm extends Component {
                                     ) : null
                                 )}
                             />
+                            ) : null}
+                            {this.props.initialValues.TYPE === 'Partner' ? (
+                                <Table
+                                    className="ant-border-space"
+                                    size="small"
+                                    style={{ margin: '15px' }}
+                                    rowKey="ITEM_ID_AI"
+                                    columns={[
+                                        {
+                                            title: 'Reference Item',
+                                            dataIndex: 'ITEM_CODE',
+                                            render: (text, record) => (
+                                                <Button type="default" style={{ height: 'auto' }}
+                                                        onClick={() => this.showReferenceItem(record.ITEM_ID_AI)}>
+                                <span>
+                <div>{record.ITEM_CODE}</div>
+                                </span>
+                                                </Button>
+                                            ),
+                                        },
+                                        {
+                                            title: 'Share Percentage',
+                                            dataIndex: 'SHARE_PERCENTAGE',
+                                            render: (text, record) => (
+                                                <span>
+                <div>{record.SHARE_PERCENTAGE}%</div>
+            </span>
+                                            ),
+                                        },
+                                        {
+                                            title: 'Other Shares',
+                                            dataIndex: 'OTHER_SHARES',
+                                        }
+                                    ]}
+                                    dataSource={this.state.tablePayment}
+                                    pagination={true}
+                                    loading={this.state.loading}
+                                />
+                            ) : null}
+                            {this.props.initialValues.TYPE === 'Sales Person' ? (
+                                <Table
+                                    className="ant-border-space"
+                                    size="small"
+                                    style={{ margin: '15px' }}
+                                    rowKey="ITEM_ID_AI"
+                                    columns={[
+                                        {
+                                            title: 'Reference Item',
+                                            dataIndex: 'ITEM_CODE',
+                                            render: (text, record) => (
+                                                <Button type="default" style={{ height: 'auto' }}
+                                                        onClick={() => this.showReferenceItem(record.ITEM_ID_AI)}>
+                                <span>
+                <div>{record.ITEM_CODE}</div>
+                                </span>
+                                                </Button>
+                                            ),
+                                        },
+                                        {
+                                            title: 'Buyer',
+                                            dataIndex: 'C_NAME',
+                                        },
+                                    ]}
+                                    dataSource={this.state.tablePayment}
+                                    pagination={true}
+                                    loading={this.state.loading}
+                                />
+                            ) : null}
+
+                            {this.props.initialValues.TYPE === 'Preformer' || this.props.initialValues.TYPE === 'Electric' || this.props.initialValues.TYPE === 'Heat T' || this.props.initialValues.TYPE === 'C&P' ? (
+                                <Table
+                                    className="ant-border-space"
+                                    size="small"
+                                    style={{ margin: '15px' }}
+                                    rowKey="ITEM_ID_AI"
+                                    columns={[
+                                        {
+                                            title: 'Items With Customer',
+                                            dataIndex: 'CODE',
+                                            render: (text, record) => (
+                                                <Button type="default" style={{ height: 'auto' }}
+                                                        onClick={() => this.showReferenceItem(record.ITEM_ID_AI)}>
+                                <span>
+                <div>{record.CODE}</div>
+                                </span>
+                                                </Button>
+                                            ),
+                                        },
+                                    ]}
+                                    dataSource={this.state.tablePayment}
+                                    pagination={true}
+                                    loading={this.state.loading}
+                                />
+                            ) : null}
                         </div>
                         <Modal
                             title="View Transaction"

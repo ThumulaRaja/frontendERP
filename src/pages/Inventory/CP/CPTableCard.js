@@ -1,6 +1,6 @@
 // /* eslint-disable */
 import React from 'react';
-import { Button, Card, Table, Tooltip, Divider, Popconfirm } from 'antd';
+import {Button, Card, Table, Tooltip, Divider, Popconfirm, InputNumber} from 'antd';
 import {EyeOutlined, EditOutlined, DeleteOutlined, QrcodeOutlined} from '@ant-design/icons';
 
 let CPTableCard = ({
@@ -68,10 +68,7 @@ let CPTableCard = ({
                             title: 'Status',
                             dataIndex: 'STATUS',
                         },
-                        // {
-                        //     title: 'Item ID',
-                        //     dataIndex: 'ITEM_ID',
-                        // },
+
                         {
                             title: 'No of Pieces',
                             dataIndex: 'PIECES',
@@ -79,6 +76,32 @@ let CPTableCard = ({
                         {
                             title: 'Weight',
                             dataIndex: 'WEIGHT',
+                        },
+                        {
+                            title: 'Policy',
+                            dataIndex: 'POLICY',
+                        },
+                        {
+                            title: 'Cost',
+                            dataIndex: 'COST',
+                            render: (text, record) => {
+                                return (
+                                    <InputNumber readOnly
+                                                 defaultValue={text}
+                                                 formatter={(value) =>
+                                                     `Rs. ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                                                 }
+                                                 parser={(value) => value.replace(/\Rs.\s?|(,*)/g, '')}
+                                    />
+                                );
+                            },
+                        },
+                        {
+                            title: 'In Inventory',
+                            dataIndex: 'IS_IN_INVENTORY',
+                            render: (text, record) => {
+                                return text === 1 ? <span style={{ color: 'green' }}>Yes</span> : <span style={{ color: 'red' }}>No</span>;
+                            }
                         },
                         {
                             title: 'Action',

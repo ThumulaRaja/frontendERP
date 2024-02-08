@@ -5,6 +5,7 @@ import {EditOutlined, DeleteOutlined, PlusOutlined, EyeOutlined} from '@ant-desi
 import axios from 'axios';
 import AddHeatT from './AddHeatT';
 import UpdateHeatT from './UpdateHeatT';
+import Customer from "../../GlobalViewModels/Customer";
 
 const { Option } = Select;
 
@@ -23,6 +24,8 @@ class HeatT extends Component {
             selectedCustomer: null,
             referenceOptions: [],
             formType: 'view',
+            selectedCustomer1: null,
+            isViewModalCustomerVisible1: false,
         };
 
         // Bind methods
@@ -44,8 +47,8 @@ class HeatT extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
-            console.log('response', response);
+            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -61,7 +64,7 @@ class HeatT extends Component {
 
         // Filter the table data based on Heat Treatment Code and Heat Treatment Name
         const filteredData = tableData.filter((record) => {
-            return record.NAME.toLowerCase().includes(value.toLowerCase());
+            return record.CODE.toLowerCase().includes(value.toLowerCase()) || record.HT_BY_NAME.toLowerCase().includes(value.toLowerCase());
         });
 
         this.setState({
@@ -84,7 +87,7 @@ class HeatT extends Component {
     handleDelete = async (Id) => {
         try {
             // Make an API call to deactivate the Heat Treatment
-            const response = await axios.post('http://35.154.1.99:3001/deactivateHeatT', {
+            const response = await axios.post('http://localhost:3001/deactivateHeatT', {
                 HEAT_ID: Id,
             });
 
@@ -106,7 +109,7 @@ class HeatT extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getAllHeatT');
+            const response = await axios.post('http://localhost:3001/getAllHeatT');
 
             if (response.data.success) {
                 const customers = response.data.result;
@@ -115,10 +118,10 @@ class HeatT extends Component {
                     tableData: customers,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -140,7 +143,7 @@ class HeatT extends Component {
 
     handleAddCustomer(values) {
         // Implement logic to add a new Heat Treatment using the provided values
-        console.log('Add Heat Treatment:', values);
+        //console.log('Add Heat Treatment:', values);
 
         // Close the modal after adding Heat Treatment
         this.toggleAddCustomerModal();
@@ -152,6 +155,13 @@ class HeatT extends Component {
 
         // Close the update modal
         this.toggleUpdateCustomerModal();
+    }
+
+    showCustomer(customerId){
+        this.setState({
+            selectedCustomer1: customerId,
+            isViewModalCustomerVisible1: true,
+        });
     }
 
     render() {
@@ -176,7 +186,7 @@ class HeatT extends Component {
                                 extra={
                                     <>
                                         <Search
-                                            placeholder="Search by HT Name"
+                                            placeholder="Search by Code or HT By"
                                             onSearch={this.handleSearch}
                                             style={{ width: 300, marginRight: '16px' }}
                                             allowClear
@@ -192,28 +202,27 @@ class HeatT extends Component {
                                         className="ant-border-space"
                                         size="small"
                                         style={{ margin: '15px' }}
-                                        rowKey="CUSTOMER_ID"
+                                        rowKey="HEAT_ID"
                                         columns={[
                                             {
                                                 title: 'HT Code',
                                                 dataIndex: 'CODE',
                                             },
-                                            // {
-                                            //     title: 'HT Name',
-                                            //     dataIndex: 'NAME',
-                                            // },
+
                                             {
                                                 title: 'HT Group',
-                                                dataIndex: 'GROUP_NAME',
-                                                render: (text, record) => {
-                                                    return (
-                                                        <span>{record.GROUP_NAME} - {record.GROUP_CODE}</span>
-                                                        )
-                                                }
+                                                dataIndex: 'GROUP_CODE',
                                             },
                                             {
                                                 title: 'HT By',
                                                 dataIndex: 'HT_BY_NAME',
+                                                render: (text, record) => (
+                                                    <Button type="default" style={{ height: 'auto'  }} onClick={() => this.showCustomer(record.CUSTOMER_ID)}>
+                                <span>
+                <div>{record.HT_BY_NAME}</div>
+            </span>
+                                                    </Button>
+                                                ),
                                             },
                                             {
                                                 title: "References",
@@ -252,7 +261,7 @@ class HeatT extends Component {
                                                 width: '120px',
                                                 align: 'center',
                                                 render: (row) => (
-                                                    <span style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                    <span style={{ display: 'flex', justifyContent: 'center' }}>
                                                         <Tooltip titile="View">
                                 <Button
                                     type="default"
@@ -263,16 +272,20 @@ class HeatT extends Component {
                                 />
                                 </Tooltip>
                                                         <Divider type="vertical" style={{ height: '50px', display: 'flex', alignItems: 'center' }} />
-                            <Tooltip title="Edit">
-                              <Button
-                                  type="primary"
-                                  icon={<EditOutlined />}
-                                  size="large"
-                                  style={buttonStyle}
-                                  onClick={() => this.handleUpdateShow(row, 'edit')}
-                              />
-                            </Tooltip>
-                            <Divider type="vertical" style={{ height: '50px', display: 'flex', alignItems: 'center' }} />
+                                                        {row.IS_APPROVED === 0 && (
+                                                            <Tooltip title="Edit">
+                                                                <Button
+                                                                    type="primary"
+                                                                    icon={<EditOutlined />}
+                                                                    size="large"
+                                                                    style={buttonStyle}
+                                                                    onClick={() => this.handleUpdateShow(row, 'edit')}
+                                                                />
+                                                            </Tooltip>
+                                                        )}
+                                                        {row.IS_APPROVED === 0 && (
+                                                            <Divider type="vertical" style={{ height: '50px', display: 'flex', alignItems: 'center' }} />
+                                                        )}
                             <Tooltip title="Delete">
   <Popconfirm
       title="Are you sure you want to delete this Heat Treatment?"
@@ -333,6 +346,21 @@ class HeatT extends Component {
                             type={this.state.formType}
                             onUpdate={this.getAllHeatT}
                             onCancel={this.toggleUpdateCustomerModal}
+                        />
+                    )}
+                </Modal>
+
+                <Modal
+                    title="View Customer"
+                    visible={this.state.isViewModalCustomerVisible1}
+                    onCancel={() => this.setState({ isViewModalCustomerVisible1: false })}
+                    footer={null}
+                    width={1250}
+                >
+                    {this.state.selectedCustomer1 && (
+                        <Customer
+                            key={this.state.selectedCustomer1} // Pass a key to ensure a new instance is created
+                            customerId={this.state.selectedCustomer1}
                         />
                     )}
                 </Modal>

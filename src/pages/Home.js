@@ -1,11 +1,10 @@
 // /* eslint-disable */
 import React, { useEffect, useState } from 'react';
-import {Button, Card, Col, Divider, InputNumber, Popconfirm, Row, Table, Tooltip, Typography} from 'antd';
+import {Card, Col, InputNumber, Row, Table, Typography} from 'antd';
 import axios from 'axios';
-import EChart from '../components/chart/EChart';
 import LineChart from '../components/chart/LineChart';
 import Paragraph from "antd/lib/typography/Paragraph";
-import {DeleteOutlined, EyeOutlined, PrinterOutlined, RightCircleOutlined} from "@ant-design/icons";
+import { RightCircleOutlined} from "@ant-design/icons";
 import Cookies from "js-cookie";
 import {NavLink} from "react-router-dom";
 
@@ -25,16 +24,16 @@ function Home() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://35.154.1.99:3001/getItemCountData');
+      const response = await axios.post('http://localhost:3001/getItemCountData');
 
       if (response.data.success) {
-        console.log('ResponseDashboard:', response.data.result);
+        //console.log('ResponseDashboard:', response.data.result);
         setCountData(response.data.result);
       } else {
-        console.log('Error:', response.data.message);
+        //console.log('Error:', response.data.message);
       }
     } catch (error) {
-      console.log('Error:', error.message);
+      //console.log('Error:', error.message);
     } finally {
       setLoading(false);
     }
@@ -44,16 +43,15 @@ function Home() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://35.154.1.99:3001/getTodayTransactionData');
-
+      const response = await axios.post('http://localhost:3001/getTodayTransactionData');
       if (response.data.success) {
-        console.log('ResponseDashboard1:', response.data.result);
+        //console.log('ResponseDashboard1:', response.data.result);
         setTodayTransactionData(response.data.result);
       } else {
-        console.log('Error:', response.data.message);
+        //console.log('Error:', response.data.message);
       }
     } catch (error) {
-      console.log('Error:', error.message);
+      //console.log('Error:', error.message);
     } finally {
       setLoading(false);
     }
@@ -69,7 +67,7 @@ function Home() {
     const { USER_ID, NAME,ROLE } = rememberedUser;
     NAME1 = NAME;
     ROLE1 = ROLE;
-    console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
+    //console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
   }
   else{
     Cookies.remove('rememberedUser');
@@ -270,7 +268,7 @@ function Home() {
             </Col>
             <Col xs={24} sm={24} md={12} lg={12} xl={10} className="mb-24">
               <Card bordered={false} className="criclebox h-full"
-                    title={'Troday\'s Transactions'}>
+                    title={'Today\'s Transactions'}>
                 <div className="table-responsive">
                   <Table
                       className="ant-border-space"

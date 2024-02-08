@@ -33,6 +33,7 @@ export default class AddTransactionForm extends Component {
             htByOptions: [],
             cpByOptions: [],
             preformerOptions: [],
+        etByOptions: [],
       ReferenceOptions: [],
       type: 'Selling',
 
@@ -67,16 +68,17 @@ export default class AddTransactionForm extends Component {
     }
   };
 
-  handleTransactionTypeChange = (value) => {
-    const form = this.formRef.current;
-    this.formRef.current.resetFields();
-    this.setState({ type: value });
-    if (value === 'Buying') {
-      form.setFieldsValue({ STATUS: 'Working' });
-    }
-    else if (value === 'Selling') {
-      form.setFieldsValue({ STATUS: 'Sold' });
-    }
+  handleTransactionTypeChange = async (value) => {
+      const form = this.formRef.current;
+      // Reset CUSTOMER and BEARER fields when the transaction type changes
+        form.setFieldsValue({ CUSTOMER: undefined });
+        form.setFieldsValue({ BEARER: undefined });
+      if (value === 'Buying') {
+          form.setFieldsValue({STATUS: 'Working'});
+      } else if (value === 'Selling') {
+          form.setFieldsValue({STATUS: 'Sold'});
+      }
+      //console.log("type", this.state.type);
   }
 
 
@@ -91,8 +93,8 @@ export default class AddTransactionForm extends Component {
 
   async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
             const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
@@ -143,7 +145,14 @@ export default class AddTransactionForm extends Component {
             }
             ));
 
-            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+            // ETByOptions Filter TYPE = Electric
+            const etByOptions = response.data.result.filter((customer) => customer.TYPE === 'Electric').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions, etByOptions });
 
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
@@ -157,8 +166,8 @@ export default class AddTransactionForm extends Component {
 
   async fetchReferenceOptions() {
     try {
-      const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
-      console.log("response", response);
+      const response = await axios.post("http://localhost:3001/getItemsForReference");
+      //console.log("response", response);
       return response.data.result.map((ref) => ({
         value: ref.ITEM_ID_AI,
         label: ref.CODE,
@@ -172,14 +181,14 @@ export default class AddTransactionForm extends Component {
 
 
   handleReferenceChange = async (value) => {
-    console.log(`selected ${value}`);
+    //console.log(`selected ${value}`);
     const form = this.formRef.current;
     try {
-      const response = await axios.post('http://35.154.1.99:3001/getItemsDetailsForTransaction', {
+      const response = await axios.post('http://localhost:3001/getItemsDetailsForTransaction', {
         ITEM_ID_AI: value,
       });
       if (response.data.success) {
-        console.log("response", response);
+        //console.log("response", response);
         form.setFieldsValue({ PAYMENT_ETA_START: response.data.result[0].PAYMENT_ETA_START ? moment(response.data.result[0].PAYMENT_ETA_START) : undefined });
         form.setFieldsValue({ PAYMENT_ETA_END: response.data.result[0].PAYMENT_ETA_END ? moment(response.data.result[0].PAYMENT_ETA_END) : undefined });
         form.setFieldsValue({ DATE_FINISHED: response.data.result[0].DATE_FINISHED ? moment(response.data.result[0].DATE_FINISHED) : undefined });
@@ -237,9 +246,9 @@ export default class AddTransactionForm extends Component {
         PAYMENT_AMOUNT: values.AMOUNT_SETTLED,
       };
 
-      console.log("updatedValues", updatedValues);
+      //console.log("updatedValues", updatedValues);
 
-      const response = await axios.post('http://35.154.1.99:3001/addTransaction', updatedValues);
+      const response = await axios.post('http://localhost:3001/addTransaction', updatedValues);
 
       if (response.data.success) {
         message.success('Transaction added successfully');
@@ -336,7 +345,7 @@ export default class AddTransactionForm extends Component {
                               <Option value="Sold">Sold</Option>
                               <Option value="Finished">Finished</Option>
                               <Option value="Stuck">Stuck</Option>
-                              <Option value="With Seller">With Seller</Option>
+                              <Option value="With Sales Person">With Sales Person</Option>
                               <Option value="Cutting">Cutting</Option>
                               <Option value="Ready for Selling">Ready for Selling</Option>
                               <Option value="Heat Treatment">Heat Treatment</Option>
@@ -344,6 +353,10 @@ export default class AddTransactionForm extends Component {
                               <Option value="C&P">C&P</Option>
                               <Option value="Preformed">Preformed</Option>
                               <Option value="Added to a lot">Added to a lot</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
+                                <Option value="With Preformer">With Preformer</Option>
                             </Select>
                         </Form.Item>
                       </Col>
@@ -353,7 +366,7 @@ export default class AddTransactionForm extends Component {
                         <Form.Item
                             name="DATE"
                             label="Date"
-                            initialValue={moment()}  // Set the default date to today
+                            rules={[{ required: true, message: 'Please select Date' }]}  // Set the default date to today
                             rules={[
                               { required: true, message: 'Please enter Date' },
                             ]}

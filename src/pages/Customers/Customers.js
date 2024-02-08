@@ -14,10 +14,12 @@ import {
     Tooltip,
     Select, Form,
 } from 'antd';
-import { EditOutlined, DeleteOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, EyeOutlined, PlusOutlined,CopyOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import AddCustomerForm from './AddCustomerForm';
 import UpdateCustomerForm from './UpdateCustomerForm';
+import 'clipboard-polyfill';
+
 
 const { Search } = Input;
 const { Option } = Select;
@@ -126,7 +128,7 @@ class Customers extends Component {
     handleDelete = async (customerId) => {
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://35.154.1.99:3001/deactivateCustomer', {
+            const response = await axios.post('http://localhost:3001/deactivateCustomer', {
                 CUSTOMER_ID: customerId,
             });
 
@@ -143,11 +145,32 @@ class Customers extends Component {
         }
     };
 
+    handleCopyURL = (row) => {
+        // Encode row.CUSTOMER_ID using Base64
+        const encodedCustomerId = this.encodeBase64(row.CUSTOMER_ID);
+
+        const url = `app.nihalgems.com/customer/${encodedCustomerId}`;
+
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(url)
+                .then(() => {
+                    message.success('Customer URL copied to clipboard');
+                })
+                .catch((error) => {
+                    console.error('Error copying to clipboard:', error);
+                });
+        } else {
+            console.error('Clipboard API not supported');
+        }
+    }
+
+    encodeBase64 = (text) => btoa(text);
+
     async getAllCustomers() {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getAllCustomers');
+            const response = await axios.post('http://localhost:3001/getAllCustomers');
 
             if (response.data.success) {
                 const customers = response.data.result;
@@ -164,10 +187,10 @@ class Customers extends Component {
                     filteredTableDataHeatT: customers.filter((customer) => customer.TYPE === 'Heat T'),
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -176,15 +199,15 @@ class Customers extends Component {
     }
 
     async getDueCustomers() {
-        console.log('getDueCustomers');
+        //console.log('getDueCustomers');
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getDueCustomers');
+            const response = await axios.post('http://localhost:3001/getDueCustomers');
 
             if (response.data.success) {
                 const customers = response.data.result;
-                console.log('customers', customers);
+                //console.log('customers', customers);
 
                 this.setState({
                     tableData: customers,
@@ -198,10 +221,10 @@ class Customers extends Component {
                     filteredTableDataHeatT: customers.filter((customer) => customer.TYPE === 'Heat T'),
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -223,7 +246,7 @@ class Customers extends Component {
 
     handleAddCustomer(values) {
         // Implement logic to add a new customer using the provided values
-        console.log('Add customer:', values);
+        //console.log('Add customer:', values);
 
         // Close the modal after adding customer
         this.toggleAddCustomerModal();
@@ -243,6 +266,17 @@ class Customers extends Component {
             height: '50px',
             borderRadius: '20px',
             display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+        };
+
+        const buttonStylePrint = {
+            width: '50px',
+            height: '50px',
+            borderRadius: '20px',
+            backgroundColor: '#52c41a',
+            display: 'flex',
+            color: '#FFFFFF',
             alignItems: 'center',
             justifyContent: 'center',
         };
@@ -325,6 +359,15 @@ class Customers extends Component {
                                                         icon={<EditOutlined />}
                                                         style={buttonStyle}
                                                         onClick={() => this.handleUpdateShow(row, 'edit')}
+                                                    />
+                                                </Tooltip>
+                                                <Divider type="vertical" style={{ height: '50px', display: 'flex', alignItems: 'center' }} />
+                                                <Tooltip title="Copy Customer URL">
+                                                    <Button
+                                                        type="primary"
+                                                        icon={<CopyOutlined />}
+                                                        style={buttonStylePrint}
+                                                        onClick={() => this.handleCopyURL(row)}
                                                     />
                                                 </Tooltip>
                                                 <Divider type="vertical" style={{ height: '50px', display: 'flex', alignItems: 'center' }} />

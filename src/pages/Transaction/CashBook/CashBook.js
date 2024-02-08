@@ -41,8 +41,9 @@ class CashBook extends Component {
             htByOptions: [],
             cpByOptions: [],
             preformerOptions: [],
+        etByOptions: [],
             countData: [],
-            showCountCards: true,
+            showCountCards: false,
 
             searchCode: '',
             searchStatus: '',
@@ -63,8 +64,8 @@ class CashBook extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
             const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
@@ -115,7 +116,14 @@ class CashBook extends Component {
             }
             ));
 
-            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+            // ETByOptions Filter TYPE = Electric
+            const etByOptions = response.data.result.filter((customer) => customer.TYPE === 'Electric').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions, etByOptions });
 
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
@@ -136,7 +144,7 @@ class CashBook extends Component {
     }
 
     showReferenceItem(itemId){
-        console.log('itemId', itemId);
+        //console.log('itemId', itemId);
         this.setState({
             selectedRefferenceItem: itemId,
             isViewItemModalVisible: true,
@@ -207,7 +215,7 @@ class CashBook extends Component {
             this.state.tableData = filteredTableData;
 
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -218,21 +226,21 @@ class CashBook extends Component {
 
 
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
 
     handleDelete = async (id,all) => {
-        console.log('id', id);
-        console.log('all', all);
+        //console.log('id', id);
+        //console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://35.154.1.99:3001/deactivateTransaction', {
+            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -251,9 +259,9 @@ class CashBook extends Component {
     };
 
     handlePrint = async (row) => {
-        console.log('row', row);
+        //console.log('row', row);
         try {
-            const response = await axios.post('http://35.154.1.99:3001/generateInvoice', {
+            const response = await axios.post('http://localhost:3001/generateInvoice', {
                 data: row,
             });
 
@@ -278,7 +286,7 @@ class CashBook extends Component {
     handleDeleteExp = async (Id) => {
         try {
             // Make an API call to deactivate the Expenses
-            const response = await axios.post('http://35.154.1.99:3001/deactivateExpenses', {
+            const response = await axios.post('http://localhost:3001/deactivateExpenses', {
                 EXPENSES_ID: Id,
             });
 
@@ -301,18 +309,18 @@ class CashBook extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getAllTransactionsCashBook');
+            const response = await axios.post('http://localhost:3001/getAllTransactionsCashBook');
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
 
                 this.state.tableData = items;
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -346,13 +354,13 @@ class CashBook extends Component {
     filterByShareholder = async (value) => {
         this.setState({ loading: true });
         try {
-            const response = await axios.post('http://35.154.1.99:3001/filterByShareholderCashBook', {
+            const response = await axios.post('http://localhost:3001/filterByShareholderCashBook', {
                 shareholder: value,
             });
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
                 this.state.tableData = items;
             }
             else {
@@ -360,7 +368,7 @@ class CashBook extends Component {
             }
         }
         catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
             this.state.tableData = [];
         }
         finally {
@@ -374,16 +382,16 @@ class CashBook extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getCashBookSumData');
+            const response = await axios.post('http://localhost:3001/getCashBookSumData');
 
             if (response.data.success) {
-                console.log('ResponseDashboard:', response.data.result);
+                //console.log('ResponseDashboard:', response.data.result);
                 this.setState({ countData: response.data.result });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({ loading: false });
         }
@@ -420,15 +428,15 @@ class CashBook extends Component {
                                             }}
                                         >
                                             <div className="chart-visitor-count">
-            <span style={{ fontSize: '24px', color: '#313131' }}>
+            <span style={{ fontSize: '20px', color: '#313131' }}>
                 Cash Inflow ➕: <strong>Rs {countData.sellCashInTransactions}.00</strong>
             </span>
                                                 <br />
-                                                <span style={{ fontSize: '24px', color: '#313131' }}>
+                                                <span style={{ fontSize: '20px', color: '#313131' }}>
                 Cash Outflow ➖: <strong>Rs {countData.buyCashOutTransactions}.00</strong>
             </span>
                                                 <br />
-                                                <span style={{ fontSize: '24px', color: '#313131' }}>
+                                                <span style={{ fontSize: '20px', color: '#313131' }}>
                 Cash Balance 🟰: <strong>Rs {countData.cashBalance}.00</strong>
             </span>
                                             </div>
@@ -453,15 +461,15 @@ class CashBook extends Component {
                                             }}
                                         >
                                             <div className="chart-visitor-count">
-            <span style={{ fontSize: '24px', color: '#313131' }}>
+            <span style={{ fontSize: '20px', color: '#313131' }}>
                 Bank Inflow ➕: <strong>Rs {countData.sellBankInTransactions}.00</strong>
             </span>
                                                 <br />
-                                                <span style={{ fontSize: '24px', color: '#313131' }}>
+                                                <span style={{ fontSize: '20px', color: '#313131' }}>
                 Bank Outflow ➖: <strong>Rs {countData.buyBankOutTransactions}.00</strong>
             </span>
                                                 <br />
-                                                <span style={{ fontSize: '24px', color: '#313131' }}>
+                                                <span style={{ fontSize: '20px', color: '#313131' }}>
                 Bank Balance 🟰: <strong>Rs {countData.bankBalance}.00</strong>
             </span>
                                             </div>
@@ -483,15 +491,15 @@ class CashBook extends Component {
                                             }}
                                         >
                                             <div className="chart-visitor-count">
-            <span style={{ fontSize: '24px', color: '#313131' }}>
+            <span style={{ fontSize: '20px', color: '#313131' }}>
                 Total Inflow ➕: <strong>Rs {countData.sellCashInTransactions + countData.sellBankInTransactions}.00</strong>
             </span>
                                                 <br />
-                                                <span style={{ fontSize: '24px', color: '#313131' }}>
+                                                <span style={{ fontSize: '20px', color: '#313131' }}>
                 Total Outflow ➖: <strong>Rs {countData.buyCashOutTransactions + countData.buyBankOutTransactions}.00</strong>
             </span>
                                                 <br />
-                                                <span style={{ fontSize: '24px', color: '#313131' }}>
+                                                <span style={{ fontSize: '20px', color: '#313131' }}>
                 Total Balance 🟰: <strong>Rs {countData.cashBalance + countData.bankBalance}.00</strong>
             </span>
                                             </div>
@@ -640,7 +648,7 @@ class CashBook extends Component {
                                                 (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                                 (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                             }>
-                                        {this.state.customerOptions.map((option) => (
+                                        {this.state.partnerOptions.map((option) => (
                                             <Option key={option.value} value={option.value} title={option.label}>
                                                 {option.label}
                                             </Option>

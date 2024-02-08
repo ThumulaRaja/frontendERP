@@ -86,7 +86,7 @@ class Expenses extends Component {
     handleDelete = async (Id) => {
         try {
             // Make an API call to deactivate the Expenses
-            const response = await axios.post('http://35.154.1.99:3001/deactivateExpenses', {
+            const response = await axios.post('http://localhost:3001/deactivateExpenses', {
                 EXPENSES_ID: Id,
             });
 
@@ -108,7 +108,7 @@ class Expenses extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getAllExpenses');
+            const response = await axios.post('http://localhost:3001/getAllExpenses');
 
             if (response.data.success) {
                 const customers = response.data.result;
@@ -117,10 +117,10 @@ class Expenses extends Component {
                     tableData: customers,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -142,7 +142,7 @@ class Expenses extends Component {
 
     handleAddCustomer(values) {
         // Implement logic to add a new Expenses using the provided values
-        console.log('Add Expenses:', values);
+        //console.log('Add Expenses:', values);
 
         // Close the modal after adding Expenses
         this.toggleAddCustomerModal();
@@ -158,8 +158,8 @@ class Expenses extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
-            console.log('response', response);
+            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,

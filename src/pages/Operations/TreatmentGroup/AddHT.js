@@ -28,8 +28,8 @@ class AddHT extends React.Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
-            console.log('response', response);
+            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -62,10 +62,10 @@ class AddHT extends React.Component {
                 REFERENCE: referenceString,
             };
 
-            const response = await axios.post('http://35.154.1.99:3001/addHT', updatedValues);
+            const response = await axios.post('http://localhost:3001/addHT', updatedValues);
 
             if (response.data.success) {
-                message.success('Heat Treatment Group added successfully');
+                message.success('Treatment Group added successfully');
 
                 // Close the modal
                 this.props.onClose();
@@ -76,10 +76,10 @@ class AddHT extends React.Component {
                 // You can reset the form if needed
                 this.formRef.current.resetFields();
             } else {
-                message.error('Failed to add Heat Treatment Group');
+                message.error('Failed to add Treatment Group');
             }
         } catch (error) {
-            console.error('Error adding Heat Treatment Group:', error);
+            console.error('Error adding Treatment Group:', error);
             message.error('Internal server error');
         }
     };
@@ -127,6 +127,19 @@ class AddHT extends React.Component {
                         </Form.Item>
                     </Col>
                 </Row>
+                <Row gutter={[16, 16]} justify="left" align="top">
+                    <Col xs={24} sm={24} md={24} lg={24}>
+                        <Form.Item name="TYPE" label="Type"
+                                   rules={[{ required: true, message: 'Please select reference' }]}>
+                            <Select
+                                placeholder="Select Reference"
+                                showSearch>
+                                <Option value="Heat Treatment">Heat Treatment</Option>
+                                <Option value="Electric Treatment">Electric Treatment</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                </Row>
 
                 <Row gutter={[16, 16]} justify="left" align="top">
                     <Col xs={24} sm={24} md={24} lg={24}>
@@ -143,7 +156,7 @@ class AddHT extends React.Component {
                     <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
-                                Add Heat Treatment Group
+                                Add Treatment Group
                             </Button>
                         </Form.Item>
                     </Col>

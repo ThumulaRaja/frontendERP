@@ -1,36 +1,36 @@
-// /* eslint-disable */
-import React from 'react';
+/* eslint-disable */
+
+import React, { Component } from 'react';
 import {
-    Form,
-    Input,
-    Button,
-    Col,
+    Card,
     Row,
-    message,
-    Select,
-    Divider,
+    Col,
+    Form,
     InputNumber,
-    Modal,
+    Select,
     Switch,
     Upload,
-    DatePicker
-} from 'antd';
+    Button,
+    message,
+    DatePicker,
+    Input, Divider, Modal
+} from "antd";
+import Cookies from "js-cookie";
 import axios from "axios";
-import Cookies from 'js-cookie';
-import {UploadOutlined} from "@ant-design/icons";
-import moment from "moment/moment";
+import moment from 'moment';
+import {RightOutlined, UploadOutlined} from "@ant-design/icons";
+
 const { Option } = Select;
 
-
-class AddHeatT extends React.Component {
+class UpdateElectricTreatment extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             referenceOptions: [],
-            heatTreatmentGroupOptions: [],
-            enlargedImageVisibleHT: false,
             enlargedImageVisible: false,
+            enlargedImageVisibleET: false,
+            heatTreatmentGroupOptions: [],
             customerOptions: [],
             buyerOptions: [],
             sellerOptions: [],
@@ -50,6 +50,7 @@ class AddHeatT extends React.Component {
         };
 
         this.formRef = React.createRef();
+        this.loadReferenceFromHTGroup(this.props.initialValues.HT_ID);
     }
 
     async fetchCustomerOptions() {
@@ -157,7 +158,7 @@ class AddHeatT extends React.Component {
         try {
             for(let i=0;i<this.state.resultArray.length;i++){
                 form.setFieldsValue({
-                    [`HT_BY_${i+1}`]: value,
+                    [`ET_BY_${i+1}`]: value,
                 });
             }
         } catch (error) {
@@ -171,7 +172,7 @@ class AddHeatT extends React.Component {
             const response = await axios.post("http://localhost:3001/getAllHT");
             //console.log("response", response);
 
-            return response.data.result.filter((ht) => ht.TYPE === 'Heat Treatment').map((ht) => ({
+            return response.data.result.filter((ht) => ht.TYPE === 'Electric Treatment').map((ht) => ({
                 value: ht.HT_ID,
                 code: ht.CODE,
             }));
@@ -183,9 +184,10 @@ class AddHeatT extends React.Component {
 
     loadReferenceFromHTGroup = async (value) => {
         const form = this.formRef.current;
+        //console.log("value", this.props);
         try {
             this.setState({ resultArray: [] });
-            const response = await axios.post('http://localhost:3001/getReferenceFromHTGroup', {
+            const response = await axios.post('http://localhost:3001/getReferenceFromETGroup', {
                 HT_ID: value,
             });
             if (response.data.success) {
@@ -193,6 +195,7 @@ class AddHeatT extends React.Component {
 
                 // Store the result array in the component state
                 this.setState({ resultArray: response.data.result });
+                //console.log("resultArray", this.state.resultArray);
 
             } else {
                 message.error('Failed to fetch Item Details');
@@ -266,61 +269,35 @@ class AddHeatT extends React.Component {
         }
     };
 
-
-    handleSubmit = async (values) => {
+    handleApprove = async () => {
         try {
-            // Retrieve USER_ID from rememberedUser
-            let rememberedUser = Cookies.get('rememberedUser');
-            let USER_ID = null;
+            //put all the reference ids in an array
+            const referenceArray = this.state.resultArray.map((referenceData) => referenceData.ITEM_ID_AI);
 
-            if (rememberedUser) {
-                rememberedUser = JSON.parse(rememberedUser);
-                USER_ID = rememberedUser.USER_ID;
+            const sendObject = {
+                ELEC_ID: this.props.initialValues.ELEC_ID,
+                referenceArray,
             }
-
-            // Main data for the request
-            const mainData = {
-                ...values,
-                CREATED_BY: USER_ID,
-            };
-
-            // Organize sub-data into an array
-            const subDataArray = this.state.resultArray.map((referenceData, index) => ({
-                REFERENCE: values[`REFERENCE_${index + 1}`],
-                AFTER_STATUS: values[`AFTER_STATUS_${index + 1}`],
-                WEIGHT_AFTER_HT: values[`WEIGHT_AFTER_HT_${index + 1}`],
-                HT_BY: values[`HT_BY_${index + 1}`],
-                PHOTOS_AFTER_HT_LINK: this.state[`imgBBLink${index}`] === undefined ? referenceData.PHOTOS_AFTER_HT_LINK : this.state[`imgBBLink${index}`],
-            }));
-
-            // Combine main data with sub-data array
-            const resultArrayData = {
-                mainData,
-                subDataArray,
-            };
-            //console.log('resultArrayData', resultArrayData);
+            //console.log('sendObject', sendObject);
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/addHeatT', resultArrayData);
+            const response = await axios.post('http://localhost:3001/approveElecT', sendObject);
 
             if (response.data.success) {
-                message.success('Heat Treatment added successfully');
+                message.success('Elec Treatment approved successfully');
                 // Close the modal
-                this.props.onClose();
-                // Refresh the table
-                this.props.refreshTable();
+                this.props.onUpdate();
+                this.props.onCancel();
                 // You can reset the form if needed
-                this.formRef.current.resetFields();
+                // this.formRef.current.resetFields();
             } else {
-                message.error('Failed to add Heat Treatment');
+                message.error('Failed to Approve Elec Treatment');
             }
         } catch (error) {
-            console.error('Error adding Heat Treatment:', error);
+            console.error('Error Approving Elec Treatment:', error);
             message.error('Internal server error');
         }
     };
-
-
 
     renderFormFields = () => {
         const { resultArray, referenceOptions, customerOptions, fileList1 } = this.state;
@@ -334,6 +311,8 @@ class AddHeatT extends React.Component {
         const fileLimit = {
             accept: 'image/*', // Accept only image files
         };
+
+        const { type } = this.props;
 
         return resultArray.map((referenceData, index) => (
             <div key={index}>
@@ -376,9 +355,9 @@ class AddHeatT extends React.Component {
                                 <Option value="C&P">C&P</Option>
                                 <Option value="Preformed">Preformed</Option>
                                 <Option value="Added to a lot">Added to a lot</Option>
-                                <Option value="With Heat T">With Heat T</Option>
-                                <Option value="With C&P">With C&P</Option>
-                                <Option value="With Electric T">With Electric T</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
                                 <Option value="With Preformer">With Preformer</Option>
                             </Select>
                         </Form.Item>
@@ -394,43 +373,43 @@ class AddHeatT extends React.Component {
                         </Form.Item>
                     </Col>
                     {referenceData.PHOTO_LINK ? (
-                    <Col span={3} style={{ display: 'flex', alignItems: 'center' }}>
-                        <Form.Item
-                            label="Photo"
-                        >
-                            <img
-                                alt="Initial Photo"
-                                style={{ width: '50%', borderRadius: '5px', cursor: 'pointer' }}
-                                src={referenceData.PHOTO_LINK}
-                                onClick={() => this.setState({ enlargedImageVisible: true })}
-                            />
-
-                            {/* Enlarged view modal */}
-                            <Modal
-                                visible={this.state.enlargedImageVisible}
-                                footer={null}
-                                onCancel={() => this.setState({ enlargedImageVisible: false })}
+                        <Col span={3} style={{ display: 'flex', alignItems: 'center' }}>
+                            <Form.Item
+                                label="Photo"
                             >
                                 <img
-                                    alt="Enlarged View"
-                                    style={{ width: '100%' }}
+                                    alt="Initial Photo"
+                                    style={{ width: '50%', borderRadius: '5px', cursor: 'pointer' }}
                                     src={referenceData.PHOTO_LINK}
-                                    onError={(e) => {
-                                        console.error('Image loading error:', e);
-                                    }}
+                                    onClick={() => this.setState({ enlargedImageVisible: true })}
                                 />
-                            </Modal>
-                        </Form.Item>
-                    </Col>
+
+                                {/* Enlarged view modal */}
+                                <Modal
+                                    visible={this.state.enlargedImageVisible}
+                                    footer={null}
+                                    onCancel={() => this.setState({ enlargedImageVisible: false })}
+                                >
+                                    <img
+                                        alt="Enlarged View"
+                                        style={{ width: '100%' }}
+                                        src={referenceData.PHOTO_LINK}
+                                        onError={(e) => {
+                                            console.error('Image loading error:', e);
+                                        }}
+                                    />
+                                </Modal>
+                            </Form.Item>
+                        </Col>
                     ) : null}
                     <Col xs={24} sm={24} md={24} lg={3}>
                         <Form.Item
-                            name={`IS_HEAT_TREATED_${index + 1}`}
-                            label={`Is Heat Treated Already ${index + 1}`}
-                            initialValue={referenceData.IS_HEAT_TREATED}
+                            name={`IS_ELEC_TREATED_${index + 1}`}
+                            label={`Is Elec Treated Already ${index + 1}`}
+                            initialValue={referenceData.IS_ELEC_TREATED}
                         >
                             <Switch
-                                checkedChildren="Heat Treated"
+                                checkedChildren="Elec Treated"
                                 unCheckedChildren="Not Treated"
                                 disabled
                             />
@@ -440,10 +419,10 @@ class AddHeatT extends React.Component {
                         {/* Status */}
                         <Form.Item
                             name={`AFTER_STATUS_${index + 1}`}
-                            label={`Status After HT ${index + 1}`}
-                            initialValue="With Heat T"
+                            label={`Status After ET ${index + 1}`}
+                            initialValue="With Electric T"
                         >
-                            <Select placeholder="Select Status" showSearch>
+                            <Select placeholder="Select Status" showSearch style={ type === 'view' ? disableStyle : null }>
                                 <Option value="Working">Working</Option>
                                 <Option value="Treatment">Treatment</Option>
                                 <Option value="Sold">Sold</Option>
@@ -457,9 +436,9 @@ class AddHeatT extends React.Component {
                                 <Option value="C&P">C&P</Option>
                                 <Option value="Preformed">Preformed</Option>
                                 <Option value="Added to a lot">Added to a lot</Option>
-                                <Option value="With Heat T">With Heat T</Option>
-                                <Option value="With C&P">With C&P</Option>
-                                <Option value="With Electric T">With Electric T</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
                                 <Option value="With Preformer">With Preformer</Option>
                             </Select>
                         </Form.Item>
@@ -467,18 +446,18 @@ class AddHeatT extends React.Component {
                     <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Weight (ct) */}
                         <Form.Item
-                            name={`WEIGHT_AFTER_HT_${index + 1}`}
-                            label={`Weight (ct) After HT ${index + 1}`}
-                            initialValue={referenceData.WEIGHT_AFTER_HT}
+                            name={`WEIGHT_AFTER_ET_${index + 1}`}
+                            label={`Weight (ct) After ET ${index + 1}`}
+                            initialValue={referenceData.WEIGHT_AFTER_ET}
                         >
-                            <InputNumber min={0} step={0.01} placeholder="Enter Weight" style={{ width: '100%' }} />
+                            <InputNumber min={0} step={0.01} placeholder="Enter Weight" style={ type === 'view' ? disableStyle : { width: '100%' } } />
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item
-                            name={`HT_BY_${index + 1}`}
-                            label={`Heat Treated By ${index + 1}`}
-                            initialValue={referenceData.HT_BY}
+                            name={`ET_BY_${index + 1}`}
+                            label={`Elec Treated By ${index + 1}`}
+                            initialValue={referenceData.ET_BY}
                         >
                             <Select placeholder="Select Customer" style={disableStyle}>
                                 {customerOptions.map((option) => (
@@ -489,41 +468,46 @@ class AddHeatT extends React.Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    {referenceData.PHOTOS_AFTER_HT_LINK ? (
-                    <Col span={3} style={{ display: 'flex', alignItems: 'center' }}>
-                        <Form.Item
-                            label="Photo After HT"
-                        >
-                            <img
-                                alt="Initial Photo"
-                                style={{ width: '50%', borderRadius: '5px', cursor: 'pointer' }}
-                                src={referenceData.PHOTOS_AFTER_HT_LINK}
-                                onClick={() => this.setState({ enlargedImageVisibleHT: true })}
-                            />
-
-                            {/* Enlarged view modal */}
-                            <Modal
-                                visible={this.state.enlargedImageVisibleHT}
-                                footer={null}
-                                onCancel={() => this.setState({ enlargedImageVisibleHT: false })}
-                            >
+                    {referenceData.PHOTOS_AFTER_ET_LINK ? (
+                        <Col span={3} style={{ display: 'flex', alignItems: 'center' }}>
+                            <Form.Item label="Photo After ET">
                                 <img
-                                    alt="Enlarged View"
-                                    style={{ width: '100%' }}
-                                    src={referenceData.PHOTOS_AFTER_HT_LINK}
-                                    onError={(e) => {
-                                        console.error('Image loading error:', e);
+                                    alt="Initial Photo"
+                                    style={{ width: '50%', borderRadius: '5px', cursor: 'pointer' }}
+                                    key={`img${index}`}
+                                    src={referenceData.PHOTOS_AFTER_ET_LINK}
+                                    onClick={() => {
+                                        this.setState({ enlargedImageVisibleET: index }); // Use index as the unique key
                                     }}
                                 />
-                            </Modal>
-                        </Form.Item>
-                    </Col>
+
+                                {/* Enlarged view modal */}
+                                <Modal
+                                    visible={this.state.enlargedImageVisibleET === index}
+                                    footer={null}
+                                    onCancel={() => this.setState({ enlargedImageVisibleET: null })} // Reset to null when modal is closed
+                                    key={`modal${index}`} // Use index as the unique key for the modal
+                                >
+                                    <img
+                                        alt="Enlarged View"
+                                        style={{ width: '100%' }}
+                                        key={`img${index}`}
+                                        src={referenceData.PHOTOS_AFTER_ET_LINK}
+                                        onError={(e) => {
+                                            console.error('Image loading error:', e);
+                                        }}
+                                    />
+                                </Modal>
+                            </Form.Item>
+                        </Col>
+
                     ) : null}
+                    {type === 'edit' ? (
                     <Col xs={24} sm={24} md={24} lg={3}>
                         {/* File Upload */}
                         <Form.Item
-                            name={`PHOTOS_AFTER_HT_LINK_${index + 1}`}
-                            label={`Upload Photo After HT ${index + 1}`}
+                            name={`PHOTOS_AFTER_ET_LINK_${index + 1}`}
+                            label={`Upload Photo After ET ${index + 1}`}
                         >
                             <Upload
                                 customRequest={({ onSuccess, onError, file }) => {
@@ -567,18 +551,75 @@ class AddHeatT extends React.Component {
                             </div>
                         </Form.Item>
                     </Col>
+                    ) : null}
+
+
                 </Row>
             </div>
         ));
     }
 
 
+    handleSubmit = async (values) => {
+        try {
+            // Retrieve USER_ID from rememberedUser
+            let rememberedUser = Cookies.get('rememberedUser');
+            let USER_ID = null;
+
+            if (rememberedUser) {
+                rememberedUser = JSON.parse(rememberedUser);
+                USER_ID = rememberedUser.USER_ID;
+            }
+
+            // Main data for the request
+            const mainData = {
+                ...values,
+                ELEC_ID: this.props.initialValues.ELEC_ID,
+            };
+
+            // Organize sub-data into an array
+            const subDataArray = this.state.resultArray.map((referenceData, index) => ({
+                REFERENCE: values[`REFERENCE_${index + 1}`],
+                AFTER_STATUS: values[`AFTER_STATUS_${index + 1}`],
+                WEIGHT_AFTER_ET: values[`WEIGHT_AFTER_ET_${index + 1}`],
+                ET_BY: values[`ET_BY_${index + 1}`],
+                PHOTOS_AFTER_ET_LINK: this.state[`imgBBLink${index}`] === undefined ? referenceData.PHOTOS_AFTER_ET_LINK : this.state[`imgBBLink${index}`],
+            }));
+
+            // Combine main data with sub-data array
+            const resultArrayData = {
+                mainData,
+                subDataArray,
+            };
+            //console.log('resultArrayData', resultArrayData);
+
+            // Send the request
+            const response = await axios.post('http://localhost:3001/updateElecT', resultArrayData);
+
+            if (response.data.success) {
+                message.success('Elec Treatment added successfully');
+                // Close the modal
+                this.props.onUpdate();
+                this.props.onCancel();
+                // You can reset the form if needed
+                // this.formRef.current.resetFields();
+            } else {
+                message.error('Failed to add Elec Treatment');
+            }
+        } catch (error) {
+            console.error('Error adding Elec Treatment:', error);
+            message.error('Internal server error');
+        }
+    };
+
     render() {
         const { referenceOptions,heatTreatmentGroupOptions,customerOptions,fileList1 } = this.state;
 
+        const { type } = this.props;
+
         const disableStyle = {
             pointerEvents: "none", // Disable pointer events to prevent interaction
-            background: "#f5f5f5", // Set a background color to indicate it's disabled
+            background: "#FFFFFF", // Set a background color to indicate it's disabled
             width: "100%"
         }
 
@@ -592,24 +633,27 @@ class AddHeatT extends React.Component {
                     {/*<Col xs={24} sm={12} md={12} lg={12}>*/}
                     {/*    <Form.Item*/}
                     {/*        name="NAME"*/}
-                    {/*        label="Name"*/}
+                    {/*        label="Group Name"*/}
                     {/*        rules={[{ required: true, message: 'Please enter group name' }]}*/}
+                    {/*        initialValue={this.props.initialValues.NAME}*/}
                     {/*    >*/}
-                    {/*        <Input placeholder="Enter a group name" />*/}
+                    {/*        <Input placeholder="Enter a group name" style={ type === 'view' ? disableStyle : null } />*/}
                     {/*    </Form.Item>*/}
                     {/*</Col>*/}
                     <Col xs={24} sm={12} md={12} lg={24}>
                         <Form.Item
-                            name="HT_ID"
+                            name="ET_ID"
                             label="Treatment Group"
                             rules={[{ required: true, message: 'Please select Treatment Group' }]}
+                            initialValue={this.props.initialValues.HT_ID}
                         >
                             <Select placeholder="Select Treatment Group" allowClear showSearch
                                     filterOption={(input, option) =>
                                         (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                         (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                     }
-                                    onChange={this.loadReferenceFromHTGroup}>
+                                    onChange={this.loadReferenceFromHTGroup}
+                                    style={ type === 'view' ? disableStyle : null }>
                                 {heatTreatmentGroupOptions.map((option) => (
                                     <Option key={option.value} value={option.value} title={option.label}>
                                         {option.code}
@@ -620,15 +664,17 @@ class AddHeatT extends React.Component {
                     </Col>
                     <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item
-                            name="HT_BY"
-                            label="Heat Treated By"
+                            name="ET_BY"
+                            label="Elec Treated By"
                             rules={[{ required: true, message: 'Please enter heat treated by' }]}
+                            initialValue={this.props.initialValues.ELEC_BY}
                         >
                             <Select placeholder="Select Customer" allowClear showSearch onChange={this.handleCustomerChange}
                                     filterOption={(input, option) =>
                                         (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                         (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
-                                    }>
+                                    }
+                                    style={ type === 'view' ? disableStyle : null }>
                                 {this.state.htByOptions.map((option) => (
                                     <Option key={option.value} value={option.value} title={option.label}>
                                         {option.label}
@@ -642,33 +688,44 @@ class AddHeatT extends React.Component {
                         <Form.Item
                             name="DATE"
                             label="Date"
-                            rules={[{ required: true, message: 'Please select Date' }]}  // Set the default date to today
+                            initialValue={this.props.initialValues.DATE ? moment(this.props.initialValues.DATE) : null}
                         >
-                            <DatePicker style={{ width: '100%' }} />
+                            <DatePicker style={ type === 'view' ? disableStyle : { width: '100%' }} />
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item
                             name="REMARK"
                             label="Remarks"
+                            initialValue={this.props.initialValues.REMARK}
                         >
-                            <Input.TextArea rows={2} placeholder="Enter remarks" />
+                            <Input.TextArea rows={2} placeholder="Enter remarks" style={ type === 'view' ? disableStyle : null } />
                         </Form.Item>
                     </Col>
                 </Row>
                 {this.renderFormFields()}
+                {type === 'edit' ? (
                 <Row gutter={[16, 16]} justify="left" align="top">
-                    <Col xs={24} sm={24} md={24} lg={24}>
+                    <Col xs={12} sm={12} md={12} lg={12}>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
-                                Add Heat Treatment
+                                Update Electric Treatment
                             </Button>
                         </Form.Item>
                     </Col>
+                    <Col xs={12} sm={12} md={12} lg={12}>
+                        <Form.Item>
+                            <Button type="default" style={{float: 'right'}} onClick={this.handleApprove}>
+                                Approve
+                            </Button>
+                        </Form.Item>
+
+                    </Col>
                 </Row>
+                ) : null}
             </Form>
         );
     }
 }
 
-export default AddHeatT;
+export default UpdateElectricTreatment;

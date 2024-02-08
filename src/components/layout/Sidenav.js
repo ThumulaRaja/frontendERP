@@ -128,7 +128,7 @@ function Sidenav({ color }) {
         rememberedUser = JSON.parse(rememberedUser);
         const { USER_ID, NAME, ROLE } = rememberedUser;
         ROLE1 = ROLE;
-        //console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
+        ////console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
     }
     else{
         Cookies.remove('rememberedUser');
@@ -207,13 +207,18 @@ function Sidenav({ color }) {
               }
           >
               <Menu.Item key="18" style={menuItemStyle}>
-                  <NavLink to="/heat-treatment-group">
-                      <span className="label">Heat Treatment Group</span>
+                  <NavLink to="/treatment-group">
+                      <span className="label">Treatment Group</span>
                   </NavLink>
               </Menu.Item>
               <Menu.Item key="30" style={menuItemStyle}>
                   <NavLink to="/heat-treatment">
                       <span className="label">Heat Treatment</span>
+                  </NavLink>
+              </Menu.Item>
+              <Menu.Item key="31" style={menuItemStyle}>
+                  <NavLink to="/elec-treatment">
+                      <span className="label">Electric Treatment</span>
                   </NavLink>
               </Menu.Item>
               <Menu.Item key="19" style={menuItemStyle}>

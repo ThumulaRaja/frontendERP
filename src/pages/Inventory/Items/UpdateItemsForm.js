@@ -27,6 +27,7 @@ class UpdateItemsForm extends Component {
         super(props);
         this.state = {
             isHeatTreated: this.props.initialValues.IS_HEAT_TREATED ? this.props.initialValues.IS_HEAT_TREATED : false,
+            isElectricTreated: this.props.initialValues.IS_ELEC_TREATED ? this.props.initialValues.IS_ELEC_TREATED : false,
             isTransaction: this.props.initialValues.IS_TRANSACTION ? this.props.initialValues.IS_TRANSACTION : false,
             fileList: [],
             gemType: this.props.initialValues.TYPE,
@@ -36,6 +37,7 @@ class UpdateItemsForm extends Component {
 
             enlargedImageVisible: false,
             enlargedImageVisibleHT: false,
+            enlargedImageVisibleET: false,
 
             customerOptions: [],
             buyerOptions: [],
@@ -45,6 +47,7 @@ class UpdateItemsForm extends Component {
             htByOptions: [],
             cpByOptions: [],
             preformerOptions: [],
+            etByOptions: [],
 
 
             fileList1: [],  // For the first photo uploader
@@ -56,6 +59,11 @@ class UpdateItemsForm extends Component {
             previewVisible2: false,
             previewImage2: '',
             imgBBLink2: this.props.initialValues.PHOTO_LINK ? this.props.initialValues.PHOTO_LINK : '',
+
+            fileList3: [],  // For the second photo uploader
+            previewVisible3: false,
+            previewImage3: '',
+            imgBBLink3: this.props.initialValues.PHOTOS_AFTER_ET_LINK ? this.props.initialValues.PHOTOS_AFTER_ET_LINK : '',
         };
         this.showProps();
         // this.handleSwitchChange(this.props.initialValues.IS_HEAT_TREATED);
@@ -88,7 +96,7 @@ class UpdateItemsForm extends Component {
     }
 
     showProps = () => {
-        console.log("this.props",this.props);
+        //console.log("this.props",this.props);
     }
 
     handleFileChange = async ({ fileList }, uploaderNumber) => {
@@ -113,7 +121,15 @@ class UpdateItemsForm extends Component {
 
                     const imgBBLinkKey = `imgBBLink${uploaderNumber}`;
                     this.setState({ [imgBBLinkKey]: response.data.data.url });
-                    console.log('Image uploaded to ImgBB:', response.data.data.url);
+                    //show success message if response is success
+                    if (response.data.success) {
+                        message.success('Image uploaded successfully');
+                    }
+                    //show not success message if response is not success
+                    else {
+                        message.error('Failed to upload Image');
+                    }
+                    //console.log('Image uploaded to ImgBB:', response.data.data.url);
                 }
             }
         } catch (error) {
@@ -139,6 +155,10 @@ class UpdateItemsForm extends Component {
         this.setState({ isHeatTreated: checked });
     }
 
+    handleSwitchChangeET = (checked) => {
+        this.setState({ isElectricTreated: checked });
+    }
+
     handleSwitchChangeTR = (checked) => {
         this.setState({ isTransaction: checked });
     }
@@ -147,8 +167,8 @@ class UpdateItemsForm extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
             const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
@@ -192,6 +212,7 @@ class UpdateItemsForm extends Component {
                 }
             ));
 
+
             // PreformerOptions Filter TYPE = Preformer
             const preformerOptions = response.data.result.filter((customer) => customer.TYPE === 'Preformer').map((customer) => ({
                     value: customer.CUSTOMER_ID,
@@ -199,7 +220,13 @@ class UpdateItemsForm extends Component {
                 }
             ));
 
-            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+            const etByOptions = response.data.result.filter((customer) => customer.TYPE === 'Electric').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions, etByOptions });
 
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
@@ -213,8 +240,8 @@ class UpdateItemsForm extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getItemsForReference");
+            //console.log("response", response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -227,15 +254,15 @@ class UpdateItemsForm extends Component {
 
     async fetchHTGroupOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllHT");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllHT");
+            //console.log("response", response);
             return response.data.result.map((ht) => ({
                 value: ht.HT_ID,
-                label: ht.NAME,
                 code: ht.CODE,
+                type : ht.TYPE,
             }));
         } catch (error) {
-            console.error("Error fetching heat Treatment Group Options:", error);
+            console.error("Error fetching Treatment Group Options:", error);
             return [];
         }
     }
@@ -278,6 +305,7 @@ class UpdateItemsForm extends Component {
                 CREATED_BY: USER_ID,
                 PHOTO_LINK: this.state.imgBBLink2,
                 PHOTOS_AFTER_HT_LINK: this.state.imgBBLink1,
+                PHOTOS_AFTER_ET_LINK: this.state.imgBBLink3,
                 SHARE_HOLDERS: shareHoldersString,
                 REFERENCE_ID_LOTS: referenceString,
                 IS_TRANSACTION: this.state.isTransaction,
@@ -285,9 +313,9 @@ class UpdateItemsForm extends Component {
                 POLICY: policyString,
             };
 
-            console.log("updatedValues", updatedValues);
+            //console.log("updatedValues", updatedValues);
 
-            const response = await axios.post('http://35.154.1.99:3001/updateItem', updatedValues);
+            const response = await axios.post('http://localhost:3001/updateItem', updatedValues);
 
             if (response.data.success) {
                 message.success('Item updated successfully');
@@ -316,7 +344,7 @@ class UpdateItemsForm extends Component {
             height: '30px',
         };
 
-        const {  gemType, customerOptions,heatTreatmentGroupOptions,fileList1,fileList2,ReferenceOptions } = this.state;
+        const {  gemType, customerOptions,heatTreatmentGroupOptions,fileList1,fileList2,fileList3,ReferenceOptions } = this.state;
 
         const fileLimit = {
             accept: 'image/*', // Accept only image files
@@ -384,7 +412,7 @@ class UpdateItemsForm extends Component {
                                                     <Option value="Sold">Sold</Option>
                                                     <Option value="Finished">Finished</Option>
                                                     <Option value="Stuck">Stuck</Option>
-                                                    <Option value="With Seller">With Seller</Option>
+                                                    <Option value="With Sales Person">With Sales Person</Option>
                                                     <Option value="Cutting">Cutting</Option>
                                                     <Option value="Ready for Selling">Ready for Selling</Option>
                                                     <Option value="Heat Treatment">Heat Treatment</Option>
@@ -392,6 +420,10 @@ class UpdateItemsForm extends Component {
                                                     <Option value="C&P">C&P</Option>
                                                     <Option value="Preformed">Preformed</Option>
                                                     <Option value="Added to a lot">Added to a lot</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
+                                <Option value="With Preformer">With Preformer</Option>
                                                 </Select>
                                             </Form.Item>
                                         </Col>
@@ -667,15 +699,15 @@ class UpdateItemsForm extends Component {
                                             <Col xs={24} sm={12} md={12} lg={12}>
                                                 <Form.Item
                                                     name="PERFORMER"
-                                                    label="Performer"
+                                                    label="Preformer"
                                                     initialValue={this.props.initialValues.PERFORMER}
                                                 >
-                                                    <Select placeholder="Select Performer" allowClear showSearch
+                                                    <Select placeholder="Select Preformer" allowClear showSearch
                                                             filterOption={(input, option) =>
                                                                 (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                                                 (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                                             }>
-                                                        {customerOptions.map((option) => (
+                                                        {this.state.preformerOptions.map((option) => (
                                                             <Option key={option.value} value={option.value} title={option.label}>
                                                                 {option.label}
                                                             </Option>
@@ -808,17 +840,17 @@ class UpdateItemsForm extends Component {
                                         <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="HT_ID"
-                                                label="Heat Treatment Group"
+                                                label="Treatment Group"
                                                 initialValue={this.props.initialValues.HT_ID}
                                             >
-                                                <Select placeholder="Select Heat Treatment Group" allowClear showSearch disabled
+                                                <Select placeholder="Select Treatment Group" allowClear showSearch disabled
                                                         filterOption={(input, option) =>
                                                             (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                                             (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                                         }>
-                                                    {heatTreatmentGroupOptions.map((option) => (
+                                                    {heatTreatmentGroupOptions.filter((option) => option.type === 'Heat Treatment').map((option) => (
                                                         <Option key={option.value} value={option.value} title={option.label}>
-                                                            {option.label} ({option.code})
+                                                            {option.code}
                                                         </Option>
                                                     ))}
                                                 </Select>
@@ -937,6 +969,155 @@ class UpdateItemsForm extends Component {
                                             </Form.Item>
 
 
+                                        </Col>
+                                    </Row>
+                                    <Divider />
+
+                                    <Row gutter={[16, 16]} justify="left" align="top">
+                                        <Col xs={24} sm={24} md={24} lg={3}>
+                                            <Form.Item
+                                                name="IS_ELEC_TREATED"
+                                                label="Is Electric Treated"
+                                                initialValue={this.props.initialValues.IS_ELEC_TREATED}
+                                            >
+                                                <Switch
+                                                    checkedChildren="Heat Treated"
+                                                    unCheckedChildren="Not Heat Treated"
+                                                    onChange={this.handleSwitchChangeET}
+                                                    disabled
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
+                                            <Form.Item
+                                                name="ET_ID"
+                                                label="Treatment Group"
+                                                initialValue={this.props.initialValues.ET_ID}
+                                            >
+                                                <Select placeholder="Select Treatment Group" allowClear showSearch disabled
+                                                        filterOption={(input, option) =>
+                                                            (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
+                                                            (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
+                                                        }>
+                                                    {heatTreatmentGroupOptions.filter((option) => option.type === 'Electric Treatment').map((option) => (
+                                                        <Option key={option.value} value={option.value} title={option.label}>
+                                                            {option.code}
+                                                        </Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={24} sm={24} md={24} lg={3}>
+                                            {/* Weight (ct) */}
+                                            <Form.Item
+                                                name="WEIGHT_AFTER_ET"
+                                                label="Weight (ct) After ET"
+                                                initialValue={this.props.initialValues.WEIGHT_AFTER_ET}
+                                            >
+                                                <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Weight" disabled={!this.state.isElectricTreated} />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
+                                            <Form.Item
+                                                name="ET_BY"
+                                                label="Electric Treated By"
+                                                initialValue={this.props.initialValues.ET_BY}
+                                            >
+                                                <Select placeholder="Select Customer" disabled={!this.state.isElectricTreated} allowClear showSearch
+                                                        filterOption={(input, option) =>
+                                                            (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
+                                                            (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
+                                                        }>
+                                                    {this.state.etByOptions.map((option) => (
+                                                        <Option key={option.value} value={option.value} title={option.label}>
+                                                            {option.label}
+                                                        </Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+                                        </Col>
+                                        {this.props.initialValues.PHOTOS_AFTER_ET_LINK && this.state.isElectricTreated && (
+                                            <Col span={3} style={{ display: 'flex', alignItems: 'center' }}>
+                                                <Form.Item
+                                                    label="Photo After ET"
+                                                >
+                                                    {/* Display initial photo */}
+                                                    {this.props.initialValues.PHOTOS_AFTER_ET_LINK && (
+                                                        <img
+                                                            alt="Initial Photo"
+                                                            style={{ width: '100%', borderRadius: '5px', cursor: 'pointer' }}
+                                                            src={this.props.initialValues.PHOTOS_AFTER_ET_LINK}
+                                                            onClick={() => this.setState({ enlargedImageVisibleET: true })}
+                                                        />
+                                                    )}
+
+                                                    {/* Enlarged view modal */}
+                                                    <Modal
+                                                        visible={this.state.enlargedImageVisibleET}
+                                                        footer={null}
+                                                        onCancel={() => this.setState({ enlargedImageVisibleET: false })}
+                                                    >
+                                                        {this.props.initialValues.PHOTOS_AFTER_ET_LINK && (
+                                                            <img
+                                                                alt="Enlarged View"
+                                                                style={{ width: '100%' }}
+                                                                src={this.props.initialValues.PHOTOS_AFTER_ET_LINK}
+                                                                onError={(e) => {
+                                                                    console.error('Image loading error:', e);
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </Modal>
+                                                </Form.Item>
+                                            </Col>
+                                        )}
+                                        <Col xs={24} sm={24} md={24} lg={3}>
+                                            {/* File Upload */}
+                                            <Form.Item
+                                                name="PHOTOS_AFTER_ET"
+                                                label="Change Photos After ET"
+                                            >
+                                                <Upload disabled={!this.state.isElectricTreated}
+                                                        customRequest={({ onSuccess, onError, file }) => {
+                                                            onSuccess();
+                                                        }}
+                                                        fileList={fileList3}
+                                                        onChange={(info) => this.handleFileChange(info, 3)}
+                                                        {...fileLimit}
+                                                        listType="picture-card"
+                                                        showUploadList={{ showPreviewIcon: true, showRemoveIcon: true }}
+                                                        maxCount={1} // Allow only one file
+                                                        onPreview={() => this.setState({ previewVisible3: true })}
+                                                >
+                                                    {fileList3.length >= 1 ? null : (
+                                                        <div>
+                                                            <UploadOutlined  />
+                                                            <div className="ant-upload-text">Upload</div>
+                                                        </div>
+                                                    )}
+                                                </Upload>
+                                                {/* Display uploaded image */}
+                                                <div className="clearfix">
+                                                    <Modal
+                                                        visible={this.state.previewVisible3}
+                                                        footer={null}
+                                                        onCancel={() => this.setState({ previewVisible3: false })}
+                                                    >
+                                                        {this.state.imgBBLink3 === '' ? (
+                                                            <div className="loading-indicator">Uploading...</div>
+                                                        ) : (
+                                                            <img
+                                                                alt="Preview"
+                                                                style={{ width: '100%' }}
+                                                                src={this.state.imgBBLink3}
+                                                                onError={(e) => {
+                                                                    console.error('Image loading error:', e);
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </Modal>
+                                                </div>
+                                            </Form.Item>
                                         </Col>
                                     </Row>
                                     <Divider />

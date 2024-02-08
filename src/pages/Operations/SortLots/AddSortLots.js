@@ -1,28 +1,28 @@
-/* eslint-disable */
-
-import React, { Component } from 'react';
+// /* eslint-disable */
+import React from 'react';
 import {
-    Card,
-    Row,
-    Col,
     Form,
-    InputNumber,
+    Input,
+    Button,
+    Col,
+    Row,
+    message,
     Select,
+    Divider,
+    InputNumber,
+    Modal,
     Switch,
     Upload,
-    Button,
-    message,
-    DatePicker,
-    Input, Divider, Modal
-} from "antd";
-import Cookies from "js-cookie";
+    DatePicker
+} from 'antd';
 import axios from "axios";
-import moment from 'moment';
+import Cookies from 'js-cookie';
 import {RightOutlined, UploadOutlined} from "@ant-design/icons";
-
+import moment from "moment/moment";
 const { Option } = Select;
 
-class UpdateCutPolish extends Component {
+
+class AddSortLots extends React.Component {
     constructor(props) {
         super(props);
 
@@ -45,12 +45,12 @@ class UpdateCutPolish extends Component {
 
             resultArray: [],
             photo: null,
-            currentCode: null,
+            currentCode: this.props.currentCode,
+            oldDeactivate: true,
 
         };
 
         this.formRef = React.createRef();
-
     }
 
     async fetchCustomerOptions() {
@@ -60,51 +60,58 @@ class UpdateCutPolish extends Component {
 
             // BuyerOptions Filter TYPE = Buyer
             const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
-                    value: customer.CUSTOMER_ID,
-                    label: customer.NAME,
-                }
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
             ));
 
             // SellerOptions Filter TYPE = Seller
             const sellerOptions = response.data.result.filter((customer) => customer.TYPE === 'Seller').map((customer) => ({
-                    value: customer.CUSTOMER_ID,
-                    label: customer.NAME,
-                }
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
             ));
 
             // SalesPersonOptions Filter TYPE = Sales Person
             const salesPersonOptions = response.data.result.filter((customer) => customer.TYPE === 'Sales Person').map((customer) => ({
-                    value: customer.CUSTOMER_ID,
-                    label: customer.NAME,
-                }
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
             ));
 
             // PartnerOptions Filter TYPE = Partner
             const partnerOptions = response.data.result.filter((customer) => customer.TYPE === 'Partner').map((customer) => ({
-                    value: customer.CUSTOMER_ID,
-                    label: customer.NAME,
-                }
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
             ));
 
             // HTByOptions Filter TYPE = HT By
             const htByOptions = response.data.result.filter((customer) => customer.TYPE === 'Heat T').map((customer) => ({
-                    value: customer.CUSTOMER_ID,
-                    label: customer.NAME,
-                }
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
             ));
 
             // CPByOptions Filter TYPE = CP By
             const cpByOptions = response.data.result.filter((customer) => customer.TYPE === 'C&P').map((customer) => ({
-                    value: customer.CUSTOMER_ID,
-                    label: customer.NAME,
-                }
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
             ));
 
             // PreformerOptions Filter TYPE = Preformer
             const preformerOptions = response.data.result.filter((customer) => customer.TYPE === 'Preformer').map((customer) => ({
-                    value: customer.CUSTOMER_ID,
-                    label: customer.NAME,
-                }
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            // ETByOptions Filter TYPE = Electric
+            const etByOptions = response.data.result.filter((customer) => customer.TYPE === 'Electric').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
             ));
 
             this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions, etByOptions });
@@ -125,7 +132,6 @@ class UpdateCutPolish extends Component {
             this.setState({ referenceOptions });
             const customerOptions = await this.fetchCustomerOptions();
             this.setState({ customerOptions });
-            this.loadReferenceCPDetails(this.props.initialValues.REFERENCE);
         } catch (error) {
             console.error('Error fetching reference options:', error);
         }
@@ -144,48 +150,6 @@ class UpdateCutPolish extends Component {
             return [];
         }
     }
-
-
-
-    loadReferenceCPDetails = async (value) => {
-        const form = this.formRef.current;
-        //console.log("this.props", this.props);
-        // form.resetFields(['CODE_AFTER_CUTTING']);
-        try {
-            this.setState({
-                imgBBLink2: '',
-                fileList2: [],
-            });
-            const response = await axios.post('http://localhost:3001/getReferenceCPDetails', {
-                ITEM_ID_AI: value,
-            });
-            if (response.data.success) {
-                //console.log("response1", response);
-                form.setFieldsValue({ CP_TYPE: response.data.result[0].CP_TYPE });
-                form.setFieldsValue({ CP_COLOR: response.data.result[0].CP_COLOR });
-                form.setFieldsValue({ SHAPE: response.data.result[0].SHAPE });
-                form.setFieldsValue({ CP_BY: response.data.result[0].CP_BY });
-                form.setFieldsValue({ TOTAL_COST: response.data.result[0].TOTAL_COST });
-                form.setFieldsValue({ REMARK: response.data.result[0].REMARK ? response.data.result[0].REMARK : '' });
-                form.setFieldsValue({ WEIGHT_AFTER_CP: response.data.result[0].WEIGHT_AFTER_CP });
-                if(response.data.result[0].PHOTO){
-                    this.setState({ imgBBLink2: response.data.result[0].PHOTO });
-                    this.setState({ fileList2: [{
-                            uid: '-1',
-                            name: 'image.png',
-                            status: 'done',
-                            url: response.data.result[0].PHOTO,
-                        }] });
-                }
-                this.setState({ currentCode: response.data.result[0].ITEM_CODE });
-            } else {
-                message.error('Failed to fetch Item Details');
-            }
-        } catch (error) {
-            console.error("Error fetching reference options:", error);
-            return [];
-        }
-    };
 
 
     handleFileChange = async ({ fileList }, uploaderNumber) => {
@@ -210,6 +174,7 @@ class UpdateCutPolish extends Component {
 
                     const imgBBLinkKey = `imgBBLink${uploaderNumber}`;
                     this.setState({ [imgBBLinkKey]: response.data.data.url });
+                    //console.log('Image uploaded to ImgBB:', response.data.data.url);
                     //show success message if response is success
                     if (response.data.success) {
                         message.success('Image uploaded successfully');
@@ -218,7 +183,6 @@ class UpdateCutPolish extends Component {
                     else {
                         message.error('Failed to upload Image');
                     }
-                    //console.log('Image uploaded to ImgBB:', response.data.data.url);
 
                     //console.log('this.state', this.state);
                 }
@@ -254,70 +218,53 @@ class UpdateCutPolish extends Component {
                 USER_ID = rememberedUser.USER_ID;
             }
 
+            const referenceString = Array.isArray(values.REFERENCE_ID_LOTS)
+                ? values.REFERENCE_ID_LOTS.join(',')
+                : values.REFERENCE_ID_LOTS ? values.REFERENCE_ID_LOTS.toString() : '';
+
             // Main data for the request
             const resultArrayData = {
                 ...values,
                 PHOTO: this.state.imgBBLink2,
-                CP_ID: this.props.initialValues.CP_ID,
-                REFERENCE: this.props.initialValues.REFERENCE,
+                OLD_REFERENCE: referenceString,
+                CREATED_BY: USER_ID,
             };
 
 
             //console.log('resultArrayData', resultArrayData);
 
             // Send the request
-            const response = await axios.post('http://localhost:3001/updateCutPolish', resultArrayData);
+            const response = await axios.post('http://localhost:3001/addSortLot', resultArrayData);
 
             if (response.data.success) {
-                message.success('Cut & Polish update successfully');
+                message.success('Sort Lot added successfully');
                 // Close the modal
-                this.props.onUpdate();
-                this.props.onCancel();
-                // You can reset the form if needed
-                // this.formRef.current.resetFields();
+                this.props.onClose();
+                // Refresh the table
+                if(this.props.refe){
+                    this.formRef.current.resetFields();
+                }
+                else{
+                    this.props.refreshTable();
+                    // You can reset the form if needed
+                    this.formRef.current.resetFields();
+                }
             } else {
-                message.error('Failed to update Cut & Polish');
+                message.error('Failed to add Sort Lot');
             }
         } catch (error) {
-            console.error('Error updating Cut & Polish:', error);
+            console.error('Error adding Sort Lot:', error);
             message.error('Internal server error');
         }
     };
-
-    handleApprove = async () => {
-        try {
-            const sendObject = {
-                CP_ID: this.props.initialValues.CP_ID,
-                REFERENCE: this.props.initialValues.REFERENCE,
-            }
-
-            // Send the request
-            const response = await axios.post('http://localhost:3001/approveCutPolish', sendObject);
-
-            if (response.data.success) {
-                message.success('Cut & Polish Approved successfully');
-                // Close the modal
-                this.props.onUpdate();
-                this.props.onCancel();
-                // You can reset the form if needed
-                // this.formRef.current.resetFields();
-            } else {
-                message.error('Failed to Approve Cut & Polish');
-            }
-        } catch (error) {
-            console.error('Error Approving Cut & Polish:', error);
-            message.error('Internal server error');
-        }
-    };
-
 
 
     render() {
         const { referenceOptions,customerOptions,fileList2 } = this.state;
 
         const inputStyle = {
-            pointerEvents: "none", // Disable pointer events to prevent interaction
-            background: "#FFFFFF", // Set a background color to indicate it's disabled
+            // pointerEvents: "none", // Disable pointer events to prevent interaction
+            // background: "#f5f5f5", // Set a background color to indicate it's disabled
             width: "100%"
         }
 
@@ -325,20 +272,16 @@ class UpdateCutPolish extends Component {
             accept: 'image/*', // Accept only image files
         };
 
-        const type = this.props.type;
-
         return (
             <Form ref={this.formRef} layout="vertical" onFinish={this.handleSubmit}>
                 <Row gutter={[16, 16]} justify="left" align="top">
 
-                    <Col xs={24} sm={12} md={8} lg={6}>
+                    <Col xs={24} sm={12} md={8} lg={12}>
                         <Form.Item
-                            name="REFERENCE_ID_CP"
-                            label="Reference"
-                            rules={[{ required: true, message: 'Please select Reference' }]}
-                            initialValue={this.props.initialValues.OLD_REFERENCE}
+                            name="REFERENCE_ID_LOTS"
+                            label="References"
                         >
-                            <Select placeholder="Select Item" allowClear showSearch style={inputStyle}
+                            <Select placeholder="Select Reference" mode="multiple" allowClear showSearch
                                     filterOption={(input, option) =>
                                         (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                         (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
@@ -351,33 +294,29 @@ class UpdateCutPolish extends Component {
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={12} md={8} lg={6}>
-                        {/* Gem Type */}
-                        <Form.Item
-                            name="CP_TYPE"
-                            label="Cut and Polished Type"
-                            rules={[{ required: true, message: 'Please select Cut and Polished Type' }]}
-                        >
-                            <Select placeholder="Select Cut and Polished Type" showSearch style={inputStyle}>
-                                <Option value="Blue Sapphire Natural">Blue Sapphire - Natural</Option>
-                                <Option value="Blue Sapphire Heated">Blue Sapphire - Heated</Option>
-                                <Option value="Yellow Sapphire">Yellow Sapphire</Option>
-                                <Option value="Pink Sapphire Natural">Pink Sapphire - Natural</Option>
-                                <Option value="Pink Sapphire Treated">Pink Sapphire - Treated</Option>
-                                <Option value="Purple Sapphire Natural">Purple Sapphire - Natural</Option>
-                                <Option value="Violet Sapphire Natural">Violet Sapphire - Natural</Option>
-                                <Option value="Blue Sapphire Treated Lots">Blue Sapphire - Treated Lots</Option>
-                                <Option value="Padparadscha Sapphire Natural">Padparadscha Sapphire - Natural</Option>
-                            </Select>
-                        </Form.Item>
-                    </Col>
+
+                        <Col xs={24} sm={24} md={24} lg={6}>
+                            {/* Gem Type */}
+                            <Form.Item
+                                name="SORTED_LOT_TYPE"
+                                label="Sorted Lot Type"
+                                rules={[{ required: true, message: 'Please select Sorted Lot Type' }]}
+                            >
+                                <Select placeholder="Select Sorted Lot Type" showSearch>
+                                    <Option value="Lots Blue">Lots - Blue</Option>
+                                    <Option value="Lots Geuda">Lots - Geuda</Option>
+                                    <Option value="Lots Yellow">Lots - Yellow</Option>
+                                    <Option value="Lots Mix">Lots - Mix</Option>
+                                </Select>
+                            </Form.Item>
+                        </Col>
 
                     <Col xs={24} sm={12} md={8} lg={6}>
                         {/* Status */}
                         <Form.Item
                             name="STATUS"
-                            label="Status after Cut and Polish"
-                            initialValue="C&P"
+                            label="Status"
+                            initialValue="Preformed"
                             rules={[{ required: true, message: 'Please select Status' }]}
                         >
                             <Select style={inputStyle} placeholder="Select Status" showSearch>
@@ -394,58 +333,24 @@ class UpdateCutPolish extends Component {
                                 <Option value="C&P">C&P</Option>
                                 <Option value="Preformed">Preformed</Option>
                                 <Option value="Added to a lot">Added to a lot</Option>
-<Option value="With Heat T">With Heat T</Option>
-<Option value="With C&P">With C&P</Option>
-<Option value="With Electric T">With Electric T</Option>
-                                <Option value="With Preformer">With Preformer</Option>
+                                <Option value="With Heat T">With Heat T</Option>
+                                <Option value="With C&P">With C&P</Option>
+                                <Option value="With Electric T">With Electric T</Option>
+                                <Option value="">With Preformer</Option>
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col xs={24} sm={12} md={8} lg={6}>
+                    <Col xs={24} sm={12} md={12} lg={12}>
                         <Form.Item
-                            name="CODE_AFTER_CUTTING"
-                            label="Code After C&P"
-                            rules={[{ required: true, message: 'Please genarate Code After C & P' }]}
-                            initialValue={this.props.initialValues.ITEM_CODE}
+                            name="PERFORMER"
+                            label="Preformer"
                         >
-                            <Input step={0.01} placeholder="Genarate Code" style={{ width: '100%',
-                                pointerEvents: "none", // Disable pointer events to prevent interaction
-                                background: "#ffffff", // Set a background color to indicate it's style={inputStyle}
-                                color: "#000000", // Set a text color to indicate it's not editable
-                            }} />
-                        </Form.Item>
-                    </Col>
-
-                    <Col xs={24} sm={24} md={24} lg={3}>
-                        <Form.Item
-                            name="TOTAL_COST"
-                            label="Total Cost (RS)"
-                            type="number"
-                        >
-                            <InputNumber min={0} step={0.01} placeholder="Enter Total Cost" style={ type === 'view' ? inputStyle : { width: '100%' }} />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={24} md={24} lg={3}>
-                        {/* Weight (ct) */}
-                        <Form.Item
-                            name="WEIGHT_AFTER_CP"
-                            label="Weight CP"
-                        >
-                            <InputNumber min={0} step={0.01} placeholder="Enter Weight" style={ type === 'view' ? inputStyle : { width: '100%' }} />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={8} lg={6}>
-                        <Form.Item
-                            name="CP_BY"
-                            label="Cutting & Polished By"
-                        >
-                            <Select placeholder="Select Customer" allowClear showSearch
+                            <Select placeholder="Select Preformer" allowClear showSearch
                                     filterOption={(input, option) =>
                                         (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                         (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
-                                    }
-                                    style={ type === 'view' ? inputStyle : { width: '100%' }}>
-                                {this.state.cpByOptions.map((option) => (
+                                    }>
+                                {this.state.preformerOptions.map((option) => (
                                     <Option key={option.value} value={option.value} title={option.label}>
                                         {option.label}
                                     </Option>
@@ -454,41 +359,32 @@ class UpdateCutPolish extends Component {
                         </Form.Item>
                     </Col>
 
-                    <Col xs={24} sm={12} md={8} lg={6}>
+                        <Col xs={24} sm={12} md={8} lg={6}>
+                            <Form.Item
+                                name="FULL_LOT_COST"
+                                label="Full Lot Cost (RS)"
+                                type="number"
+                            >
+                                <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Lot Cost" />
+                            </Form.Item>
+                        </Col>
+
+                    <Col xs={24} sm={24} md={24} lg={6}>
+                        {/* Weight (ct) */}
                         <Form.Item
-                            name="CP_COLOR"
-                            label="Color"
+                            name="WEIGHT"
+                            label="Weight After Sorting (ct)"
                         >
-                            <Input  placeholder="Enter Color" style={ type === 'view' ? inputStyle : { width: '100%' }} />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={8} lg={6}>
-                        <Form.Item
-                            name="SHAPE"
-                            label="Shape"
-                        >
-                            <Select placeholder="Select Shape" allowClear showSearch style={ type === 'view' ? inputStyle : { width: '100%' }}>
-                                <Option value="Oval">Oval</Option>
-                                <Option value="Cabochon Oval">Cabochon Oval</Option>
-                                <Option value="Cushion">Cushion</Option>
-                                <Option value="Heart">Heart</Option>
-                                <Option value="Pear">Pear</Option>
-                                <Option value="Radiant">Radiant</Option>
-                                <Option value="Rectangle">Rectangle</Option>
-                                <Option value="Round">Round</Option>
-                                <Option value="Square">Square</Option>
-                                <Option value="Sugarloaf">Sugarloaf</Option>
-                            </Select>
+                            <InputNumber min={0} step={0.01} placeholder="Enter Weight" style={{ width: '100%' }} />
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={24} lg={3}>
                         {/* File Upload */}
                         <Form.Item
                             name="PHOTO"
-                            label="Upload CP Photo"
+                            label="Sorted Lot Photo"
                         >
                             <Upload
-                                disabled={type === 'view'}
                                 customRequest={({ onSuccess, onError, file }) => {
                                     onSuccess();
                                 }}
@@ -536,33 +432,37 @@ class UpdateCutPolish extends Component {
                             name="REMARK"
                             label="Remarks"
                         >
-                            <Input.TextArea rows={4} placeholder="Enter remarks" style={ type === 'view' ? inputStyle : { width: '100%' }} />
+                            <Input.TextArea rows={4} placeholder="Enter remarks" />
+                        </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} lg={6}>
+                        <Form.Item
+                            name="IS_REFERENCE_DEACTIVATED"
+                            label="Is Want to Remove From Inventory"
+                            initialValue={this.state.oldDeactivate}
+                        >
+                            <Switch
+                                checkedChildren="Remove Reference"
+                                unCheckedChildren="Keep Reference"
+                                onChange={(checked) => {
+                                    this.setState({ oldDeactivate: checked });
+                                }}
+                            />
                         </Form.Item>
                     </Col>
                 </Row>
-                {type !== 'view' && (
                 <Row gutter={[16, 16]} justify="left" align="top">
-                    <Col xs={12} sm={12} md={12} lg={12}>
+                    <Col xs={24} sm={24} md={24} lg={24}>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
-                                Update Cut and Polish
+                                Add Sorted Lot
                             </Button>
                         </Form.Item>
-
-                    </Col>
-                    <Col xs={12} sm={12} md={12} lg={12}>
-                        <Form.Item>
-                            <Button type="default" style={{float: 'right'}} onClick={this.handleApprove}>
-                                Approve
-                            </Button>
-                        </Form.Item>
-
                     </Col>
                 </Row>
-                )}
             </Form>
         );
     }
 }
 
-export default UpdateCutPolish;
+export default AddSortLots;

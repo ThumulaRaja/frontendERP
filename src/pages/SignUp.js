@@ -61,9 +61,17 @@ export default class SignUp extends Component {
 
           const imgBBLinkKey = `imgBBLink${uploaderNumber}`;
           this.setState({ [imgBBLinkKey]: response.data.data.url });
-          console.log('Image uploaded to ImgBB:', response.data.data.url);
+          //console.log('Image uploaded to ImgBB:', response.data.data.url);
+          //show success message if response is success
+          if (response.data.success) {
+            message.success('Image uploaded successfully');
+          }
+          //show not success message if response is not success
+          else {
+            message.error('Failed to upload Image');
+          }
 
-          console.log('this.state', this.state);
+          //console.log('this.state', this.state);
         }
       }
     } catch (error) {
@@ -91,7 +99,7 @@ export default class SignUp extends Component {
 
 
       // Check if the email and username are already in use
-      const checkResponse = await axios.post('http://35.154.1.99:3001/checkEmailUsername', { EMAIL, USERNAME });
+      const checkResponse = await axios.post('http://localhost:3001/checkEmailUsername', { EMAIL, USERNAME });
 
       if (checkResponse.data.used) {
         // Either email or username is already in use
@@ -116,7 +124,7 @@ export default class SignUp extends Component {
         PHOTO: this.state.imgBBLink2,
       };
 
-      const response = await axios.post('http://35.154.1.99:3001/addUser', updatedValues);
+      const response = await axios.post('http://localhost:3001/addUser', updatedValues);
 
       if (response.data.success) {
         message.success('User added successfully');

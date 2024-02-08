@@ -11,7 +11,7 @@ import {
     Switch,
     Button,
     DatePicker,
-    Input, Divider, Modal, Table, Tooltip, Popconfirm, message
+    Input, Divider, Modal, Table, Tooltip, Popconfirm, message, Upload
 } from "antd";
 import axios from "axios";
 import moment from 'moment';
@@ -21,7 +21,7 @@ import {
     ExclamationCircleOutlined,
     EyeOutlined,
     PlusOutlined,
-    PrinterOutlined
+    PrinterOutlined, UploadOutlined
 } from "@ant-design/icons";
 import ViewTransactionForm  from "../../Transaction/Commen/ViewTransactionForm";
 import AddCutPolish from '../../Operations/CutPolish/AddCutPolish';
@@ -34,6 +34,7 @@ class ViewItemsForm extends Component {
         super(props);
         this.state = {
             isHeatTreated: this.props.initialValues.IS_HEAT_TREATED ? this.props.initialValues.IS_HEAT_TREATED : false,
+            isElectricTreated: this.props.initialValues.IS_ELEC_TREATED ? this.props.initialValues.IS_ELEC_TREATED : false,
             isTransaction: this.props.initialValues.IS_TRANSACTION ? this.props.initialValues.IS_TRANSACTION : false,
             fileList: [],
             gemType: this.props.initialValues.TYPE,
@@ -45,6 +46,7 @@ class ViewItemsForm extends Component {
             htByOptions: [],
             cpByOptions: [],
             preformerOptions: [],
+            etByOptions: [],
             heatTreatmentGroupOptions: [],
             ReferenceOptions: [],
             tableTransaction: [],
@@ -53,6 +55,7 @@ class ViewItemsForm extends Component {
 
             enlargedImageVisible: false,
             enlargedImageVisibleHT: false,
+            enlargedImageVisibleET: false,
             isAddCustomerModalVisible: false,
 
 
@@ -90,21 +93,22 @@ class ViewItemsForm extends Component {
 
     async getAllTransactions() {
         this.setState({ loading: true });
+        //console.log('this.props.initialValues', this.props.initialValues);
 
         try {
             let id = this.props.initialValues.ITEM_ID_AI;
-            const response = await axios.post('http://35.154.1.99:3001/getAllTransactions', { id });
+            const response = await axios.post('http://localhost:3001/getAllTransactions', { id });
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
                 this.setState({ tableTransaction: items });
-                console.log('tableTransaction', this.state.tableTransaction);
+                //console.log('tableTransaction', this.state.tableTransaction);
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -113,7 +117,7 @@ class ViewItemsForm extends Component {
     }
 
     showProps = () => {
-        console.log("this.props",this.props);
+        //console.log("this.props",this.props);
     }
 
 
@@ -137,8 +141,8 @@ class ViewItemsForm extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
             const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
@@ -189,7 +193,14 @@ class ViewItemsForm extends Component {
             }
             ));
 
-            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+            // ETByOptions Filter TYPE = Electric
+            const etByOptions = response.data.result.filter((customer) => customer.TYPE === 'Electric').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions, etByOptions });
 
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
@@ -203,8 +214,9 @@ class ViewItemsForm extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getItemsForReference");
+            //console.log("response", response);
+            //console.log("this.state.heatTreatmentGroupOptions", this.state.heatTreatmentGroupOptions);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -217,14 +229,14 @@ class ViewItemsForm extends Component {
 
     async fetchHTGroupOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllHT");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllHT");
+            //console.log("response11", response);
             return response.data.result.map((ht) => ({
                 value: ht.HT_ID,
-                label: ht.NAME,
+                label: ht.CODE,
             }));
         } catch (error) {
-            console.error("Error fetching heat Treatment Group Options:", error);
+            console.error("Error fetching Treatment Group Options:", error);
             return [];
         }
     }
@@ -235,11 +247,11 @@ class ViewItemsForm extends Component {
     };
 
     handleDeleteTranscation = async (id, all) => {
-        console.log('id', id);
-        console.log('all', all);
+        //console.log('id', id);
+        //console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://35.154.1.99:3001/deactivateTransaction', {
+            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -258,12 +270,12 @@ class ViewItemsForm extends Component {
     };
 
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
     toggleAddCustomerModal() {
@@ -403,7 +415,7 @@ class ViewItemsForm extends Component {
                                                     <Option value="Sold">Sold</Option>
                                                     <Option value="Finished">Finished</Option>
                                                     <Option value="Stuck">Stuck</Option>
-                                                    <Option value="With Seller">With Seller</Option>
+                                                    <Option value="With Sales Person">With Sales Person</Option>
                                                     <Option value="Cutting">Cutting</Option>
                                                     <Option value="Ready for Selling">Ready for Selling</Option>
                                                     <Option value="Heat Treatment">Heat Treatment</Option>
@@ -411,6 +423,10 @@ class ViewItemsForm extends Component {
                                                     <Option value="C&P">C&P</Option>
                                                     <Option value="Preformed">Preformed</Option>
                                                     <Option value="Added to a lot">Added to a lot</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
+                                <Option value="With Preformer">With Preformer</Option>
                                                 </Select>
                                             </Form.Item>
                                         </Col>
@@ -631,11 +647,11 @@ class ViewItemsForm extends Component {
                                             <Col xs={24} sm={12} md={12} lg={12}>
                                                 <Form.Item
                                                     name="PERFORMER"
-                                                    label="Performer"
+                                                    label="Preformer"
                                                     initialValue={this.props.initialValues.PERFORMER}
                                                 >
-                                                    <Select placeholder="Select Performer" style={inputStyle}>
-                                                        {customerOptions.map((option) => (
+                                                    <Select placeholder="Select Preformer" style={inputStyle}>
+                                                        {this.state.preformerOptions.map((option) => (
                                                             <Option key={option.value} value={option.value}>
                                                                 {option.label}
                                                             </Option>
@@ -752,7 +768,6 @@ class ViewItemsForm extends Component {
                                                 <Switch
                                                     checkedChildren="Heat Treated"
                                                     unCheckedChildren="Not Heat Treated"
-                                                    onChange={this.handleSwitchChange}
                                                     disabled
                                                 />
                                             </Form.Item>
@@ -760,10 +775,10 @@ class ViewItemsForm extends Component {
                                         <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="HT_ID"
-                                                label="Heat Treatment Group"
+                                                label="Treatment Group"
                                                 initialValue={this.props.initialValues.HT_ID}
                                             >
-                                                <Select placeholder="Select Heat Treatment Group" style={inputStyle}>
+                                                <Select placeholder="Select Treatment Group" style={inputStyle}>
                                                     {heatTreatmentGroupOptions.map((option) => (
                                                         <Option key={option.value} value={option.value}>
                                                             {option.label}
@@ -772,6 +787,25 @@ class ViewItemsForm extends Component {
                                                 </Select>
                                             </Form.Item>
                                         </Col>
+                                        {/*<Col xs={24} sm={12} md={8} lg={6}>*/}
+                                        {/*    <Form.Item*/}
+                                        {/*        name="HT_ID"*/}
+                                        {/*        label="Treatment Group"*/}
+                                        {/*        initialValue={this.props.initialValues.HT_ID}*/}
+                                        {/*    >*/}
+                                        {/*        <Select placeholder="Select Treatment Group" allowClear showSearch disabled*/}
+                                        {/*                filterOption={(input, option) =>*/}
+                                        {/*                    (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||*/}
+                                        {/*                    (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)*/}
+                                        {/*                }>*/}
+                                        {/*            {this.state.heatTreatmentGroupOptions.filter((option) => option.type === 'Heat Treatment').map((option) => (*/}
+                                        {/*                <Option key={option.value} value={option.value} title={option.label}>*/}
+                                        {/*                    {option.code}*/}
+                                        {/*                </Option>*/}
+                                        {/*            ))}*/}
+                                        {/*        </Select>*/}
+                                        {/*    </Form.Item>*/}
+                                        {/*</Col>*/}
                                         <Col xs={24} sm={24} md={24} lg={3}>
                                             {/* Weight (ct) */}
                                             <Form.Item
@@ -826,6 +860,110 @@ class ViewItemsForm extends Component {
                                                                 alt="Enlarged View"
                                                                 style={{ width: '100%' }}
                                                                 src={this.props.initialValues.PHOTOS_AFTER_HT_LINK}
+                                                                onError={(e) => {
+                                                                    console.error('Image loading error:', e);
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </Modal>
+                                                </Form.Item>
+                                            </Col>
+                                        )}
+                                    </Row>
+                                    <Divider />
+
+                                    <Row gutter={[16, 16]} justify="left" align="top">
+                                        <Col xs={24} sm={24} md={24} lg={3}>
+                                            <Form.Item
+                                                name="IS_ELEC_TREATED"
+                                                label="Is Electric Treated"
+                                                initialValue={this.props.initialValues.IS_ELEC_TREATED}
+                                            >
+                                                <Switch
+                                                    checkedChildren="Electric Treated"
+                                                    unCheckedChildren="Not Electric Treated"
+                                                    disabled
+                                                    // onChange={this.handleSwitchChangeET}
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
+                                            <Form.Item
+                                                name="ET_ID"
+                                                label="Treatment Group"
+                                                initialValue={this.props.initialValues.ET_ID}
+                                            >
+                                                <Select placeholder="Select Treatment Group" disabled={!this.state.isElectricTreated} allowClear showSearch style={inputStyle}
+                                                        filterOption={(input, option) =>
+                                                            (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
+                                                            (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
+                                                        }>
+                                                    {heatTreatmentGroupOptions.map((option) => (
+                                                        <Option key={option.value} value={option.value} title={option.label}>
+                                                            {option.label}
+                                                        </Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={24} sm={24} md={24} lg={3}>
+                                            {/* Weight (ct) */}
+                                            <Form.Item
+                                                name="WEIGHT_AFTER_ET"
+                                                label="Weight (ct) After ET"
+                                                rules={[
+                                                    { type: 'number', message: 'Please enter a valid number' },
+                                                ]}
+                                                initialValue={this.props.initialValues.WEIGHT_AFTER_ET}
+                                            >
+                                                <InputNumber style={inputStyle} min={0} step={0.01} placeholder="Enter Weight" disabled={!this.state.isElectricTreated} style={inputStyle}/>
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
+                                            <Form.Item
+                                                name="ET_BY"
+                                                label="Electric Treated By"
+                                                initialValue={this.props.initialValues.ET_BY}
+                                            >
+                                                <Select placeholder="Select Customer" disabled={!this.state.isElectricTreated} allowClear showSearch style={inputStyle}
+                                                        filterOption={(input, option) =>
+                                                            (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
+                                                            (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
+                                                        }>
+                                                    {this.state.etByOptions.map((option) => (
+                                                        <Option key={option.value} value={option.value} title={option.label}>
+                                                            {option.label}
+                                                        </Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+                                        </Col>
+                                        {this.props.initialValues.PHOTOS_AFTER_ET_LINK && this.state.isElectricTreated && (
+                                            <Col span={3} style={{ display: 'flex', alignItems: 'center' }}>
+                                                <Form.Item
+                                                    label="Photo After HT"
+                                                >
+                                                    {/* Display initial photo */}
+                                                    {this.props.initialValues.PHOTOS_AFTER_ET_LINK && (
+                                                        <img
+                                                            alt="Initial Photo"
+                                                            style={{ width: '100%', borderRadius: '5px', cursor: 'pointer' }}
+                                                            src={this.props.initialValues.PHOTOS_AFTER_ET_LINK}
+                                                            onClick={() => this.setState({ enlargedImageVisibleET: true })}
+                                                        />
+                                                    )}
+
+                                                    {/* Enlarged view modal */}
+                                                    <Modal
+                                                        visible={this.state.enlargedImageVisibleET}
+                                                        footer={null}
+                                                        onCancel={() => this.setState({ enlargedImageVisibleET: false })}
+                                                    >
+                                                        {this.props.initialValues.PHOTOS_AFTER_ET_LINK && (
+                                                            <img
+                                                                alt="Enlarged View"
+                                                                style={{ width: '100%' }}
+                                                                src={this.props.initialValues.PHOTOS_AFTER_ET_LINK}
                                                                 onError={(e) => {
                                                                     console.error('Image loading error:', e);
                                                                 }}
@@ -930,19 +1068,25 @@ class ViewItemsForm extends Component {
                                             </Form.Item>
                                         </Col>
                                         <Col span={9}>
-                                            <Form.Item name="SHARE_HOLDERS" label="Share Holders"
-                                                       initialValue={
-                                                           this.props.initialValues.SHARE_HOLDERS
-                                                       }>
-                                                <Select  placeholder="Select Share Holders" style={inputStyle}>
+                                            <Form.Item
+                                                name="SHARE_HOLDERS"
+                                                label="Share Holders"
+                                                initialValue={this.props.initialValues.SHARE_HOLDERS ? this.props.initialValues.SHARE_HOLDERS.split(',').map(Number) : undefined}
+                                            >
+                                                <Select
+                                                    placeholder="Select Share Holders"
+                                                    style={inputStyle} // Ensure that 'inputStyle' is defined
+                                                    mode="multiple"
+                                                >
                                                     {this.state.partnerOptions.map((option) => (
-                                                        <Option key={option.value} value={option.value}>
+                                                        <Select.Option key={option.value} value={option.value}>
                                                             {option.label}
-                                                        </Option>
+                                                        </Select.Option>
                                                     ))}
                                                 </Select>
                                             </Form.Item>
                                         </Col>
+
                                         <Col xs={24} sm={24} md={24} lg={3}>
                                             <Form.Item
                                                 name="SHARE_PERCENTAGE"
@@ -1119,30 +1263,15 @@ class ViewItemsForm extends Component {
                                                 dataIndex: 'METHOD'
                                             },
                                             {
-                                                title: 'Status',
-                                                dataIndex: 'STATUS',
-                                            },
-                                            {
                                                 title: 'Date',
                                                 dataIndex: 'DATE',
                                                 render: (row) => (
                                                     <span> {new Date(row).toLocaleDateString()}</span>
                                                 ),
                                             },
-                                            // {
-                                            //     title: 'Reference Item',
-                                            //     dataIndex: 'ITEM_CODE',
-                                            // },
                                             {
                                                 title: 'Customer Name',
                                                 dataIndex: 'C_NAME',
-                                                render: (text, record) => (
-                                                    <span>
-                <div>{record.C_NAME}</div>
-                <div>{record.PHONE_NUMBER}</div>
-                <div>({record.COMPANY})</div>
-            </span>
-                                                ),
                                             },
                                             {
                                                 title: 'Initial Payment',
@@ -1164,9 +1293,25 @@ class ViewItemsForm extends Component {
                                                 dataIndex: 'AMOUNT',
                                                 render: (text, record) => (
                                                     <span>
-                <div>Amount: Rs. {record.AMOUNT}</div>
-                <div style={{ color: 'green' }}>Amount Settled: Rs. {record.AMOUNT_SETTLED}</div>
-                <div style={{ color: 'red' }}>Amount Due: Rs. {record.DUE_AMOUNT}</div>
+                <div>Rs. {record.AMOUNT}</div>
+            </span>
+                                                ),
+                                            },
+                                            {
+                                                title: 'Amount Settled',
+                                                dataIndex: 'AMOUNT_SETTLED',
+                                                render: (text, record) => (
+                                                    <span>
+                <div style={{ color: 'green' }}>Rs. {record.AMOUNT_SETTLED}</div>
+            </span>
+                                                ),
+                                            },
+                                            {
+                                                title: 'Due Amount',
+                                                dataIndex: 'DUE_AMOUNT',
+                                                render: (text, record) => (
+                                                    <span>
+                <div style={{ color: 'red' }}>Rs. {record.DUE_AMOUNT}</div>
             </span>
                                                 ),
                                             },

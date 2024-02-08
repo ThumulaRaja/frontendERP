@@ -32,27 +32,27 @@ class Customer extends Component {
         });
     }
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
     async getCustomerDetails() {
         this.setState({ loading: true });
 
         try {
-            console.log('this.props.customerId', this.props);
-            const response = await axios.post('http://35.154.1.99:3001/getCustomerDetails', {
+            //console.log('this.props.customerId', this.props);
+            const response = await axios.post('http://localhost:3001/getCustomerDetails', {
                 CUSTOMER_ID: this.props.customerId,
             });
 
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
                 this.setState({ initialValues: items });
 
                 // set the form values
@@ -64,10 +64,10 @@ class Customer extends Component {
                     ADDRESS: items.ADDRESS,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -79,19 +79,19 @@ class Customer extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getCustomerTransactions', {
+            const response = await axios.post('http://localhost:3001/getCustomerTransactions', {
                 CUSTOMER_ID: this.props.customerId,
             });
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
                 this.setState({ tablePayment: items });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,

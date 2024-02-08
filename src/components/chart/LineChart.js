@@ -20,16 +20,16 @@ function LineChart() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getTransactionData');
+            const response = await axios.post('http://localhost:3001/getTransactionData');
 
             if (response.data.success) {
-                console.log('TransactionData:', response.data.result);
+                //console.log('TransactionData:', response.data.result);
                 setTransactionData(response.data.result);
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             setLoading(false);
         }

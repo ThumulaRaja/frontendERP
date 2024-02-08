@@ -68,7 +68,7 @@ class Bank extends Component {
 
 
     showReferenceItem(itemId){
-        console.log('itemId', itemId);
+        //console.log('itemId', itemId);
         this.setState({
             selectedRefferenceItem: itemId,
             isViewItemModalVisible: true,
@@ -85,9 +85,9 @@ class Bank extends Component {
     }
 
     handlePrint = async (row) => {
-        console.log('row', row);
+        //console.log('row', row);
         try {
-            const response = await axios.post('http://35.154.1.99:3001/generateInvoice', {
+            const response = await axios.post('http://localhost:3001/generateInvoice', {
                 data: row,
             });
 
@@ -131,13 +131,13 @@ class Bank extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://35.154.1.99:3001/searchBank', searchData);
+            const response = await axios.post('http://localhost:3001/searchBank', searchData);
 
 
             if (response.data.success) {
                 const filteredItems = response.data.result;
 
-                console.log('filteredItems', filteredItems);
+                //console.log('filteredItems', filteredItems);
 
                 // Categorize filtered items based on CP_TYPE
                 const categorizedTables = {
@@ -172,10 +172,10 @@ class Bank extends Component {
                     tablePayment: categorizedTables.Payment,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -203,12 +203,12 @@ class Bank extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://35.154.1.99:3001/searchBank', searchData);
+            const response = await axios.post('http://localhost:3001/searchBank', searchData);
 
 
             if (response.data.success) {
                 const filteredItems = response.data.result;
-                console.log('filteredItems', filteredItems);
+                //console.log('filteredItems', filteredItems);
 
                 message.info(response.data.message);
 
@@ -247,10 +247,10 @@ class Bank extends Component {
                     tableSelling: categorizedTables.Selling,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -261,21 +261,21 @@ class Bank extends Component {
 
 
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
 
     handleDelete = async (id,all) => {
-        console.log('id', id);
-        console.log('all', all);
+        //console.log('id', id);
+        //console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://35.154.1.99:3001/deactivateTransaction', {
+            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -294,10 +294,10 @@ class Bank extends Component {
     };
 
     deletePayment = async (id ,paymentAmount , amountSettled , dueAmount,referenceTransaction) => {
-        console.log('id', id);
+        //console.log('id', id);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://35.154.1.99:3001/deletePayment', {
+            const response = await axios.post('http://localhost:3001/deletePayment', {
                 TRANSACTION_ID: id,
                 PAYMENT_AMOUNT: paymentAmount,
                 AMOUNT_SETTLED: amountSettled,
@@ -323,11 +323,11 @@ class Bank extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getAllBankTransactions');
+            const response = await axios.post('http://localhost:3001/getAllBankTransactions');
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
 
 
                 // Categorize items based on TYPE
@@ -362,12 +362,12 @@ class Bank extends Component {
                     tablePayment: categorizedTables.Payment,
                     tableSelling: categorizedTables.Selling,
                 });
-                console.log('tablePayment', this.state.tablePayment);
+                //console.log('tablePayment', this.state.tablePayment);
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -444,7 +444,7 @@ class Bank extends Component {
                                         <Option value="Sold">Sold</Option>
                                         <Option value="Finished">Finished</Option>
                                         <Option value="Stuck">Stuck</Option>
-                                        <Option value="With Seller">With Seller</Option>
+                                        <Option value="With Sales Person">With Sales Person</Option>
                                         <Option value="Cutting">Cutting</Option>
                                         <Option value="Ready for Selling">Ready for Selling</Option>
                                         <Option value="Heat Treatment">Heat Treatment</Option>
@@ -452,6 +452,10 @@ class Bank extends Component {
                                         <Option value="C&P">C&P</Option>
                                         <Option value="Preformed">Preformed</Option>
                                         <Option value="Added to a lot">Added to a lot</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
+                                <Option value="With Preformer">With Preformer</Option>
                                     </Select>
                                 </Form.Item>
                             </Col>

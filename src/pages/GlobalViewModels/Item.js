@@ -17,6 +17,7 @@ import axios from "axios";
 import moment from 'moment';
 import {DeleteOutlined, ExclamationCircleOutlined, EyeOutlined} from "@ant-design/icons";
 import ViewTransactionForm  from "../Transaction/Commen/ViewTransactionForm";
+import Cookies from "js-cookie";
 
 const { Option } = Select;
 
@@ -25,6 +26,7 @@ class Item extends Component {
         super(props);
         this.state = {
             isHeatTreated: false,
+        isElectricTreated: false,
             isTransaction: false,
             fileList: [],
             gemType: null,
@@ -36,6 +38,7 @@ class Item extends Component {
             htByOptions: [],
             cpByOptions: [],
             preformerOptions: [],
+            etByOptions: [],
             heatTreatmentGroupOptions: [],
             ReferenceOptions: [],
             tableTransaction: [],
@@ -44,6 +47,7 @@ class Item extends Component {
 
             enlargedImageVisible: false,
             enlargedImageVisibleHT: false,
+            enlargedImageVisibleET: false,
 
 
             fileList1: [],  // For the first photo uploader
@@ -81,14 +85,14 @@ class Item extends Component {
     async getModelItemDetails() {
         try {
             let id = this.props.itemId;
-            console.log('id', id);
-            const response = await axios.post('http://35.154.1.99:3001/getItemDetails', { id });
+            //console.log('id', id);
+            const response = await axios.post('http://localhost:3001/getItemDetails', { id });
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
                 this.setState({ initialValues: items });
-                console.log('tableTransaction', this.state.initialValues);
+                //console.log('tableTransaction', this.state.initialValues);
 
                 //set the form values
                 this.formRef.current.setFieldsValue({
@@ -118,12 +122,17 @@ class Item extends Component {
                     HT_BY: this.state.initialValues.HT_BY,
                     PHOTO_LINK: this.state.initialValues.PHOTO_LINK,
                     PHOTOS_AFTER_HT_LINK: this.state.initialValues.PHOTOS_AFTER_HT_LINK,
+                    IS_ELEC_TREATED: this.state.initialValues.IS_ELEC_TREATED,
+                    ET_ID: this.state.initialValues.ET_ID,
+                    WEIGHT_AFTER_ET: this.state.initialValues.WEIGHT_AFTER_ET,
+                    ET_BY: this.state.initialValues.ET_BY,
+                    PHOTOS_AFTER_ET_LINK: this.state.initialValues.PHOTOS_AFTER_ET_LINK,
                     SELLER: this.state.initialValues.SELLER,
                     COST: this.state.initialValues.COST,
                     GIVEN_AMOUNT: this.state.initialValues.GIVEN_AMOUNT,
                     PAYMENT_METHOD: this.state.initialValues.PAYMENT_METHOD,
                     IS_TRANSACTION: this.state.initialValues.IS_TRANSACTION,
-                    SHARE_HOLDERS: this.state.initialValues.SHARE_HOLDERS,
+                    SHARE_HOLDERS: this.state.initialValues.SHARE_HOLDERS ? this.state.initialValues.SHARE_HOLDERS.split(',').map(Number) : undefined,
                     OTHER_SHARES: this.state.initialValues.OTHER_SHARES,
                     COMMENTS: this.state.initialValues.COMMENTS,
                     EXPENSE_AMOUNT: this.state.initialValues.EXPENSE_AMOUNT,
@@ -138,10 +147,10 @@ class Item extends Component {
                     DATE_FINISHED: this.state.initialValues.DATE_FINISHED ? moment(this.state.initialValues.DATE_FINISHED) : null,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -156,19 +165,19 @@ class Item extends Component {
 
         try {
             let id = this.props.itemId;
-            console.log('id1', id);
-            const response = await axios.post('http://35.154.1.99:3001/getAllTransactions', { id });
+            //console.log('id1', id);
+            const response = await axios.post('http://localhost:3001/getAllTransactions', { id });
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
                 this.setState({ tableTransaction: items });
-                console.log('tableTransaction1', this.state.tableTransaction);
+                //console.log('tableTransaction1', this.state.tableTransaction);
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -177,7 +186,7 @@ class Item extends Component {
     }
 
     showProps = () => {
-        console.log("this.props",this.props);
+        //console.log("this.props",this.props);
     }
 
 
@@ -200,8 +209,68 @@ class Item extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
-            console.log("response cus", response);
+            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            //console.log("response123", response);
+
+            // BuyerOptions Filter TYPE = Buyer
+            const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // SellerOptions Filter TYPE = Seller
+            const sellerOptions = response.data.result.filter((customer) => customer.TYPE === 'Seller').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // SalesPersonOptions Filter TYPE = Sales Person
+            const salesPersonOptions = response.data.result.filter((customer) => customer.TYPE === 'Sales Person').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // PartnerOptions Filter TYPE = Partner
+            const partnerOptions = response.data.result.filter((customer) => customer.TYPE === 'Partner').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // HTByOptions Filter TYPE = HT By
+            const htByOptions = response.data.result.filter((customer) => customer.TYPE === 'Heat T').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // CPByOptions Filter TYPE = CP By
+            const cpByOptions = response.data.result.filter((customer) => customer.TYPE === 'C&P').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // PreformerOptions Filter TYPE = Preformer
+            const preformerOptions = response.data.result.filter((customer) => customer.TYPE === 'Preformer').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            // ETByOptions Filter TYPE = Electric
+            const etByOptions = response.data.result.filter((customer) => customer.TYPE === 'Electric').map((customer) => ({
+                    value: customer.CUSTOMER_ID,
+                    label: customer.NAME,
+                }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions,etByOptions });
+            //console.log("partnerOptions", this.state.partnerOptions);
+
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
                 label: customer.NAME,
@@ -214,8 +283,8 @@ class Item extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getItemsForReference");
+            //console.log("response", response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -228,14 +297,14 @@ class Item extends Component {
 
     async fetchHTGroupOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllHT");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllHT");
+            //console.log("response", response);
             return response.data.result.map((ht) => ({
                 value: ht.HT_ID,
-                label: ht.NAME,
+                label: ht.CODE,
             }));
         } catch (error) {
-            console.error("Error fetching heat Treatment Group Options:", error);
+            console.error("Error fetching Treatment Group Options:", error);
             return [];
         }
     }
@@ -246,11 +315,11 @@ class Item extends Component {
     };
 
     handleDeleteTranscation = async (id, all) => {
-        console.log('id', id);
-        console.log('all', all);
+        //console.log('id', id);
+        //console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://35.154.1.99:3001/deactivateTransaction', {
+            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -269,12 +338,12 @@ class Item extends Component {
     };
 
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
 
@@ -295,6 +364,14 @@ class Item extends Component {
             alignItems: 'center',
             justifyContent: 'center',
         };
+
+        let rememberedUser = Cookies.get('rememberedUser');
+        let ROLE = null;
+
+        if (rememberedUser) {
+            rememberedUser = JSON.parse(rememberedUser);
+            ROLE = rememberedUser.ROLE;
+        }
 
 
         const showDeleteAllPaymentsConfirm = (itemId) => {
@@ -387,7 +464,7 @@ class Item extends Component {
                                                     <Option value="Sold">Sold</Option>
                                                     <Option value="Finished">Finished</Option>
                                                     <Option value="Stuck">Stuck</Option>
-                                                    <Option value="With Seller">With Seller</Option>
+                                                    <Option value="With Sales Person">With Sales Person</Option>
                                                     <Option value="Cutting">Cutting</Option>
                                                     <Option value="Ready for Selling">Ready for Selling</Option>
                                                     <Option value="Heat Treatment">Heat Treatment</Option>
@@ -395,25 +472,16 @@ class Item extends Component {
                                                     <Option value="C&P">C&P</Option>
                                                     <Option value="Preformed">Preformed</Option>
                                                     <Option value="Added to a lot">Added to a lot</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
+                                <Option value="With Preformer">With Preformer</Option>
                                                 </Select>
                                             </Form.Item>
                                         </Col>
-                                        <Col xs={24} sm={24} md={24} lg={3}>
-                                            {/* No of Pieces */}
-                                            <Form.Item
-                                                name="ITEM_ID"
-                                                label="Item ID"
-                                                type="number"
-                                                initialValue={this.state.initialValues.ITEM_ID}
-                                                rules={[
-                                                    { required: true, message: 'Please enter Item ID' },
-                                                ]}
-                                            >
-                                                <InputNumber style={inputStyle}  placeholder="Enter ID"/>
-                                            </Form.Item>
-                                        </Col>
 
-                                        <Col xs={24} sm={24} md={24} lg={3}>
+
+                                        <Col xs={24} sm={24} md={24} lg={6}>
                                             {/* Weight (ct) */}
                                             <Form.Item
                                                 name="WEIGHT"
@@ -615,11 +683,11 @@ class Item extends Component {
                                             <Col xs={24} sm={12} md={12} lg={12}>
                                                 <Form.Item
                                                     name="PERFORMER"
-                                                    label="Performer"
+                                                    label="Preformer"
                                                     initialValue={this.state.initialValues.PERFORMER}
                                                 >
-                                                    <Select placeholder="Select Performer" style={inputStyle}>
-                                                        {customerOptions.map((option) => (
+                                                    <Select placeholder="Select Preformer" style={inputStyle}>
+                                                        {this.state.preformerOptions.map((option) => (
                                                             <Option key={option.value} value={option.value}>
                                                                 {option.label}
                                                             </Option>
@@ -744,10 +812,10 @@ class Item extends Component {
                                         <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="HT_ID"
-                                                label="Heat Treatment Group"
+                                                label="Treatment Group"
                                                 initialValue={this.state.initialValues.HT_ID}
                                             >
-                                                <Select placeholder="Select Heat Treatment Group" style={inputStyle}>
+                                                <Select placeholder="Select Treatment Group" style={inputStyle}>
                                                     {heatTreatmentGroupOptions.map((option) => (
                                                         <Option key={option.value} value={option.value}>
                                                             {option.label}
@@ -784,7 +852,7 @@ class Item extends Component {
                                                 </Select>
                                             </Form.Item>
                                         </Col>
-                                        {this.state.initialValues.PHOTOS_AFTER_HT_LINK && this.state.isHeatTreated && (
+                                        {this.state.initialValues.PHOTOS_AFTER_HT_LINK && this.state.initialValues.IS_HEAT_TREATED && (
                                             <Col span={3} style={{ display: 'flex', alignItems: 'center' }}>
                                                 <Form.Item
                                                     label="Photo After HT"
@@ -810,6 +878,103 @@ class Item extends Component {
                                                                 alt="Enlarged View"
                                                                 style={{ width: '100%' }}
                                                                 src={this.state.initialValues.PHOTOS_AFTER_HT_LINK}
+                                                                onError={(e) => {
+                                                                    console.error('Image loading error:', e);
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </Modal>
+                                                </Form.Item>
+                                            </Col>
+                                        )}
+                                    </Row>
+
+                                    <Divider />
+
+                                    <Row gutter={[16, 16]} justify="left" align="top">
+                                        <Col xs={24} sm={24} md={24} lg={3}>
+                                            <Form.Item
+                                                name="IS_ELEC_TREATED"
+                                                label="Is Electric Treated"
+                                                initialValue={this.state.initialValues.IS_ELEC_TREATED}
+                                            >
+                                                <Switch
+                                                    checkedChildren="Heat Treated"
+                                                    unCheckedChildren="Not Heat Treated"
+                                                    // onChange={this.handleSwitchChange}
+                                                    disabled
+                                                />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
+                                            <Form.Item
+                                                name="ET_ID"
+                                                label="Treatment Group"
+                                                initialValue={this.state.initialValues.ET_ID}
+                                            >
+                                                <Select placeholder="Select Treatment Group" style={inputStyle}>
+                                                    {heatTreatmentGroupOptions.map((option) => (
+                                                        <Option key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={24} sm={24} md={24} lg={3}>
+                                            {/* Weight (ct) */}
+                                            <Form.Item
+                                                name="WEIGHT_AFTER_ET"
+                                                label="Weight (ct) After ET"
+                                                initialValue={this.state.initialValues.WEIGHT_AFTER_ET}
+                                                rules={[
+                                                    { type: 'number', message: 'Please enter a valid number' },
+                                                ]}
+                                            >
+                                                <InputNumber  min={0} step={0.01} placeholder="Enter Weight" style={inputStyle} />
+                                            </Form.Item>
+                                        </Col>
+                                        <Col xs={24} sm={12} md={8} lg={6}>
+                                            <Form.Item
+                                                name="ET_BY"
+                                                label="Electric Treated By"
+                                                initialValue={this.state.initialValues.ET_BY}
+                                            >
+                                                <Select placeholder="Select Customer" style={inputStyle}>
+                                                    {this.state.etByOptions.map((option) => (
+                                                        <Option key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </Option>
+                                                    ))}
+                                                </Select>
+                                            </Form.Item>
+                                        </Col>
+                                        {this.state.initialValues.PHOTOS_AFTER_ET_LINK && this.state.initialValues.IS_ELEC_TREATED && (
+                                            <Col span={3} style={{ display: 'flex', alignItems: 'center' }}>
+                                                <Form.Item
+                                                    label="Photo After HT"
+                                                >
+                                                    {/* Display initial photo */}
+                                                    {this.state.initialValues.PHOTOS_AFTER_ET_LINK && (
+                                                        <img
+                                                            alt="Initial Photo"
+                                                            style={{ width: '100%', borderRadius: '5px', cursor: 'pointer' }}
+                                                            src={this.state.initialValues.PHOTOS_AFTER_ET_LINK}
+                                                            onClick={() => this.setState({ enlargedImageVisibleET: true })}
+                                                        />
+                                                    )}
+
+                                                    {/* Enlarged view modal */}
+                                                    <Modal
+                                                        visible={this.state.enlargedImageVisibleET}
+                                                        footer={null}
+                                                        onCancel={() => this.setState({ enlargedImageVisibleET: false })}
+                                                    >
+                                                        {this.state.initialValues.PHOTOS_AFTER_ET_LINK && (
+                                                            <img
+                                                                alt="Enlarged View"
+                                                                style={{ width: '100%' }}
+                                                                src={this.state.initialValues.PHOTOS_AFTER_ET_LINK}
                                                                 onError={(e) => {
                                                                     console.error('Image loading error:', e);
                                                                 }}
@@ -914,13 +1079,20 @@ class Item extends Component {
                                             </Form.Item>
                                         </Col>
                                         <Col span={9}>
-                                            <Form.Item name="SHARE_HOLDERS" label="Share Holders"
-                                                       initialValue={this.state.initialValues.SHARE_HOLDERS}>
-                                                <Select placeholder="Select Customer" style={inputStyle}>
+                                            <Form.Item
+                                                name="SHARE_HOLDERS"
+                                                label="Share Holders"
+                                                initialValue={this.state.initialValues.SHARE_HOLDERS ? this.state.initialValues.SHARE_HOLDERS.split(',').map(Number) : undefined}
+                                            >
+                                                <Select
+                                                    placeholder="Select Share Holders"
+                                                    style={inputStyle} // Ensure that 'inputStyle' is defined
+                                                    mode="multiple"
+                                                >
                                                     {this.state.partnerOptions.map((option) => (
-                                                        <Option key={option.value} value={option.value}>
+                                                        <Select.Option key={option.value} value={option.value}>
                                                             {option.label}
-                                                        </Option>
+                                                        </Select.Option>
                                                     ))}
                                                 </Select>
                                             </Form.Item>
@@ -1068,6 +1240,7 @@ class Item extends Component {
 
                                 </Form>
                             </Card>
+                            {ROLE === 'ADMIN' && (
                             <Card
                                 className="criclebox tablespace mb-24"
                                 title={"Transaction Details Related To " + this.state.initialValues.CODE}
@@ -1225,6 +1398,7 @@ class Item extends Component {
                                     />
                                 </div>
                             </Card>
+                            )}
 
                         </Col>
                     </Row>

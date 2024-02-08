@@ -135,7 +135,7 @@ function Header({
     NAME1 = NAME;
     PHOTO1 = PHOTO;
 
-    //console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
+    ////console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
   }
   else{
     Cookies.remove('rememberedUser');
@@ -176,9 +176,9 @@ function Header({
 
   return (
     <>
-      <div className="setting-drwer" onClick={showDrawer}>
-        {setting}
-      </div>
+      {/*<div className="setting-drwer" onClick={showDrawer}>*/}
+      {/*  {setting}*/}
+      {/*</div>*/}
       <Row gutter={[16, 16]} justify="left" align="top">
         <Col span={24} md={6}>
           <Breadcrumb>

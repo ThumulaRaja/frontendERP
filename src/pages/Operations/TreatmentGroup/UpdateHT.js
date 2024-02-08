@@ -21,8 +21,8 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
 
     const fetchReferenceOptions = async () => {
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
-            console.log('response', response);
+            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            //console.log('response', response);
             const options = response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -48,12 +48,12 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
             };
 
             // Make API call to update customer
-            const response = await axios.post('http://35.154.1.99:3001/updateHT', updatedValues);
+            const response = await axios.post('http://localhost:3001/updateHT', updatedValues);
 
             if (response.data.success) {
-                message.success('Heat Treatment Group updated successfully');
+                message.success('Treatment Group updated successfully');
 
-                // Notify parent component (Heat Treatment Group) about the update
+                // Notify parent component (Treatment Group) about the update
                 onUpdate();
 
                 // Close the modal
@@ -113,6 +113,19 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
                     </Form.Item>
                 </Col>
             </Row>
+            <Row gutter={[16, 16]} justify="left" align="top">
+                <Col xs={24} sm={24} md={24} lg={24}>
+                    <Form.Item name="TYPE" label="Type"
+                               rules={[{ required: true, message: 'Please select reference' }]}>
+                        <Select
+                            placeholder="Select Reference"
+                            showSearch>
+                            <Option value="Heat Treatment">Heat Treatment</Option>
+                            <Option value="Electric Treatment">Electric Treatment</Option>
+                        </Select>
+                    </Form.Item>
+                </Col>
+            </Row>
 
             <Row gutter={[16, 16]} justify="left" align="top">
                 <Col xs={24} sm={24} md={24} lg={24}>
@@ -129,7 +142,7 @@ const UpdateHT = ({ initialValues, onUpdate, onCancel }) => {
                 <Col xs={24} sm={24} md={24} lg={24}>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
-                            Update Heat Treatment Group
+                            Update Treatment Group
                         </Button>
                     </Form.Item>
                 </Col>

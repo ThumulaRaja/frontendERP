@@ -40,6 +40,7 @@ class Selling extends Component {
             htByOptions: [],
             cpByOptions: [],
             preformerOptions: [],
+        etByOptions: [],
 
 
             searchCode: '',
@@ -67,8 +68,8 @@ class Selling extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
             const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
@@ -119,7 +120,14 @@ class Selling extends Component {
             }
             ));
 
-            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+            // ETByOptions Filter TYPE = Electric
+            const etByOptions = response.data.result.filter((customer) => customer.TYPE === 'Electric').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions, etByOptions });
 
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
@@ -132,7 +140,7 @@ class Selling extends Component {
     }
 
     showReferenceItem(itemId){
-        console.log('itemId', itemId);
+        //console.log('itemId', itemId);
         this.setState({
             selectedRefferenceItem: itemId,
             isViewItemModalVisible: true,
@@ -174,12 +182,12 @@ class Selling extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://35.154.1.99:3001/searchSelling', searchData);
+            const response = await axios.post('http://localhost:3001/searchSelling', searchData);
 
 
             if (response.data.success) {
                 const filteredItems = response.data.result;
-                console.log('filteredItems', filteredItems);
+                //console.log('filteredItems', filteredItems);
 
                 message.info(response.data.message);
 
@@ -188,10 +196,10 @@ class Selling extends Component {
                 this.state.tableData = filteredItems;
 
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -202,21 +210,21 @@ class Selling extends Component {
 
 
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
 
     handleDelete = async (id,all) => {
-        console.log('id', id);
-        console.log('all', all);
+        //console.log('id', id);
+        //console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://35.154.1.99:3001/deactivateTransaction', {
+            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -235,9 +243,9 @@ class Selling extends Component {
     };
 
     handlePrint = async (row) => {
-        console.log('row', row);
+        //console.log('row', row);
         try {
-            const response = await axios.post('http://35.154.1.99:3001/generateInvoice', {
+            const response = await axios.post('http://localhost:3001/generateInvoice', {
                 data: row,
             });
 
@@ -265,18 +273,18 @@ class Selling extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getAllSellingTransactions');
+            const response = await axios.post('http://localhost:3001/getAllSellingTransactions');
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
 
                 this.state.tableData = items;
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -310,13 +318,13 @@ class Selling extends Component {
     filterByShareholder = async (value) => {
         this.setState({ loading: true });
         try {
-            const response = await axios.post('http://35.154.1.99:3001/filterByShareholderSelling', {
+            const response = await axios.post('http://localhost:3001/filterByShareholderSelling', {
                 shareholder: value,
             });
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
                 this.state.tableData = items;
             }
             else {
@@ -324,7 +332,7 @@ class Selling extends Component {
             }
         }
         catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
             this.state.tableData = [];
         }
         finally {
@@ -462,7 +470,7 @@ class Selling extends Component {
                                                 (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                                 (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
                                             }>
-                                        {this.state.customerOptions.map((option) => (
+                                        {this.state.partnerOptions.map((option) => (
                                             <Option key={option.value} value={option.value} title={option.label}>
                                                 {option.label}
                                             </Option>

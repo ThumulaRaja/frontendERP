@@ -1,7 +1,7 @@
 // const currentMonth = new Date().toLocaleString('default', { month: 'short' });
 const currentMonth = new Date().toLocaleString('default', { month: 'short' });
 
-//console.log('Current month:', currentMonth);
+////console.log('Current month:', currentMonth);
 
 const months = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -15,6 +15,8 @@ const updatedCategories = [
   ...months.slice(currentMonthIndex + 1),
   ...months.slice(0, currentMonthIndex + 1)
 ];
+
+//console.log('Updated categories:', updatedCategories);
 
 const lineChart = {
   series: [

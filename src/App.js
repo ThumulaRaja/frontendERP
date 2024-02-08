@@ -14,13 +14,11 @@ import CP from "./pages/Inventory/CP/CP";
 import AddTransactionForm from "./pages/Transaction/AddTransactionForm/AddTransactionForm";
 import AddPaymentsForm from "./pages/Transaction/AddPaymentsForm/AddPaymentsForm";
 import Expenses from "./pages/Transaction/Expenses/Expenses";
-import CashFlows from "./pages/Transaction/CashFlows/CashFlows";
-import Bank from "./pages/Transaction/Bank/Bank";
-import HT from "./pages/Operations/HeatTreatmentGroup/HT";
+import HT from "./pages/Operations/TreatmentGroup/HT";
 import HeatT from "./pages/Operations/HeatTreatment/HeatT";
 import CutPolish from "./pages/Operations/CutPolish/CutPolish";
-import CashDashboard from "./pages/Transaction/CashDashboard/CashDashboard";
 import ItemURL from "./pages/GlobalViewModels/ItemURL";
+import CustomerURL from "./pages/GlobalViewModels/CustomerURL";
 import Cookies from "js-cookie";
 
 import "./assets/styles/main.css";
@@ -28,6 +26,9 @@ import "./assets/styles/responsive.css";
 import Buying from "./pages/Transaction/Buying/Buying";
 import Selling from "./pages/Transaction/Selling/Selling";
 import CashBook from "./pages/Transaction/CashBook/CashBook";
+import ElectricTreatment from "./pages/Operations/ElectricTreatment/ElectricTreatment";
+import SortLots from "./pages/Operations/SortLots/SortLots";
+import Invoice from "./pages/Transaction/Invoice/Invoice";
 
 function App() {
   const rememberedUser = Cookies.get("rememberedUser");
@@ -44,10 +45,11 @@ function App() {
       ];
 
       // Check if the current path is in the allowed paths or has a dynamic :code part
-      if (!allowedPaths.includes(currentPath) && !currentPath.match(/^\/(rough|lots|sorted-lots|c-p)\/[^/]+$/)) {
+      if (!allowedPaths.includes(currentPath) && !currentPath.match(/^\/(rough|lots|sorted-lots|c-p|customer)\/[^/]+$/)) {
         // If not, redirect to '/'
         window.location.href = "/";
       }
+
     }
   }, [is_cookie_set]);
 
@@ -56,6 +58,7 @@ function App() {
       <div className="App">
         <Switch>
           <Route path="/" exact component={Login} />
+          <Route exact path="/customer/:id" component={CustomerURL} />
           {!is_cookie_set && (
               <>
                 <Route exact path="/sorted-lots/:code" component={ItemURL} />
@@ -68,9 +71,11 @@ function App() {
             <Route exact path="/dashboard" component={Home} />
             <Route exact path="/sign-up" component={SignUp} />
             <Route exact path="/customers" component={Customers} />
-            <Route exact path="/heat-treatment-group" component={HT} />
+            <Route exact path="/treatment-group" component={HT} />
             <Route exact path="/heat-treatment" component={HeatT} />
+            <Route exact path="/elec-treatment" component={ElectricTreatment} />
             <Route exact path="/c-and-p" component={CutPolish} />
+            <Route exact path="/sort-lots" component={SortLots} />
             <Route exact path="/add-items" component={AddItemsForm} />
             <Route exact path="/rough" component={Rough} />
             <Route exact path="/lots" component={Lots} />
@@ -78,13 +83,14 @@ function App() {
             <Route exact path="/c-p" component={CP} />
             <Route exact path="/add-transation" component={AddTransactionForm} />
             <Route exact path="/add-payments" component={AddPaymentsForm} />
+            <Route exact path="/invoice" component={Invoice} />
             <Route exact path="/expenses" component={Expenses} />
-            <Route exact path="/cash-flows" component={CashFlows} />
-            <Route exact path="/cash-dashboard" component={CashDashboard} />
+            {/*<Route exact path="/cash-flows" component={CashFlows} />*/}
+            {/*<Route exact path="/cash-dashboard" component={CashDashboard} />*/}
             <Route exact path="/buying" component={Buying} />
             <Route exact path="/selling" component={Selling} />
             <Route exact path="/cash-book" component={CashBook} />
-            <Route exact path="/bank" component={Bank} />
+            {/*<Route exact path="/bank" component={Bank} />*/}
             <Route exact path="/profile" component={Profile} />
             {is_cookie_set && (
                 <>

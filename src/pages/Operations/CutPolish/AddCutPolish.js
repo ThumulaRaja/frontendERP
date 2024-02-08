@@ -36,6 +36,7 @@ class AddCutPolish extends React.Component {
             htByOptions: [],
             cpByOptions: [],
             preformerOptions: [],
+        etByOptions: [],
 
             fileList2: [],  // For the second photo uploader
             previewVisible2: false,
@@ -54,8 +55,8 @@ class AddCutPolish extends React.Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
             const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
@@ -106,7 +107,14 @@ class AddCutPolish extends React.Component {
             }
             ));
 
-            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+            // ETByOptions Filter TYPE = Electric
+            const etByOptions = response.data.result.filter((customer) => customer.TYPE === 'Electric').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions, etByOptions });
 
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
@@ -134,8 +142,8 @@ class AddCutPolish extends React.Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
-            console.log('response', response);
+            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -156,11 +164,11 @@ class AddCutPolish extends React.Component {
                 imgBBLink2: '',
                 fileList2: [],
             });
-            const response = await axios.post('http://35.154.1.99:3001/getReferenceCPDetails', {
+            const response = await axios.post('http://localhost:3001/getReferenceCPDetails', {
                 ITEM_ID_AI: value,
             });
             if (response.data.success) {
-                console.log("response1", response);
+                //console.log("response1", response);
                 form.setFieldsValue({ CP_TYPE: response.data.result[0].CP_TYPE });
                 form.setFieldsValue({ CP_COLOR: response.data.result[0].CP_COLOR });
                 form.setFieldsValue({ SHAPE: response.data.result[0].SHAPE });
@@ -189,9 +197,9 @@ class AddCutPolish extends React.Component {
     handleGenerateCode = async () => {
         const form = this.formRef.current;
         const referenceId = form.getFieldValue('REFERENCE_ID_CP');
-        console.log('referenceId', referenceId);
+        //console.log('referenceId', referenceId);
         const cpType = form.getFieldValue('CP_TYPE');
-        console.log('cpType', cpType);
+        //console.log('cpType', cpType);
 
         if (referenceId !== undefined && cpType !== undefined) {
             const currentCode = this.state.currentCode;
@@ -236,7 +244,7 @@ class AddCutPolish extends React.Component {
                         break;
                 }
                 // Use the generated code as needed (e.g., set it in state, display it, etc.)
-                console.log('Generated Code:', code);
+                //console.log('Generated Code:', code);
                 form.setFieldsValue({CODE_AFTER_CUTTING: code});
             }
             else {
@@ -274,9 +282,17 @@ class AddCutPolish extends React.Component {
 
                     const imgBBLinkKey = `imgBBLink${uploaderNumber}`;
                     this.setState({ [imgBBLinkKey]: response.data.data.url });
-                    console.log('Image uploaded to ImgBB:', response.data.data.url);
+                    //show success message if response is success
+                    if (response.data.success) {
+                        message.success('Image uploaded successfully');
+                    }
+                    //show not success message if response is not success
+                    else {
+                        message.error('Failed to upload Image');
+                    }
+                    //console.log('Image uploaded to ImgBB:', response.data.data.url);
 
-                    console.log('this.state', this.state);
+                    //console.log('this.state', this.state);
                 }
             }
         } catch (error) {
@@ -318,10 +334,10 @@ class AddCutPolish extends React.Component {
             };
 
 
-            console.log('resultArrayData', resultArrayData);
+            //console.log('resultArrayData', resultArrayData);
 
             // Send the request
-            const response = await axios.post('http://35.154.1.99:3001/addCutPolish', resultArrayData);
+            const response = await axios.post('http://localhost:3001/addCutPolish', resultArrayData);
 
             if (response.data.success) {
                 message.success('Cut & Polish added successfully');
@@ -424,8 +440,8 @@ class AddCutPolish extends React.Component {
                         {/* Status */}
                         <Form.Item
                             name="STATUS"
-                            label="Status after Cut and Polish"
-                            initialValue="C&P"
+                            label="Change Status To"
+                            initialValue="With C&P"
                             rules={[{ required: true, message: 'Please select Status' }]}
                         >
                             <Select style={inputStyle} placeholder="Select Status" showSearch>
@@ -434,7 +450,7 @@ class AddCutPolish extends React.Component {
                                 <Option value="Sold">Sold</Option>
                                 <Option value="Finished">Finished</Option>
                                 <Option value="Stuck">Stuck</Option>
-                                <Option value="With Seller">With Seller</Option>
+                                <Option value="With Sales Person">With Sales Person</Option>
                                 <Option value="Cutting">Cutting</Option>
                                 <Option value="Ready for Selling">Ready for Selling</Option>
                                 <Option value="Heat Treatment">Heat Treatment</Option>
@@ -442,6 +458,10 @@ class AddCutPolish extends React.Component {
                                 <Option value="C&P">C&P</Option>
                                 <Option value="Preformed">Preformed</Option>
                                 <Option value="Added to a lot">Added to a lot</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
+                                <Option value="With Preformer">With Preformer</Option>
                             </Select>
                         </Form.Item>
                     </Col>
@@ -585,7 +605,7 @@ class AddCutPolish extends React.Component {
                         </Form.Item>
                     </Col>
 
-                    <Col span={15}>
+                    <Col xs={24} sm={24} md={24} lg={15}>
                         <Form.Item
                             name="REMARK"
                             label="Remarks"

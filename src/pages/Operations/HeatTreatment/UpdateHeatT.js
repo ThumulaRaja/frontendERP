@@ -29,6 +29,8 @@ class UpdateHeatT extends Component {
         this.state = {
             referenceOptions: [],
             heatTreatmentGroupOptions: [],
+            enlargedImageVisible: false,
+            enlargedImageVisibleHT: false,
             customerOptions: [],
             buyerOptions: [],
             sellerOptions: [],
@@ -37,6 +39,7 @@ class UpdateHeatT extends Component {
             htByOptions: [],
             cpByOptions: [],
             preformerOptions: [],
+        etByOptions: [],
 
             fileList: {}, // Change fileList1 to fileList
             previewVisible: {}, // Change previewVisible1 to previewVisible
@@ -52,8 +55,8 @@ class UpdateHeatT extends Component {
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
             const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
@@ -104,7 +107,14 @@ class UpdateHeatT extends Component {
             }
             ));
 
-            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+            // ETByOptions Filter TYPE = Electric
+            const etByOptions = response.data.result.filter((customer) => customer.TYPE === 'Electric').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions, etByOptions });
 
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
@@ -131,8 +141,8 @@ class UpdateHeatT extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getItemsForReference');
-            console.log('response', response);
+            const response = await axios.post('http://localhost:3001/getItemsForReference');
+            //console.log('response', response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -159,8 +169,8 @@ class UpdateHeatT extends Component {
 
     async fetchHTGroupOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllHT");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllHT");
+            //console.log("response", response);
             return response.data.result.map((ht) => ({
                 value: ht.HT_ID,
                 label: ht.NAME,
@@ -174,18 +184,18 @@ class UpdateHeatT extends Component {
 
     loadReferenceFromHTGroup = async (value) => {
         const form = this.formRef.current;
-        console.log("value", this.props);
+        //console.log("value", this.props);
         try {
             this.setState({ resultArray: [] });
-            const response = await axios.post('http://35.154.1.99:3001/getReferenceFromHTGroup', {
+            const response = await axios.post('http://localhost:3001/getReferenceFromHTGroup', {
                 HT_ID: value,
             });
             if (response.data.success) {
-                console.log("response1", response);
+                //console.log("response1", response);
 
                 // Store the result array in the component state
                 this.setState({ resultArray: response.data.result });
-                console.log("resultArray", this.state.resultArray);
+                //console.log("resultArray", this.state.resultArray);
 
             } else {
                 message.error('Failed to fetch Item Details');
@@ -233,8 +243,16 @@ class UpdateHeatT extends Component {
                     this.setState({
                         [imgBBLinkKey]: response.data.data.url,
                     });
-                    console.log('this.state', this.state);
-                    console.log('Image uploaded to ImgBB:', response.data.data.url);
+                    //show success message if response is success
+                    if (response.data.success) {
+                        message.success('Image uploaded successfully');
+                    }
+                    //show not success message if response is not success
+                    else {
+                        message.error('Failed to upload Image');
+                    }
+                    //console.log('this.state', this.state);
+                    //console.log('Image uploaded to ImgBB:', response.data.data.url);
                 }
             }
         } catch (error) {
@@ -248,6 +266,36 @@ class UpdateHeatT extends Component {
             } else {
                 console.error('Error in request setup:', error.message);
             }
+        }
+    };
+
+    handleApprove = async () => {
+        try {
+            //put all the reference ids in an array
+            const referenceArray = this.state.resultArray.map((referenceData) => referenceData.ITEM_ID_AI);
+
+            const sendObject = {
+                HEAT_ID: this.props.initialValues.HEAT_ID,
+                referenceArray,
+            }
+            //console.log('sendObject', sendObject);
+
+            // Send the request
+            const response = await axios.post('http://localhost:3001/approveHeatT', sendObject);
+
+            if (response.data.success) {
+                message.success('Heat Treatment approved successfully');
+                // Close the modal
+                this.props.onUpdate();
+                this.props.onCancel();
+                // You can reset the form if needed
+                // this.formRef.current.resetFields();
+            } else {
+                message.error('Failed to Approve Heat Treatment');
+            }
+        } catch (error) {
+            console.error('Error Approving Heat Treatment:', error);
+            message.error('Internal server error');
         }
     };
 
@@ -299,7 +347,7 @@ class UpdateHeatT extends Component {
                                 <Option value="Sold">Sold</Option>
                                 <Option value="Finished">Finished</Option>
                                 <Option value="Stuck">Stuck</Option>
-                                <Option value="With Seller">With Seller</Option>
+                                <Option value="With Sales Person">With Sales Person</Option>
                                 <Option value="Cutting">Cutting</Option>
                                 <Option value="Ready for Selling">Ready for Selling</Option>
                                 <Option value="Heat Treatment">Heat Treatment</Option>
@@ -307,6 +355,10 @@ class UpdateHeatT extends Component {
                                 <Option value="C&P">C&P</Option>
                                 <Option value="Preformed">Preformed</Option>
                                 <Option value="Added to a lot">Added to a lot</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
+                                <Option value="With Preformer">With Preformer</Option>
                             </Select>
                         </Form.Item>
                     </Col>
@@ -368,7 +420,7 @@ class UpdateHeatT extends Component {
                         <Form.Item
                             name={`AFTER_STATUS_${index + 1}`}
                             label={`Status After HT ${index + 1}`}
-                            initialValue="Heat Treatment"
+                            initialValue="With Electric T"
                         >
                             <Select placeholder="Select Status" showSearch style={ type === 'view' ? disableStyle : null }>
                                 <Option value="Working">Working</Option>
@@ -376,7 +428,7 @@ class UpdateHeatT extends Component {
                                 <Option value="Sold">Sold</Option>
                                 <Option value="Finished">Finished</Option>
                                 <Option value="Stuck">Stuck</Option>
-                                <Option value="With Seller">With Seller</Option>
+                                <Option value="With Sales Person">With Sales Person</Option>
                                 <Option value="Cutting">Cutting</Option>
                                 <Option value="Ready for Selling">Ready for Selling</Option>
                                 <Option value="Heat Treatment">Heat Treatment</Option>
@@ -384,6 +436,10 @@ class UpdateHeatT extends Component {
                                 <Option value="C&P">C&P</Option>
                                 <Option value="Preformed">Preformed</Option>
                                 <Option value="Added to a lot">Added to a lot</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
+                                <Option value="With Preformer">With Preformer</Option>
                             </Select>
                         </Form.Item>
                     </Col>
@@ -535,10 +591,10 @@ class UpdateHeatT extends Component {
                 mainData,
                 subDataArray,
             };
-            console.log('resultArrayData', resultArrayData);
+            //console.log('resultArrayData', resultArrayData);
 
             // Send the request
-            const response = await axios.post('http://35.154.1.99:3001/updateHeatT', resultArrayData);
+            const response = await axios.post('http://localhost:3001/updateHeatT', resultArrayData);
 
             if (response.data.success) {
                 message.success('Heat Treatment added successfully');
@@ -587,11 +643,11 @@ class UpdateHeatT extends Component {
                     <Col xs={24} sm={12} md={12} lg={24}>
                         <Form.Item
                             name="HT_ID"
-                            label="Heat Treatment Group"
-                            rules={[{ required: true, message: 'Please select heat treatment group' }]}
+                            label="Treatment Group"
+                            rules={[{ required: true, message: 'Please select Treatment Group' }]}
                             initialValue={this.props.initialValues.HT_ID}
                         >
-                            <Select placeholder="Select Heat Treatment Group" allowClear showSearch
+                            <Select placeholder="Select Treatment Group" allowClear showSearch
                                     filterOption={(input, option) =>
                                         (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                         (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
@@ -650,12 +706,20 @@ class UpdateHeatT extends Component {
                 {this.renderFormFields()}
                 {type === 'edit' ? (
                 <Row gutter={[16, 16]} justify="left" align="top">
-                    <Col xs={24} sm={24} md={24} lg={24}>
+                    <Col xs={12} sm={12} md={12} lg={12}>
                         <Form.Item>
                             <Button type="primary" htmlType="submit">
                                 Update Heat Treatment
                             </Button>
                         </Form.Item>
+                    </Col>
+                    <Col xs={12} sm={12} md={12} lg={12}>
+                        <Form.Item>
+                            <Button type="default" style={{float: 'right'}} onClick={this.handleApprove}>
+                                Approve
+                            </Button>
+                        </Form.Item>
+
                     </Col>
                 </Row>
                 ) : null}

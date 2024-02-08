@@ -57,37 +57,37 @@ class CashDashboard extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getCashDashboardData');
+            const response = await axios.post('http://localhost:3001/getCashDashboardData');
 
             if (response.data.success) {
-                console.log('ResponseDashboard:', response.data.result);
+                //console.log('ResponseDashboard:', response.data.result);
                 this.setState({ countData: response.data.result });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({ loading: false });
         }
     };
 
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
 
     handleDelete = async (id,all) => {
-        console.log('id', id);
-        console.log('all', all);
+        //console.log('id', id);
+        //console.log('all', all);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://35.154.1.99:3001/deactivateTransaction', {
+            const response = await axios.post('http://localhost:3001/deactivateTransaction', {
                 TRANSACTION_ID: id,
                 ALL: all,
             });
@@ -106,9 +106,9 @@ class CashDashboard extends Component {
     };
 
     handlePrint = async (row) => {
-        console.log('row', row);
+        //console.log('row', row);
         try {
-            const response = await axios.post('http://35.154.1.99:3001/generateInvoice', {
+            const response = await axios.post('http://localhost:3001/generateInvoice', {
                 data: row,
             });
 
@@ -135,17 +135,17 @@ class CashDashboard extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getAllDueTransactions');
+            const response = await axios.post('http://localhost:3001/getAllDueTransactions');
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
                 this.setState({ tablePayment: items });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -460,7 +460,7 @@ class CashDashboard extends Component {
             const parsedUser = JSON.parse(rememberedUser);
             const { USER_ID, NAME } = parsedUser;
             NAME1 = NAME;
-            console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
+            //console.log(`User ID: ${USER_ID}, Name: ${NAME}`);
         } else {
             Cookies.remove('rememberedUser');
             window.location.href = '/';

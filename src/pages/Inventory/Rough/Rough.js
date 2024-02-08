@@ -74,14 +74,14 @@ class Rough extends Component {
         const { code } = params;
 
         this.setState({ code });
-        console.log('code', code);
+        //console.log('code', code);
 
         if (code) {
-            console.log('roughId1', code);
+            //console.log('roughId1', code);
             const lowerCaseRoughId = code.toLowerCase();
 
             this.state.tableData.forEach(item => {
-                console.log('item.CODE', item.CODE);
+                //console.log('item.CODE', item.CODE);
                 if (item.CODE.toLowerCase() === lowerCaseRoughId) {
                     this.handleUpdateShow(item);
                 }
@@ -90,9 +90,9 @@ class Rough extends Component {
     }
 
     handlePrint = async (row) => {
-        console.log('row', row);
+        //console.log('row', row);
         try {
-            const response = await axios.post('http://35.154.1.99:3001/generateQR', {
+            const response = await axios.post('http://localhost:3001/generateQR', {
                 data: row
             });
 
@@ -134,7 +134,7 @@ class Rough extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://35.154.1.99:3001/searchRough', searchData);
+            const response = await axios.post('http://localhost:3001/searchRough', searchData);
 
 
             if (response.data.success) {
@@ -200,10 +200,10 @@ class Rough extends Component {
                     tableFancy: categorizedTables.Fancy,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -229,12 +229,12 @@ class Rough extends Component {
             });
 
             // Make an AJAX request to search for data
-            const response = await axios.post('http://35.154.1.99:3001/searchRough', searchData);
+            const response = await axios.post('http://localhost:3001/searchRough', searchData);
 
 
             if (response.data.success) {
                 const filteredItems = response.data.result;
-                console.log('filteredItems', filteredItems);
+                //console.log('filteredItems', filteredItems);
 
                 message.info(response.data.message);
                 this.formRef.current.resetFields();
@@ -299,10 +299,10 @@ class Rough extends Component {
                     tableFancy: categorizedTables.Fancy,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -312,29 +312,29 @@ class Rough extends Component {
 
 
     handleUpdateShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isUpdateModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
     handleViewShow(row) {
-        console.log('row', row);
+        //console.log('row', row);
         this.setState({
             selectedItem: row,
             isViewModalVisible: true,
         });
-        console.log('selectedItem', this.state.selectedItem);
+        //console.log('selectedItem', this.state.selectedItem);
     }
 
 
     handleDelete = async (id) => {
-        console.log('id', id);
+        //console.log('id', id);
         try {
             // Make an API call to deactivate the customer
-            const response = await axios.post('http://35.154.1.99:3001/deactivateItem', {
+            const response = await axios.post('http://localhost:3001/deactivateItem', {
                 ITEM_ID_AI: id,
             });
 
@@ -356,11 +356,11 @@ class Rough extends Component {
         this.setState({ loading: true });
 
         try {
-            const response = await axios.post('http://35.154.1.99:3001/getAllRough');
+            const response = await axios.post('http://localhost:3001/getAllRough');
 
             if (response.data.success) {
                 const items = response.data.result;
-                console.log('items', items);
+                //console.log('items', items);
 
                 this.setState({
                     tableData: items,
@@ -426,10 +426,10 @@ class Rough extends Component {
                     tableFancy: categorizedTables.Fancy,
                 });
             } else {
-                console.log('Error:', response.data.message);
+                //console.log('Error:', response.data.message);
             }
         } catch (error) {
-            console.log('Error:', error.message);
+            //console.log('Error:', error.message);
         } finally {
             this.setState({
                 loading: false,
@@ -519,7 +519,7 @@ class Rough extends Component {
                                         <Option value="Sold">Sold</Option>
                                         <Option value="Finished">Finished</Option>
                                         <Option value="Stuck">Stuck</Option>
-                                        <Option value="With Seller">With Seller</Option>
+                                        <Option value="With Sales Person">With Sales Person</Option>
                                         <Option value="Cutting">Cutting</Option>
                                         <Option value="Ready for Selling">Ready for Selling</Option>
                                         <Option value="Heat Treatment">Heat Treatment</Option>
@@ -527,17 +527,11 @@ class Rough extends Component {
                                         <Option value="C&P">C&P</Option>
                                         <Option value="Preformed">Preformed</Option>
                                         <Option value="Added to a lot">Added to a lot</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
+                                <Option value="With Preformer">With Preformer</Option>
                                     </Select>
-                                </Form.Item>
-                            </Col>
-                            <Col xs={24} sm={24} md={24} lg={6}>
-                                <Form.Item name="searchItemId">
-                                    <InputNumber
-                                        placeholder="Filter by Item ID"
-                                        onChange={(value) => this.setState({ searchItemId: value })}
-                                        style={{ width: '100%'}}
-                                        allowClear
-                                    />
                                 </Form.Item>
                             </Col>
                             <Col xs={24} sm={24} md={24} lg={6}>

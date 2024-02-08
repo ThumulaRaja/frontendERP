@@ -31,6 +31,7 @@ class ViewTransactionForm extends Component {
             htByOptions: [],
             cpByOptions: [],
             preformerOptions: [],
+        etByOptions: [],
             ReferenceOptions: [],
             type: this.props.initialValues.TYPE,
         };
@@ -47,13 +48,13 @@ class ViewTransactionForm extends Component {
         this.setState({ customerOptions });
         const ReferenceOptions = await this.fetchReferenceOptions();
         this.setState({ ReferenceOptions });
-        console.log("initialValues", this.props.initialValues);
+        //console.log("initialValues", this.props.initialValues);
     }
 
     async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
             const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
@@ -104,7 +105,14 @@ class ViewTransactionForm extends Component {
             }
             ));
 
-            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+            // ETByOptions Filter TYPE = Electric
+            const etByOptions = response.data.result.filter((customer) => customer.TYPE === 'Electric').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions, etByOptions });
 
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
@@ -118,8 +126,8 @@ class ViewTransactionForm extends Component {
 
     async fetchReferenceOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getItemsForReference");
+            //console.log("response", response);
             return response.data.result.map((ref) => ({
                 value: ref.ITEM_ID_AI,
                 label: ref.CODE,
@@ -209,7 +217,7 @@ class ViewTransactionForm extends Component {
                                                     <Option value="Sold">Sold</Option>
                                                     <Option value="Finished">Finished</Option>
                                                     <Option value="Stuck">Stuck</Option>
-                                                    <Option value="With Seller">With Seller</Option>
+                                                    <Option value="With Sales Person">With Sales Person</Option>
                                                     <Option value="Cutting">Cutting</Option>
                                                     <Option value="Ready for Selling">Ready for Selling</Option>
                                                     <Option value="Heat Treatment">Heat Treatment</Option>
@@ -217,6 +225,10 @@ class ViewTransactionForm extends Component {
                                                     <Option value="C&P">C&P</Option>
                                                     <Option value="Preformed">Preformed</Option>
                                                     <Option value="Added to a lot">Added to a lot</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
+                                <Option value="With Preformer">With Preformer</Option>
                                                 </Select>
                                             </Form.Item>
                                         </Col>
@@ -258,7 +270,7 @@ class ViewTransactionForm extends Component {
                                         <Col xs={24} sm={12} md={8} lg={6}>
                                             <Form.Item
                                                 name="CUSTOMER"
-                                                label="Customer"
+                                                label={this.props.initialValues.TYPE === 'Selling' ? "Buyer" : "Seller"}
                                                 initialValue={this.props.initialValues.CUSTOMER}
                                             >
                                                 <Select placeholder="Select Customer" allowClear showSearch  style={inputStyle}

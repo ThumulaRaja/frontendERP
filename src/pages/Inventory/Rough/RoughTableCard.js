@@ -97,6 +97,13 @@ let RoughTableCard = ({
                             },
                         },
                         {
+                            title: 'In Inventory',
+                            dataIndex: 'IS_IN_INVENTORY',
+                            render: (text, record) => {
+                                return text === 1 ? <span style={{ color: 'green' }}>Yes</span> : <span style={{ color: 'red' }}>No</span>;
+                            }
+                        },
+                        {
                             title: 'Action',
                             width: '120px',
                             align: 'center',

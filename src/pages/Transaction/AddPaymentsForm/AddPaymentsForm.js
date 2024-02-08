@@ -33,6 +33,7 @@ export default class AddPaymentsForm extends Component {
             htByOptions: [],
             cpByOptions: [],
             preformerOptions: [],
+        etByOptions: [],
       ReferenceOptions: [],
       TransactionOptions: [],
       type: 'Selling',
@@ -76,8 +77,8 @@ export default class AddPaymentsForm extends Component {
 
   async fetchCustomerOptions() {
         try {
-            const response = await axios.post("http://35.154.1.99:3001/getAllCustomers");
-            console.log("response", response);
+            const response = await axios.post("http://localhost:3001/getAllCustomers");
+            //console.log("response", response);
 
             // BuyerOptions Filter TYPE = Buyer
             const buyerOptions = response.data.result.filter((customer) => customer.TYPE === 'Buyer').map((customer) => ({
@@ -128,7 +129,14 @@ export default class AddPaymentsForm extends Component {
             }
             ));
 
-            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions });
+            // ETByOptions Filter TYPE = Electric
+            const etByOptions = response.data.result.filter((customer) => customer.TYPE === 'Electric').map((customer) => ({
+                value: customer.CUSTOMER_ID,
+                label: customer.NAME,
+            }
+            ));
+
+            this.setState({ buyerOptions, sellerOptions, salesPersonOptions, partnerOptions, htByOptions, cpByOptions, preformerOptions, etByOptions });
 
             return response.data.result.map((customer) => ({
                 value: customer.CUSTOMER_ID,
@@ -142,8 +150,8 @@ export default class AddPaymentsForm extends Component {
 
   async fetchReferenceOptions() {
     try {
-      const response = await axios.post("http://35.154.1.99:3001/getItemsForReference");
-      console.log("response", response);
+      const response = await axios.post("http://localhost:3001/getItemsForReference");
+      //console.log("response", response);
       return response.data.result.map((ref) => ({
         value: ref.ITEM_ID_AI,
         label: ref.CODE,
@@ -156,8 +164,8 @@ export default class AddPaymentsForm extends Component {
 
   async fetchTransactionOptions() {
     try {
-      const response = await axios.post("http://35.154.1.99:3001/getTransactionForReference");
-      console.log("response", response);
+      const response = await axios.post("http://localhost:3001/getTransactionForReference");
+      //console.log("response", response);
       return response.data.result.map((transaction) => ({
         value: transaction.TRANSACTION_ID,
         label: transaction.CODE,
@@ -173,11 +181,11 @@ export default class AddPaymentsForm extends Component {
     handleTransactionChange = async (value) => {
       const form = this.formRef.current;
       try {
-        const response = await axios.post('http://35.154.1.99:3001/getTransactionDetails', {
+        const response = await axios.post('http://localhost:3001/getTransactionDetails', {
           TRANSACTION_ID: value,
         });
         if (response.data.success) {
-          console.log("response", response);
+          //console.log("response", response);
           form.setFieldsValue({ TYPE: response.data.result[0].TYPE });
             form.setFieldsValue({ METHOD: response.data.result[0].METHOD });
             form.setFieldsValue({ STATUS: response.data.result[0].STATUS });
@@ -219,9 +227,9 @@ export default class AddPaymentsForm extends Component {
         CREATED_BY: USER_ID,
       };
 
-      console.log("updatedValues", updatedValues);
+      //console.log("updatedValues", updatedValues);
 
-      const response = await axios.post('http://35.154.1.99:3001/addPayment', updatedValues);
+      const response = await axios.post('http://localhost:3001/addPayment', updatedValues);
 
       if (response.data.success) {
         message.success('Payment added successfully');
@@ -346,7 +354,7 @@ export default class AddPaymentsForm extends Component {
                               <Option value="Sold">Sold</Option>
                               <Option value="Finished">Finished</Option>
                               <Option value="Stuck">Stuck</Option>
-                              <Option value="With Seller">With Seller</Option>
+                              <Option value="With Sales Person">With Sales Person</Option>
                               <Option value="Cutting">Cutting</Option>
                               <Option value="Ready for Selling">Ready for Selling</Option>
                               <Option value="Heat Treatment">Heat Treatment</Option>
@@ -354,6 +362,10 @@ export default class AddPaymentsForm extends Component {
                               <Option value="C&P">C&P</Option>
                               <Option value="Preformed">Preformed</Option>
                               <Option value="Added to a lot">Added to a lot</Option>
+<Option value="With Heat T">With Heat T</Option>
+<Option value="With C&P">With C&P</Option>
+<Option value="With Electric T">With Electric T</Option>
+                                <Option value="With Preformer">With Preformer</Option>
                             </Select>
                         </Form.Item>
                       </Col>
@@ -363,7 +375,7 @@ export default class AddPaymentsForm extends Component {
                         <Form.Item
                             name="DATE"
                             label="Date"
-                            initialValue={moment()}  // Set the default date to today
+                            rules={[{ required: true, message: 'Please select Date' }]}  // Set the default date to today
                             rules={[
                               { required: true, message: 'Please enter Date' },
                             ]}
@@ -397,7 +409,7 @@ export default class AddPaymentsForm extends Component {
                             name="CUSTOMER"
                             label="Customer"
                         >
-                          <Select placeholder="Select Customer" allowClear showSearch
+                          <Select placeholder="Select Customer" allowClear showSearch style={inputStyle}
                                   filterOption={(input, option) =>
                                       (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                       (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)
@@ -413,7 +425,7 @@ export default class AddPaymentsForm extends Component {
                       {type === 'Selling' ?
                       <Col xs={24} sm={12} md={8} lg={6}>
                         <Form.Item name="BEARER" label="Bearer">
-                          <Select placeholder="Select Bearer" allowClear showSearch
+                          <Select placeholder="Select Bearer" allowClear showSearch style={inputStyle}
                                   filterOption={(input, option) =>
                                       (option.key ? option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false) ||
                                       (option.title ? option.title.toLowerCase().indexOf(input.toLowerCase()) >= 0 : false)

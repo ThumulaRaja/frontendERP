@@ -26,7 +26,7 @@ class AddCustomerForm extends React.Component {
                 CREATED_BY: USER_ID,
             };
 
-            const response = await axios.post('http://35.154.1.99:3001/addCustomer', updatedValues);
+            const response = await axios.post('http://localhost:3001/addCustomer', updatedValues);
 
             if (response.data.success) {
                 message.success('Customer added successfully');
@@ -98,7 +98,7 @@ class AddCustomerForm extends React.Component {
                                 <Select.Option value="Buyer">Buyer</Select.Option>
                                 <Select.Option value="Sales Person">Sales Person</Select.Option>
                                 <Select.Option value="Partner">Partner</Select.Option>
-                                <Select.Option value="Performer">Performer</Select.Option>  {/* Corrected typo here */}
+                                <Select.Option value="Preformer">Preformer</Select.Option>  {/* Corrected typo here */}
                                 <Select.Option value="C&P">C&P</Select.Option>
                                 <Select.Option value="Electric">Electric</Select.Option>
                                 <Select.Option value="Heat T">Heat T</Select.Option>
